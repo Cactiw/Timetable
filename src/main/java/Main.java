@@ -3,6 +3,8 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +16,12 @@ import javafx.scene.control.Button;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Session;
+
+import classes.User;
+import classes.HibernateUtil;
+import org.hibernate.Transaction;
+
 
 public class Main extends Application{
 
@@ -22,8 +30,28 @@ public class Main extends Application{
     HBox auditoriums, classes;
     VBox menu;
 
+
     @Override
     public void start(Stage primaryStage) throws Exception{
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        User user = new User();
+        user.setEmail("Test@test.abc");
+
+        Transaction tx = null;
+
+        try {
+            tx = session.beginTransaction();
+
+            tx.commit();
+        }
+
+        catch (Exception e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
+
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
         primaryStage.setTitle("Timetable");
@@ -120,7 +148,5 @@ public class Main extends Application{
     }
 
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) {launch(args);}
 }

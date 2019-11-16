@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Database connection settings -->
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
+        <property name="dialect">org.hibernate.dialect.SQLiteDialect</property>
+        <property name="connection.driver_class">org.sqlite.JDBC</property>
+        <property name="connection.url">jdbc:sqlite:mydb.db</property>
+        <property name="connection.username"/>
+        <property name="connection.password"/>
+        <property name="hibernate.hbm2ddl.auto">validate</property>
+
+        <!-- here all entities will come -->
+        <mapping class="classes.User"/>
+<!--        <mapping class="core.db.entity.User"/>-->
+<!--        <mapping class="core.db.entity.Project"/>-->
+<!--        <mapping class="core.db.entity.ExternalProject"/>-->
+<!--        <mapping class="core.db.entity.InternalProject"/>-->
+
+    </session-factory>
+</hibernate-configuration>
