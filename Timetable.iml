@@ -4,7 +4,7 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
-          <unit-entry name="hibernate.cfg.xml" />
+          <unit-entry name="hibernate.cfg.xml" value="6908109d-056b-4cde-994c-ef372868c5f9" />
         </datasource-map>
         <naming-strategy-map />
         <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/hibernate.cfg.xml" />
@@ -53,8 +53,9 @@
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-annotations:3.5.6-Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-commons-annotations:3.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.7.2" level="project" />
-    <orderEntry type="library" name="Maven: com.zsoltfabok:sqlite-dialect:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.hibernate:hibernate-entitymanager:5.4.3.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.28.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.gwenn:sqlite-dialect:0.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.vladmihalcea:hibernate-types-52:2.3.5" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:12.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-controls:win:12.0.1" level="project" />

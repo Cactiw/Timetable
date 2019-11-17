@@ -12,14 +12,13 @@
         <property name="connection.url">jdbc:sqlite:mydb.db</property>
         <property name="connection.username"/>
         <property name="connection.password"/>
-        <property name="hibernate.hbm2ddl.auto">validate</property>
+        <property name="hibernate.connection.charSet"> UTF-8 </property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+
+        <property name="hibernate.naming_strategy">org.hibernate.cfg.DefaultComponentSafeNamingStrategy</property>
 
         <!-- here all entities will come -->
         <mapping class="classes.User"/>
-<!--        <mapping class="core.db.entity.User"/>-->
-<!--        <mapping class="core.db.entity.Project"/>-->
-<!--        <mapping class="core.db.entity.ExternalProject"/>-->
-<!--        <mapping class="core.db.entity.InternalProject"/>-->
 
     </session-factory>
 </hibernate-configuration>
