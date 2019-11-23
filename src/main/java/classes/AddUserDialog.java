@@ -2,6 +2,7 @@ package classes;
 
 import javafx.application.Platform;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -108,6 +109,7 @@ public class AddUserDialog {
                 user.setLastName(lastName.getText());
                 user.setSurName(surName.getText());
                 user.setEmail(email.getText());
+                user.setRole(role.getSelectionModel().getSelectedIndex() + 1);
                 int code = createUser(user);
                 if (code == -1) {
                     System.out.println("Error");
@@ -141,12 +143,14 @@ public class AddUserDialog {
         }
         boolean bool = !email.getText().matches(".*@.*\\..*");
         red(email, bool);
-        correct = !bool;
-
+        if (bool) {
+            correct = false;
+        }
         if (role.valueProperty().getValue() == "") {
             correct = false;
         }
         okButton.setDisable(!correct);
+        //role.valueProperty().getValue()
     }
 
     private void red(TextField textField, boolean red) {
