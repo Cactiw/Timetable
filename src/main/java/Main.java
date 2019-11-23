@@ -1,21 +1,29 @@
 //package main.java;
 
+import classes.AddUserDialog;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.control.Button;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
+import javafx.util.Pair;
 import org.hibernate.Session;
 
 import classes.User;
@@ -28,29 +36,29 @@ public class Main extends Application{
     Button button;
     Stage mainStage;
     HBox auditoriums, classes;
-    VBox menu;
+    VBox mainBox, menu;
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
         Session session = HibernateUtil.getSessionFactory().openSession();
-        User user = new User();
-        user.setEmail("Test@test.abc");
-
-        Transaction tx = null;
-
-        try {
-            tx = session.beginTransaction();
-
-            tx.commit();
-        }
-
-        catch (Exception e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
+//        User user = new User();
+//        user.setEmail("Test@test.abc");
+//
+//        Transaction tx = null;
+//
+//        try {
+//            tx = session.beginTransaction();
+//
+//            tx.commit();
+//        }
+//
+//        catch (Exception e) {
+//            if (tx!=null) tx.rollback();
+//            e.printStackTrace();
+//        } finally {
+//            session.close();
+//        }
 
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
@@ -66,14 +74,14 @@ public class Main extends Application{
         auditoriums.toFront();
         //auditoriums.setPrefSize(100000, 100000);
         auditoriums.getChildren().add(new Text("Аудитории"));
-        auditoriums.setStyle("-fx-background-color: red");
+        auditoriums.setStyle("-fx-background-color: white");
 
 
         classes = new HBox();
         classes.toBack();
         //classes.setPrefSize(100000, 100000);
         classes.getChildren().add(new Text("Занятия"));
-        classes.setStyle("-fx-background-color: green");
+        classes.setStyle("-fx-background-color: white");
 
 
 
@@ -93,7 +101,33 @@ public class Main extends Application{
         main_layout.getChildren().add(root_pane);
         //menu.toFront();
 
-        Scene scene = new Scene(main_layout, 1000, 700);
+        // Создание меню
+        Menu addMenu = new Menu("Вставка");
+
+        MenuItem addUser = new MenuItem("Создать пользователя");
+        MenuItem addAuditorium = new MenuItem("Создать аудиторию");
+        MenuItem addPair = new MenuItem("Создать занятие");
+
+        addUser.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new AddUserDialog().show();
+            }
+        });
+
+        addMenu.getItems().add(addUser);
+        addMenu.getItems().add(addAuditorium);
+        addMenu.getItems().add(addPair);
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(addMenu);
+
+        mainBox = new VBox();
+        mainBox.getChildren().addAll(menuBar, main_layout);
+        VBox.setVgrow(main_layout, Priority.ALWAYS);
+
+        Scene scene = new Scene(mainBox, 1000, 700);
+        scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -146,6 +180,8 @@ public class Main extends Application{
             pane.setStyle("-fx-background-color: #212121");
         });
     }
+
+
 
 
     public static void main(String[] args) {launch(args);}

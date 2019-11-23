@@ -26,6 +26,7 @@ import java.util.Map;
 public class User {
     @Id
     @Column
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
     @Column
@@ -35,10 +36,10 @@ public class User {
     private String name;
 
     @Column
-    private String last_name;
+    private String lastName;
 
     @Column
-    private String surname;
+    private String surName;
 
     @Column
     private String email;
@@ -75,20 +76,20 @@ public class User {
         this.name = name;
     }
 
-    public String getLast_name() {
-        return last_name;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setLast_name(String last_name) {
-        this.last_name = last_name;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getSurName() {
+        return surName;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setSurName(String surName) {
+        this.surName = surName;
     }
 
     public String getEmail() {
@@ -117,7 +118,7 @@ public class User {
         this.additional = additional;
     }
 
-//User(int id, int role, String name, String last_name, String surname, String email);
+//User(int id, int role, String name, String lastName, String surName, String email);
 //    static User get_user(int id) {
 //        return User();
 //    };

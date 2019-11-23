@@ -1,0 +1,6 @@
+
+
+.text-input.error {
+    -fx-text-box-border: red ;
+    -fx-focus-color: red ;
+}
