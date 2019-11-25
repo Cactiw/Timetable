@@ -11,6 +11,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -59,9 +61,25 @@ public class Main extends Application{
         TableColumn<Auditorium, Integer> maxStudentsColumn = new TableColumn<>("Мест");
         maxStudentsColumn.setMinWidth(200);
         maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
+
+//        TableColumn<Auditorium, Button> edit = new TableColumn<>("Ред.");
+//        edit.setMinWidth(200);
+//        edit.setCellFactory(TableCell.<Person>forTableColumn("Remove", (Person p) -> {
+//            table.getItems().remove(p);
+//            return p;
+//        }));
+
         auditoriumTableView = new TableView<>();
         auditoriumTableView.setItems(getAuditoriums());
         auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
+        auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
+                    System.out.println(auditoriumTableView.getSelectionModel().getSelectedItem());
+                }
+            }
+        });
 
         auditoriums.getChildren().addAll(auditoriumTableView);
 
@@ -175,7 +193,7 @@ public class Main extends Application{
         });
     }
 
-    public ObservableList getAuditoriums() {
+    private ObservableList getAuditoriums() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         String hql = "FROM Auditorium";
         Query query = session.createQuery(hql);
