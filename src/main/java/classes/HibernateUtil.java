@@ -32,6 +32,24 @@ public class HibernateUtil implements AutoCloseable {
         }
     }
 
+    public static <T> int createObject(T object) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction tx = null;
+        try  {
+            tx = session.beginTransaction();
+            session.save(object);
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            return -1;
+        }
+        finally {
+            session.close();
+        }
+        return 0;
+    }
+
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
     }

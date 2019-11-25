@@ -78,23 +78,6 @@ public class AddUserDialog {
 
         gridPane.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
-        email.focusedProperty().addListener((arg0, oldValue, newValue) -> {
-            if (!newValue) { //when focus lost
-                ObservableList<String> styleClass = email.getStyleClass();
-                if(!email.getText().matches(".*@.*\\..*")){
-                    if (! styleClass.contains("error")) {
-                        styleClass.add("error");
-                    }
-                    okButton.setDisable(true);
-                } else {
-                    styleClass.removeAll("error");
-                    okButton.setDisable(false);
-                }
-            }
-
-        });
-
-
         dialog.getDialogPane().setContent(gridPane);
         verifyAddUserDialog();
 
@@ -110,7 +93,7 @@ public class AddUserDialog {
                 user.setSurName(surName.getText());
                 user.setEmail(email.getText());
                 user.setRole(role.getSelectionModel().getSelectedIndex() + 1);
-                int code = createUser(user);
+                int code = HibernateUtil.createObject(user);
                 if (code == -1) {
                     System.out.println("Error");
                 } else {
@@ -139,9 +122,11 @@ public class AddUserDialog {
         for (var x: emptyList) {
             boolean bool = x.getText().isEmpty();
             red(x, bool);
-            correct = !bool;
+            if (correct) {
+                correct = !bool;
+            }
         }
-        boolean bool = !email.getText().matches(".*@.*\\..*");
+        boolean bool = !email.getText().matches("^.+@.+\\..+$");
         red(email, bool);
         if (bool) {
             correct = false;

@@ -19,6 +19,7 @@
 
         <!-- here all entities will come -->
         <mapping class="classes.User"/>
+        <mapping class="classes.Auditorium"/>
 
     </session-factory>
 </hibernate-configuration>

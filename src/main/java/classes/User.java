@@ -1,5 +1,6 @@
 package classes;
 
+import com.sun.istack.NotNull;
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
@@ -32,9 +33,11 @@ public class User {
     @Column
     private Integer role;  // 0 - диспетчер, 1 - преподаватель, 2 - студент
 
+    @NotNull
     @Column
     private String name;
 
+    @NotNull
     @Column
     private String lastName;
 

@@ -1,34 +1,26 @@
 //package main.java;
 
-import classes.AddUserDialog;
+import classes.*;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import javafx.util.Pair;
 import org.hibernate.Session;
 
-import classes.User;
-import classes.HibernateUtil;
-import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 
 public class Main extends Application{
@@ -38,27 +30,11 @@ public class Main extends Application{
     HBox auditoriums, classes;
     VBox mainBox, menu;
 
+    TableView<Auditorium> auditoriumTableView;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Session session = HibernateUtil.getSessionFactory().openSession();
-//        User user = new User();
-//        user.setEmail("Test@test.abc");
-//
-//        Transaction tx = null;
-//
-//        try {
-//            tx = session.beginTransaction();
-//
-//            tx.commit();
-//        }
-//
-//        catch (Exception e) {
-//            if (tx!=null) tx.rollback();
-//            e.printStackTrace();
-//        } finally {
-//            session.close();
-//        }
 
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
@@ -73,8 +49,22 @@ public class Main extends Application{
         auditoriums = new HBox();
         auditoriums.toFront();
         //auditoriums.setPrefSize(100000, 100000);
-        auditoriums.getChildren().add(new Text("Аудитории"));
+        //auditoriums.getChildren().add(new Text("Аудитории"));
         auditoriums.setStyle("-fx-background-color: white");
+
+        TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
+        nameColumn.setMinWidth(200);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Auditorium, Integer> maxStudentsColumn = new TableColumn<>("Мест");
+        maxStudentsColumn.setMinWidth(200);
+        maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
+        auditoriumTableView = new TableView<>();
+        auditoriumTableView.setItems(getAuditoriums());
+        auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
+
+        auditoriums.getChildren().addAll(auditoriumTableView);
+
 
 
         classes = new HBox();
@@ -113,6 +103,10 @@ public class Main extends Application{
             public void handle(ActionEvent actionEvent) {
                 new AddUserDialog().show();
             }
+        });
+        addAuditorium.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) { new AddAuditoriumDialog().show(); }
         });
 
         addMenu.getItems().add(addUser);
@@ -179,6 +173,15 @@ public class Main extends Application{
             button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
             pane.setStyle("-fx-background-color: #212121");
         });
+    }
+
+    public ObservableList getAuditoriums() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        String hql = "FROM Auditorium";
+        Query query = session.createQuery(hql);
+        List results = query.list();
+        ObservableList auditoriums = FXCollections.observableArrayList(results);
+        return auditoriums;
     }
 
 
