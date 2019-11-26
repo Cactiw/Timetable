@@ -29,8 +29,10 @@ public class Main extends Application{
 
     Button button;
     Stage mainStage;
-    HBox auditoriums, classes;
-    VBox mainBox, menu;
+    HBox classes;
+    VBox mainBox, menu, auditoriumBox;
+    
+    StackPane modes;
 
     TableView<Auditorium> auditoriumTableView;
 
@@ -45,14 +47,14 @@ public class Main extends Application{
         button = new Button("Hello");
         button.setOnAction(event -> System.out.println("Hi"));
 
-        StackPane main_layout = new StackPane();
-        //main_layout.getChildren().add(button);
+        StackPane mainStack = new StackPane();
+        //mainStack.getChildren().add(button);
 
-        auditoriums = new HBox();
-        auditoriums.toFront();
-        //auditoriums.setPrefSize(100000, 100000);
-        //auditoriums.getChildren().add(new Text("Аудитории"));
-        auditoriums.setStyle("-fx-background-color: white");
+//        auditoriums = new HBox();
+//        auditoriums.toFront();
+//        //auditoriums.setPrefSize(100000, 100000);
+//        //auditoriums.getChildren().add(new Text("Аудитории"));
+//        auditoriums.setStyle("-fx-background-color: white");
 
         TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
         nameColumn.setMinWidth(200);
@@ -81,7 +83,7 @@ public class Main extends Application{
             }
         });
 
-        auditoriums.getChildren().addAll(auditoriumTableView);
+        //auditoriums.getChildren().addAll(auditoriumTableView);
 
 
 
@@ -92,21 +94,37 @@ public class Main extends Application{
         classes.setStyle("-fx-background-color: white");
 
 
+        auditoriumBox = new VBox();
 
         HBox root_pane = new HBox();
         menu = sidePane();
         root_pane.getChildren().add(menu);
-        //main_layout.getChildren().add(root_pane);
+        //mainStack.getChildren().add(root_pane);
 
-        var modes = new StackPane();
-        modes.getChildren().add(classes);
-        modes.getChildren().add(auditoriums);
+        modes = new StackPane();
+        //modes.getChildren().add(classes);
+
+        TextField auditoriumSearch = new TextField();
+        auditoriumSearch.setPromptText("Начните вводить для поиска");
+        auditoriumSearch.setMinWidth(300);
+        Label auditoriumSearchLabel = new Label("Поиск:");
+        auditoriumSearchLabel.setMinWidth(50);
+        HBox auditoriumSearchBox = new HBox();
+        auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
+
+        HBox auditoriumInfo = new HBox();
+        auditoriumInfo.getChildren().addAll(auditoriumTableView);
+
+        auditoriumBox.getChildren().addAll(auditoriumSearchBox, auditoriumInfo);
+        VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
+
+        modes.getChildren().addAll(auditoriumBox, classes);
 
         root_pane.getChildren().add(modes);
         HBox.setHgrow(modes, Priority.ALWAYS);
 
         //root_pane.setRight(classes);
-        main_layout.getChildren().add(root_pane);
+        mainStack.getChildren().add(root_pane);
         //menu.toFront();
 
         // Создание меню
@@ -135,8 +153,8 @@ public class Main extends Application{
         menuBar.getMenus().addAll(addMenu);
 
         mainBox = new VBox();
-        mainBox.getChildren().addAll(menuBar, main_layout);
-        VBox.setVgrow(main_layout, Priority.ALWAYS);
+        mainBox.getChildren().addAll(menuBar, mainStack);
+        VBox.setVgrow(mainStack, Priority.ALWAYS);
 
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
@@ -149,7 +167,9 @@ public class Main extends Application{
         vbox.setPrefWidth(200);
         //vbox.setStyle("-fx-background-color: red");
         List<String> names = Arrays.asList("Аудитории", "Занятия");
-        List<Pane> panes = Arrays.asList(auditoriums, classes);
+        List<Pane> panes = Arrays.asList(auditoriumBox, classes);
+        System.out.println(panes);
+        System.out.println("VBox");
         for (int i = 0; i < 2; ++i) {
             vbox.getChildren().add(boxItem(String.valueOf(i), names.get(i), panes.get(i), panes));
         }
@@ -167,9 +187,20 @@ public class Main extends Application{
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                 //to_pane.toFront();
+//                 classes.toBack();
+//                 auditoriumBox.toFront();
+//                 classes.toBack();
+//                modes.getChildren().clear();
+                for (var pane: panes) {
+                    if (pane != to_pane) {
+                        pane.toBack();
+                        pane.setVisible(false);
+                    }
+                }
                 to_pane.toFront();
-                //menu.setViewOrder(1.0);
-                //menu.toFront();
+                to_pane.setVisible(true);
+                //modes.getChildren().add(to_pane);
             }
         });
         //button.setStyle("-fx-graphic-text-gap:white");
