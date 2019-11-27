@@ -2,6 +2,7 @@
 
 import classes.*;
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -19,8 +20,8 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -45,6 +46,7 @@ public class Main extends Application{
     StackPane modes;
 
     TableView<Auditorium> auditoriumTableView;
+    TableView<HashMap.Entry<String, String>> auditoriumProperties;
 
 
     @Override
@@ -83,10 +85,19 @@ public class Main extends Application{
         auditoriumTableView = new TableView<>();
         auditoriumTableView.setItems(getAuditoriums());
         auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
+        auditoriumTableView.setPrefHeight(1000);
         auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 1) {
+                    Auditorium auditorium = auditoriumTableView.getSelectionModel().getSelectedItem();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("Название", auditorium.getName());
+                    map.put("Число мест", Integer.toString(auditorium.getMaxStudents()));
+                    auditoriumProperties.setItems(FXCollections.observableArrayList(
+                            map.entrySet()
+                    ));
+                } else if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
                 }
             }
         });
@@ -134,10 +145,20 @@ public class Main extends Application{
         HBox auditoriumSearchBox = new HBox();
         auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
 
+        auditoriumProperties =  new TableView<>();
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
+        auditoriumPropertiesColumn1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
+        auditoriumPropertiesColumn2.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
+        auditoriumProperties.getColumns().addAll(auditoriumPropertiesColumn1, auditoriumPropertiesColumn2);
+
+
+
         HBox auditoriumInfo = new HBox();
-        auditoriumInfo.getChildren().addAll(auditoriumTableView);
+        auditoriumInfo.getChildren().addAll(auditoriumTableView, auditoriumProperties);
 
         auditoriumBox.getChildren().addAll(auditoriumSearchBox, auditoriumInfo);
+        HBox.setHgrow(auditoriumInfo, Priority.ALWAYS);
         VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
 
         modes.getChildren().addAll(classes, auditoriumBox);
