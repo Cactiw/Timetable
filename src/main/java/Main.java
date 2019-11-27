@@ -4,6 +4,7 @@ import classes.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -20,9 +22,17 @@ import javafx.stage.Stage;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 
 public class Main extends Application{
@@ -40,12 +50,11 @@ public class Main extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception{
 
+        System.out.println(searchAuditoriums("П"));
+
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
         primaryStage.setTitle("Timetable");
-
-        button = new Button("Hello");
-        button.setOnAction(event -> System.out.println("Hi"));
 
         StackPane mainStack = new StackPane();
         //mainStack.getChildren().add(button);
@@ -78,7 +87,6 @@ public class Main extends Application{
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
-                    System.out.println(auditoriumTableView.getSelectionModel().getSelectedItem());
                 }
             }
         });
@@ -107,6 +115,20 @@ public class Main extends Application{
         TextField auditoriumSearch = new TextField();
         auditoriumSearch.setPromptText("Начните вводить для поиска");
         auditoriumSearch.setMinWidth(300);
+        auditoriumSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+                System.out.println("Searching");
+                String text = auditoriumSearch.getText();
+                SortedList<Auditorium> sortedData;
+                if (text.compareTo("") == 0) {
+                    sortedData = new SortedList<>(getAuditoriums());
+                } else {
+                    sortedData = new SortedList<>(searchAuditoriums(auditoriumSearch.getText()));
+                }
+                sortedData.comparatorProperty().bind(auditoriumTableView.comparatorProperty());
+                auditoriumTableView.setItems(sortedData);
+
+            }
+        );
         Label auditoriumSearchLabel = new Label("Поиск:");
         auditoriumSearchLabel.setMinWidth(50);
         HBox auditoriumSearchBox = new HBox();
@@ -118,7 +140,9 @@ public class Main extends Application{
         auditoriumBox.getChildren().addAll(auditoriumSearchBox, auditoriumInfo);
         VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
 
-        modes.getChildren().addAll(auditoriumBox, classes);
+        modes.getChildren().addAll(classes, auditoriumBox);
+        classes.toBack();
+        classes.setVisible(false);
 
         root_pane.getChildren().add(modes);
         HBox.setHgrow(modes, Priority.ALWAYS);
@@ -142,7 +166,10 @@ public class Main extends Application{
         });
         addAuditorium.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent actionEvent) { new AddAuditoriumDialog().show(); }
+            public void handle(ActionEvent actionEvent) {
+                new AddAuditoriumDialog().show();
+                auditoriumTableView.setItems(getAuditoriums());
+            }
         });
 
         addMenu.getItems().add(addUser);
@@ -168,8 +195,6 @@ public class Main extends Application{
         //vbox.setStyle("-fx-background-color: red");
         List<String> names = Arrays.asList("Аудитории", "Занятия");
         List<Pane> panes = Arrays.asList(auditoriumBox, classes);
-        System.out.println(panes);
-        System.out.println("VBox");
         for (int i = 0; i < 2; ++i) {
             vbox.getChildren().add(boxItem(String.valueOf(i), names.get(i), panes.get(i), panes));
         }
@@ -224,12 +249,49 @@ public class Main extends Application{
         });
     }
 
-    private ObservableList getAuditoriums() {
+    private ObservableList<Auditorium> getAuditoriums() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         String hql = "FROM Auditorium";
         Query query = session.createQuery(hql);
         List results = query.list();
         ObservableList auditoriums = FXCollections.observableArrayList(results);
+        return auditoriums;
+    }
+
+    private ObservableList<Auditorium> searchAuditoriums(String text) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        ObservableList<Auditorium> auditoriums;
+        Transaction tx = null;
+        try {
+
+            tx = session.beginTransaction();
+
+            // Create CriteriaBuilder
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+
+            // Create CriteriaQuery
+            CriteriaQuery<Auditorium> criteria = builder.createQuery(Auditorium.class);
+            Root root = criteria.from(Auditorium.class);
+            criteria.where(builder.like(root.get("name"), "%" + text + "%"));
+
+            //criteria.where(Restrictions.ilike("name", text));
+
+            // here get object
+            auditoriums = FXCollections.observableArrayList(session.createQuery(criteria).getResultList());
+            tx.commit();
+
+
+        } catch (HibernateException ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.println("Exception: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+            auditoriums = null;
+        } finally {
+            session.close();
+        }
         return auditoriums;
     }
 
