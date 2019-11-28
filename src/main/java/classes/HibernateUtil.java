@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
+
 public class HibernateUtil implements AutoCloseable {
     private static final SessionFactory sessionFactory;
     static {
@@ -30,7 +32,21 @@ public class HibernateUtil implements AutoCloseable {
             System.err.println("Initial SessionFactory creation failed. " + ex);
             throw new ExceptionInInitializerError(ex);
         }
+
     }
+
+//    private static void initiateICU() {
+//        Session session = HibernateUtil.getSessionFactory().openSession();
+//        Transaction tx = null;
+//        try {
+//            tx = session.beginTransaction();
+//            SQLQuery query = session.createSQLQuery("sqlite3_db_config()");
+//            List<Object[]> rows = query.list();
+//        } catch (Throwable ex) {
+//            System.err.println("Initial SessionFactory creation failed. " + ex);
+//            throw new ExceptionInInitializerError(ex);
+//        }
+//    }
 
     public static <T> int createObject(T object) {
         Session session = HibernateUtil.getSessionFactory().openSession();

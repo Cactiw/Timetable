@@ -51,21 +51,11 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-
-        System.out.println(searchAuditoriums("П"));
-
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
         primaryStage.setTitle("Timetable");
 
         StackPane mainStack = new StackPane();
-        //mainStack.getChildren().add(button);
-
-//        auditoriums = new HBox();
-//        auditoriums.toFront();
-//        //auditoriums.setPrefSize(100000, 100000);
-//        //auditoriums.getChildren().add(new Text("Аудитории"));
-//        auditoriums.setStyle("-fx-background-color: white");
 
         TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
         nameColumn.setMinWidth(200);
@@ -83,7 +73,7 @@ public class Main extends Application{
 //        }));
 
         auditoriumTableView = new TableView<>();
-        auditoriumTableView.setItems(getAuditoriums());
+        auditoriumTableView.setItems(Auditorium.getAuditoriums());
         auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
         auditoriumTableView.setPrefHeight(1000);
         auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -131,9 +121,9 @@ public class Main extends Application{
                 String text = auditoriumSearch.getText();
                 SortedList<Auditorium> sortedData;
                 if (text.compareTo("") == 0) {
-                    sortedData = new SortedList<>(getAuditoriums());
+                    sortedData = new SortedList<>(Auditorium.getAuditoriums());
                 } else {
-                    sortedData = new SortedList<>(searchAuditoriums(auditoriumSearch.getText()));
+                    sortedData = new SortedList<>(Auditorium.searchAuditoriums(auditoriumSearch.getText()));
                 }
                 sortedData.comparatorProperty().bind(auditoriumTableView.comparatorProperty());
                 auditoriumTableView.setItems(sortedData);
@@ -189,7 +179,13 @@ public class Main extends Application{
             @Override
             public void handle(ActionEvent actionEvent) {
                 new AddAuditoriumDialog().show();
-                auditoriumTableView.setItems(getAuditoriums());
+                auditoriumTableView.setItems(Auditorium.getAuditoriums());
+            }
+        });
+        addPair.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                new AddPairDialog().show();
             }
         });
 
@@ -209,6 +205,11 @@ public class Main extends Application{
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    
+
+
+
 
     private VBox sidePane() {
         VBox vbox = new VBox();
@@ -268,52 +269,6 @@ public class Main extends Application{
             button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
             pane.setStyle("-fx-background-color: #212121");
         });
-    }
-
-    private ObservableList<Auditorium> getAuditoriums() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        String hql = "FROM Auditorium";
-        Query query = session.createQuery(hql);
-        List results = query.list();
-        ObservableList auditoriums = FXCollections.observableArrayList(results);
-        return auditoriums;
-    }
-
-    private ObservableList<Auditorium> searchAuditoriums(String text) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        ObservableList<Auditorium> auditoriums;
-        Transaction tx = null;
-        try {
-
-            tx = session.beginTransaction();
-
-            // Create CriteriaBuilder
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-
-
-            // Create CriteriaQuery
-            CriteriaQuery<Auditorium> criteria = builder.createQuery(Auditorium.class);
-            Root root = criteria.from(Auditorium.class);
-            criteria.where(builder.like(root.get("name"), "%" + text + "%"));
-
-            //criteria.where(Restrictions.ilike("name", text));
-
-            // here get object
-            auditoriums = FXCollections.observableArrayList(session.createQuery(criteria).getResultList());
-            tx.commit();
-
-
-        } catch (HibernateException ex) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            System.out.println("Exception: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-            auditoriums = null;
-        } finally {
-            session.close();
-        }
-        return auditoriums;
     }
 
 

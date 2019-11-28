@@ -1,8 +1,18 @@
 package classes;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
+import org.hibernate.query.Query;
 
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 import java.util.Map;
 
 @Entity
@@ -46,5 +56,51 @@ public class Auditorium {
 
     public void setAdditional(Map<String, Integer> additional) {
         this.additional = additional;
+    }
+
+    public static ObservableList<Auditorium> getAuditoriums() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        String hql = "FROM Auditorium";
+        Query query = session.createQuery(hql);
+        List results = query.list();
+        ObservableList auditoriums = FXCollections.observableArrayList(results);
+        return auditoriums;
+    }
+
+    public static ObservableList<Auditorium> searchAuditoriums(String text) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        ObservableList<Auditorium> auditoriums;
+        Transaction tx = null;
+        try {
+
+            tx = session.beginTransaction();
+
+            // Create CriteriaBuilder
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+
+            // Create CriteriaQuery
+            CriteriaQuery<Auditorium> criteria = builder.createQuery(Auditorium.class);
+            Root root = criteria.from(Auditorium.class);
+            criteria.where(builder.like(root.get("name"), "%" + text + "%"));
+
+            //criteria.where(Restrictions.ilike("name", text));
+
+            // here get object
+            auditoriums = FXCollections.observableArrayList(session.createQuery(criteria).getResultList());
+            tx.commit();
+
+
+        } catch (HibernateException ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.println("Exception: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+            auditoriums = null;
+        } finally {
+            session.close();
+        }
+        return auditoriums;
     }
 }

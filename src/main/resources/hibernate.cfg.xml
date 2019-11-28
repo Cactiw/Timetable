@@ -16,10 +16,12 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
 
         <property name="hibernate.naming_strategy">org.hibernate.cfg.DefaultComponentSafeNamingStrategy</property>
+        
 
         <!-- here all entities will come -->
         <mapping class="classes.User"/>
         <mapping class="classes.Auditorium"/>
+        <mapping class="classes.Pair"/>
 
     </session-factory>
 </hibernate-configuration>
