@@ -103,4 +103,36 @@ public class Auditorium {
         }
         return auditoriums;
     }
+
+    public static Auditorium getAuditoriumByName(String name) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Auditorium auditorium = null;
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            // Create CriteriaBuilder
+            CriteriaBuilder builder = session.getCriteriaBuilder();
+
+            // Create CriteriaQuery
+            CriteriaQuery<Auditorium> criteria = builder.createQuery(Auditorium.class);
+            Root root = criteria.from(Auditorium.class);
+            criteria.where(builder.like(root.get("name"), "%" + name + "%"));
+            //criteria.where(Restrictions.ilike("name", text));
+
+            // here get object
+            auditorium = FXCollections.observableArrayList(session.createQuery(criteria).setMaxResults(1).getResultList()).get(0);
+            tx.commit();
+
+        } catch (HibernateException ex) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            System.out.println("Exception: " + ex.getMessage());
+            ex.printStackTrace(System.err);
+
+        } finally {
+            session.close();
+        }
+        return auditorium;
+    }
 }

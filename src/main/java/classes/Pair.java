@@ -1,5 +1,9 @@
 package classes;
 
+import com.sun.istack.NotNull;
+import javafx.beans.DefaultProperty;
+import org.hibernate.annotations.ColumnDefault;
+
 import javax.persistence.*;
 
 @Entity
@@ -10,21 +14,27 @@ public class Pair {
     private Integer id;
 
     @Column
+    @NotNull
     private String subject;
     
     @Column
     private Integer teacherId;
     
     @Column
+    @NotNull
     private Integer auditoriumId;
     
     @Column
+    @NotNull
     private Integer beginTime;
 
     @Column
+    @NotNull
     private Integer duration;
 
     @Column
+    @NotNull
+    @ColumnDefault("0")
     private Integer repeatability;  // 0 - нет, 1 - каждую неделю, so on
 
     public Integer getId() {
