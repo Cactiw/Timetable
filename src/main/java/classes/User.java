@@ -8,17 +8,24 @@ import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
+import org.hibernate.query.Query;
+import org.hibernate.type.StringNVarcharType;
+import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 
 @Entity
@@ -128,23 +135,35 @@ public class User {
         this.additional = additional;
     }
 
-    public static User getUserByName(String name) {
+    public String formatFIO() {
+        return getLastName() + " " + getName() + " " + getSurName();
+    }
+
+    public static ObservableList<User> searchUserByName(String text) {
+//        text = "%" + text.replace(" ", "%") + "%";
+        var words = text.split(" ");
+        ArrayList<org.hibernate.type.Type> types = new ArrayList<>();
+        StringBuilder QUERY = new StringBuilder("FROM User WHERE "); //lastName  || ' ' || name || ' ' || surName";
+
         Session session = HibernateUtil.getSessionFactory().openSession();
-        User user = null;
+        //var q = session.createQuery(QUERY.toString());
+        for (int i = 0; i < words.length; ++i) {
+            QUERY.append("lastName  || ' ' || name || ' ' || surName LIKE ?").append(Integer.toString(i)).append(" AND ");
+            types.add(StringNVarcharType.INSTANCE);
+        }
+        ObservableList<User> users = null;
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            // Create CriteriaBuilder
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-
-            // Create CriteriaQuery
-            CriteriaQuery<User> criteria = builder.createQuery(User.class);
-            Root root = criteria.from(User.class);
-            criteria.where(builder.like(root.get("name"), "%" + name + "%"));
-            //criteria.where(Restrictions.ilike("name", text));
+//            String QUERY = "FROM User WHERE lastName  || ' ' || name || ' ' || surName LIKE :search";
 
             // here get object
-            user = FXCollections.observableArrayList(session.createQuery(criteria).setMaxResults(1).getResultList()).get(0);
+            var q = session.createQuery(QUERY.toString().substring(0, QUERY.length() - 4));
+            for (int i = 0; i < words.length; ++i) {
+                q.setParameter(i, "%" + words[i] + "%");
+            }
+            users = FXCollections.observableArrayList(q.getResultList());
+            //users = FXCollections.observableArrayList(session.createQuery(QUERY.toString().substring(0, QUERY.length() - 4)).setParameters(words, types.toArray(org.hibernate.type.Type[]::new)).getResultList());
             tx.commit();
 
         } catch (HibernateException ex) {
@@ -157,7 +176,7 @@ public class User {
         } finally {
             session.close();
         }
-        return user;
+        return users;
     }
 
 //User(int id, int role, String name, String lastName, String surName, String email);

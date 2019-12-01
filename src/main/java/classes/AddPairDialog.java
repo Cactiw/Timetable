@@ -63,6 +63,16 @@ public class AddPairDialog {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
                 SortedList<User> users;
+                if (observableValue.getValue().compareTo("") == 0) {
+                    teacherPopup.hide();
+                } else {
+                    users = new SortedList<>(User.searchUserByName(observableValue.getValue()));
+                    teacherPopup.getItems().clear();
+                    for (var x: users) {
+                        teacherPopup.getItems().add(new MenuItem(x.formatFIO()));
+                    }
+                }
+                teacherPopup.show(teacher, Side.BOTTOM, 0, 0);
             }
         });
         auditorium = new TextField();
@@ -96,26 +106,32 @@ public class AddPairDialog {
         auditoriumPopup.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                MenuItem src = (MenuItem)actionEvent.getTarget();
+                MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
-                auditorium.setText( text );
+                auditorium.setText(text);
                 auditoriumId = Auditorium.getAuditoriumByName(text).getId();
-                Platform.runLater( new Runnable() {
-                    @Override
-                    public void run() {
-                        auditorium.positionCaret( auditorium.getText().length() );
-                    }
-                });
+                Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
             }
         });
 
-
+        teacherPopup = new ContextMenu();
+        teacherPopup.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                MenuItem src = (MenuItem) actionEvent.getTarget();
+                String text = src.getText();
+                teacher.setText(text);
+                teacherId = User.searchUserByName(text).get(0).getId();
+                Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
+            }
+        });
 
 
         gridPane.add(subject, 1, 0);
         gridPane.add(new Label("Предмет:"), 0, 0);
         gridPane.add(new Label("Преподаватель:"), 0, 1);
-        gridPane.add(teacher, 1, 1);;
+        gridPane.add(teacher, 1, 1);
+        ;
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
 
@@ -151,23 +167,22 @@ public class AddPairDialog {
 //            return result.get();
 //        }
         result.ifPresent(pair -> {
-            System.out.println("Auditorium created");
+            System.out.println("Pair created");
         });
         return;
     }
 
     EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent e){
+        public void handle(KeyEvent e) {
             EventTarget target = e.getTarget();
-            currentParentField = (TextField)target;
+            currentParentField = (TextField) target;
             EventType<? extends Event> type = e.getEventType();
-            if( type == KeyEvent.KEY_PRESSED ){
+            if (type == KeyEvent.KEY_PRESSED) {
                 System.out.println("Changed");
                 KeyCode code = e.getCode();
-                if( code == KeyCode.DOWN ){
-                    auditoriumPopup.show( currentParentField, Side.BOTTOM, 0, 0 ); //<- this
-                }
-                else{
+                if (code == KeyCode.DOWN) {
+                    auditoriumPopup.show(currentParentField, Side.BOTTOM, 0, 0); //<- this
+                } else {
                     auditoriumPopup.hide();
                 }
             }

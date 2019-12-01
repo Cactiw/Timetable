@@ -1,5 +1,6 @@
 package classes;
 
+import javafx.collections.ObservableList;
 import org.hibernate.*;
 import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -65,6 +66,8 @@ public class HibernateUtil implements AutoCloseable {
         }
         return 0;
     }
+
+    //public static <T> ObservableList<T> executeQuery() {return null;}
 
     public static SessionFactory getSessionFactory() {
         return sessionFactory;
