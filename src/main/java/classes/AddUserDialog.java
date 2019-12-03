@@ -22,7 +22,7 @@ import java.util.Optional;
 public class AddUserDialog {
     TextField firstName, lastName, surName, email;
     List<TextField> emptyList;
-    ChoiceBox role;
+    ChoiceBox<String> role;
     Button okButton;
 
     public void show() {
@@ -56,7 +56,7 @@ public class AddUserDialog {
         email = new TextField();
         email.setPromptText("Введите Email");
         email.textProperty().addListener(this::onTextChanged);
-        role = new ChoiceBox();
+        role = new ChoiceBox<String>();
         role.setItems(FXCollections.observableArrayList("Преподаватель", "Студент"));
         role.setValue("Преподаватель");
         role.valueProperty().addListener(this::onTextChanged);

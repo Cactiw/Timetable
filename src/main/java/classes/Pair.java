@@ -1,9 +1,11 @@
 package classes;
 
 import com.sun.istack.NotNull;
+import javafx.scene.control.DatePicker;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
@@ -16,14 +18,18 @@ public class Pair {
     @Column
     @NotNull
     private String subject;
-    
+
     @Column
     private Integer teacherId;
-    
+
     @Column
     @NotNull
     private Integer auditoriumId;
-    
+
+    @Column
+    @NotNull
+    private LocalDate beginDate;
+
     @Column
     @NotNull
     private LocalTime beginTime;
@@ -64,6 +70,10 @@ public class Pair {
     public void setAuditoriumId(Integer auditoriumId) {
         this.auditoriumId = auditoriumId;
     }
+
+    public LocalDate getBeginDate() { return beginDate; }
+
+    public void setBeginDate(LocalDate beginDate) { this.beginDate = beginDate; }
 
     public LocalTime getBeginTime() {
         return beginTime;

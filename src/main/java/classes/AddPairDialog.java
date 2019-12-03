@@ -43,8 +43,10 @@ public class AddPairDialog {
     ContextMenu auditoriumPopup, teacherPopup;
     TextField currentParentField;
     Integer auditoriumId = -1, teacherId = -1;
-    JFXDatePicker startDate;
-    JFXTimePicker startTime, endTime;
+    JFXDatePicker beginDate;
+    JFXTimePicker beginTime, endTime;
+
+    ChoiceBox<String> repeatability;
 
     LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
 
@@ -143,13 +145,14 @@ public class AddPairDialog {
 
         endTime = new JFXTimePicker();
         endTime.set24HourView(true);
+//        endTime.setDefaultColor(Color.valueOf("#009688"));
         endTime.valueProperty().addListener((observableValue, localTime, t1) -> { verifyAddUserDialog(); });
 
-        startDate = new JFXDatePicker();
-        startDate.valueProperty().addListener((observableValue, localDate, t1) -> { verifyAddUserDialog(); });
-        startTime = new JFXTimePicker();
-        startTime.set24HourView(true);
-        startTime.valueProperty().addListener((observableValue, localTime, t1) -> {
+        beginDate = new JFXDatePicker();
+        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> { verifyAddUserDialog(); });
+        beginTime = new JFXTimePicker();
+        beginTime.set24HourView(true);
+        beginTime.valueProperty().addListener((observableValue, localTime, t1) -> {
             if (observableValue.getValue() != null) {
                 endTime.setValue(LocalTime.of(observableValue.getValue().getHour(), observableValue.getValue().
                         getMinute()).plusHours(PAIR_LENGTH.getHour()).plusMinutes(PAIR_LENGTH.getMinute()));
@@ -157,6 +160,10 @@ public class AddPairDialog {
             verifyAddUserDialog();
         });
 
+        repeatability = new ChoiceBox<>();
+        repeatability.setItems(FXCollections.observableArrayList(Arrays.asList("Один раз", "Еженедельно")));
+        repeatability.setValue("Еженедельно");
+        repeatability.valueProperty().addListener(this::onTextChanged);
 
 
 
@@ -168,11 +175,14 @@ public class AddPairDialog {
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
         gridPane.add(new Label("Дата занятия:"), 0, 3);
-        gridPane.add(startDate, 1, 3);
+        gridPane.add(beginDate, 1, 3);
         gridPane.add(new Label("Начало занятия:"), 0, 4);
-        gridPane.add(startTime, 1, 4);
+        gridPane.add(beginTime, 1, 4);
         gridPane.add(new Label("Окончание занятия:"), 0, 5);
         gridPane.add(endTime, 1, 5);
+        gridPane.add(new Label("Периодичность:"), 0, 6);
+        gridPane.add(repeatability, 1, 6);
+
 
         gridPane.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
@@ -180,7 +190,7 @@ public class AddPairDialog {
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
         emptyList = Arrays.asList(subject, teacher, auditorium);
-        notNullList = Arrays.asList(startDate, startTime, endTime);
+        notNullList = Arrays.asList(beginDate, beginTime, endTime);
 
         dialog.getDialogPane().setContent(gridPane);
         verifyAddUserDialog();
@@ -195,6 +205,10 @@ public class AddPairDialog {
                 pair.setAuditoriumId(auditoriumId);
                 pair.setTeacherId(teacherId);
                 pair.setSubject(subject.getText());
+                pair.setBeginDate(beginDate.valueProperty().get());
+                pair.setBeginTime(beginTime.valueProperty().get());
+                pair.setEndTime(endTime.valueProperty().get());
+                pair.setRepeatability(repeatability.getSelectionModel().getSelectedIndex());
 //                auditorium.setsubject(subject.getText());
 //                auditorium.setteacher(Integer.valueOf(teacher.getText()));
                 int code = HibernateUtil.createObject(pair);
@@ -261,7 +275,7 @@ public class AddPairDialog {
                 correct = false;
             }
             red(x, bool);
-//            startDate.setDefaultColor(Color.RED);
+//            beginDate.setDefaultColor(Color.RED);
         }
         okButton.setDisable(!correct);
 
