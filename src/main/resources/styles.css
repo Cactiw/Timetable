@@ -4,3 +4,18 @@
     -fx-text-box-border: red ;
     -fx-focus-color: red ;
 }
+
+.jfx-date-picker.error {
+    /*-fx-border-color: red;*/
+    /*-fx-color-label-visible: red;*/
+    -jfx-default-color: red;
+    -jfx-unfocus-color: blue;
+    /*-jfx-overlay: red;*/
+    /*-fx-background-color: red;*/
+    /*-fx-progress-color: red;*/
+}
+
+.jfx-time-picker.error {
+    -jfx-default-color: red;
+    -jfx-unfocus-color: blue;
+}

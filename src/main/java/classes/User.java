@@ -139,11 +139,12 @@ public class User {
         return getLastName() + " " + getName() + " " + getSurName();
     }
 
-    public static ObservableList<User> searchUserByName(String text) {
+    public static ObservableList<User> searchUserByName(String text, Integer role) {
 //        text = "%" + text.replace(" ", "%") + "%";
         var words = text.split(" ");
         ArrayList<org.hibernate.type.Type> types = new ArrayList<>();
-        StringBuilder QUERY = new StringBuilder("FROM User WHERE "); //lastName  || ' ' || name || ' ' || surName";
+        StringBuilder QUERY = new StringBuilder("FROM User WHERE role = ").append(role).append(" AND ");
+        //lastName  || ' ' || name || ' ' || surName";
 
         Session session = HibernateUtil.getSessionFactory().openSession();
         //var q = session.createQuery(QUERY.toString());

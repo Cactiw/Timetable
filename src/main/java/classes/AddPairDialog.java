@@ -1,5 +1,8 @@
 package classes;
 
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXDatePicker;
+import com.jfoenix.controls.JFXTimePicker;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.value.ChangeListener;
@@ -7,6 +10,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.css.Style;
+import javafx.css.converter.PaintConverter;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
@@ -14,11 +19,15 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Popup;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import javax.xml.datatype.DatatypeConstants;
 import java.lang.reflect.Array;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,11 +37,16 @@ import java.util.regex.Pattern;
 public class AddPairDialog {
     TextField subject, teacher, auditorium;
     List<TextField> emptyList;
+    List<ComboBoxBase> notNullList;
     Button okButton;
 
     ContextMenu auditoriumPopup, teacherPopup;
     TextField currentParentField;
-    Integer auditoriumId, teacherId;
+    Integer auditoriumId = -1, teacherId = -1;
+    JFXDatePicker startDate;
+    JFXTimePicker startTime, endTime;
+
+    LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
 
 
     public void show() {
@@ -58,21 +72,22 @@ public class AddPairDialog {
         subject.textProperty().addListener(this::onTextChanged);
         teacher = new TextField();
         teacher.setPromptText("ФИО преподавателя");
-        teacher.textProperty().addListener(this::onTextChanged);
         teacher.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                teacherId = -1;
                 SortedList<User> users;
                 if (observableValue.getValue().compareTo("") == 0) {
                     teacherPopup.hide();
                 } else {
-                    users = new SortedList<>(User.searchUserByName(observableValue.getValue()));
+                    users = new SortedList<>(User.searchUserByName(observableValue.getValue(), 1));
                     teacherPopup.getItems().clear();
-                    for (var x: users) {
+                    for (var x : users) {
                         teacherPopup.getItems().add(new MenuItem(x.formatFIO()));
                     }
                 }
                 teacherPopup.show(teacher, Side.BOTTOM, 0, 0);
+                verifyAddUserDialog();
             }
         });
         auditorium = new TextField();
@@ -80,6 +95,7 @@ public class AddPairDialog {
         auditorium.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
+                auditoriumId = -1;
                 SortedList<Auditorium> auditoriums;
                 if (observableValue.getValue().compareTo("") == 0) {
                     auditoriumPopup.hide();
@@ -99,9 +115,6 @@ public class AddPairDialog {
             }
         });
 
-        // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
-        emptyList = Arrays.asList(subject, teacher, auditorium);
-
         auditoriumPopup = new ContextMenu();
         auditoriumPopup.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -111,6 +124,7 @@ public class AddPairDialog {
                 auditorium.setText(text);
                 auditoriumId = Auditorium.getAuditoriumByName(text).getId();
                 Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
+                verifyAddUserDialog();
             }
         });
 
@@ -121,10 +135,29 @@ public class AddPairDialog {
                 MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
                 teacher.setText(text);
-                teacherId = User.searchUserByName(text).get(0).getId();
-                Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
+                teacherId = User.searchUserByName(text, 1).get(0).getId();
+                Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
+                verifyAddUserDialog();
             }
         });
+
+        endTime = new JFXTimePicker();
+        endTime.set24HourView(true);
+        endTime.valueProperty().addListener((observableValue, localTime, t1) -> { verifyAddUserDialog(); });
+
+        startDate = new JFXDatePicker();
+        startDate.valueProperty().addListener((observableValue, localDate, t1) -> { verifyAddUserDialog(); });
+        startTime = new JFXTimePicker();
+        startTime.set24HourView(true);
+        startTime.valueProperty().addListener((observableValue, localTime, t1) -> {
+            if (observableValue.getValue() != null) {
+                endTime.setValue(LocalTime.of(observableValue.getValue().getHour(), observableValue.getValue().
+                        getMinute()).plusHours(PAIR_LENGTH.getHour()).plusMinutes(PAIR_LENGTH.getMinute()));
+            }
+            verifyAddUserDialog();
+        });
+
+
 
 
         gridPane.add(subject, 1, 0);
@@ -134,9 +167,20 @@ public class AddPairDialog {
         ;
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
+        gridPane.add(new Label("Дата занятия:"), 0, 3);
+        gridPane.add(startDate, 1, 3);
+        gridPane.add(new Label("Начало занятия:"), 0, 4);
+        gridPane.add(startTime, 1, 4);
+        gridPane.add(new Label("Окончание занятия:"), 0, 5);
+        gridPane.add(endTime, 1, 5);
 
         gridPane.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
 
+
+
+        // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
+        emptyList = Arrays.asList(subject, teacher, auditorium);
+        notNullList = Arrays.asList(startDate, startTime, endTime);
 
         dialog.getDialogPane().setContent(gridPane);
         verifyAddUserDialog();
@@ -149,6 +193,7 @@ public class AddPairDialog {
             if (dialogButton == loginButtonType) {
                 Pair pair = new Pair();
                 pair.setAuditoriumId(auditoriumId);
+                pair.setTeacherId(teacherId);
                 pair.setSubject(subject.getText());
 //                auditorium.setsubject(subject.getText());
 //                auditorium.setteacher(Integer.valueOf(teacher.getText()));
@@ -202,27 +247,45 @@ public class AddPairDialog {
                 correct = !bool;
             }
         }
+        if (auditoriumId == -1) {
+            correct = false;
+            red(auditorium, true);
+        }
+        if (teacherId == -1) {
+            correct = false;
+            red(teacher, true);
+        }
+        for (var x : notNullList) {
+            boolean bool = x.valueProperty().isNull().get();
+            if (bool) {
+                correct = false;
+            }
+            red(x, bool);
+//            startDate.setDefaultColor(Color.RED);
+        }
         okButton.setDisable(!correct);
+
+        ;
         //role.valueProperty().getValue()
     }
 
-    private void red(TextField textField, boolean red) {
+    private void red(Control field, boolean red) {
         if (red) {
-            setRed(textField);
+            setRed(field);
         } else {
-            cancelRed(textField);
+            cancelRed(field);
         }
     }
 
-    private void setRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void setRed(Control field) {
+        ObservableList<String> styleClass = field.getStyleClass();
         if (!styleClass.contains("error")) {
             styleClass.add("error");
         }
     }
 
-    private void cancelRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void cancelRed(Control field) {
+        ObservableList<String> styleClass = field.getStyleClass();
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }

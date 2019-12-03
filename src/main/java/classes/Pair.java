@@ -1,10 +1,10 @@
 package classes;
 
 import com.sun.istack.NotNull;
-import javafx.beans.DefaultProperty;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.time.LocalTime;
 
 @Entity
 public class Pair {
@@ -26,11 +26,11 @@ public class Pair {
     
     @Column
     @NotNull
-    private Integer beginTime;
+    private LocalTime beginTime;
 
     @Column
     @NotNull
-    private Integer duration;
+    private LocalTime endTime;
 
     @Column
     @NotNull
@@ -65,20 +65,20 @@ public class Pair {
         this.auditoriumId = auditoriumId;
     }
 
-    public Integer getBeginTime() {
+    public LocalTime getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(Integer beginTime) {
+    public void setBeginTime(LocalTime beginTime) {
         this.beginTime = beginTime;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setEndTime(LocalTime duration) {
+        this.endTime = duration;
     }
 
     public Integer getRepeatability() {
