@@ -22,6 +22,8 @@
         <mapping class="classes.User"/>
         <mapping class="classes.Auditorium"/>
         <mapping class="classes.Pair"/>
+        <mapping class="classes.PeopleUnionType"/>
+        <mapping class="classes.PeopleUnion"/>
 
     </session-factory>
 </hibernate-configuration>
