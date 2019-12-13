@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -155,6 +156,7 @@ public class Main extends Application{
         MenuItem addUser = new MenuItem("Создать пользователя");
         MenuItem addAuditorium = new MenuItem("Создать аудиторию");
         MenuItem addPair = new MenuItem("Создать занятие");
+        MenuItem addPeopleUnion = new MenuItem("Создать группу");
 
         addUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -176,9 +178,13 @@ public class Main extends Application{
             }
         });
 
+        var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
+        addPeopleUnion.setOnAction(new Dialog<Boolean>(addPeopleUnion));
+
         addMenu.getItems().add(addUser);
         addMenu.getItems().add(addAuditorium);
         addMenu.getItems().add(addPair);
+        addMenu.getItems().add(addPeopleUnion);
 
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(addMenu);

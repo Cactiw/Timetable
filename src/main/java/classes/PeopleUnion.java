@@ -26,6 +26,9 @@ public class PeopleUnion {
     @OneToMany(mappedBy = "parent")
     Set<PeopleUnion> unions = new HashSet<>();
 
+    @OneToMany
+    private Set<User> users;
+
     public Integer getId() {
         return id;
     }
@@ -34,9 +37,7 @@ public class PeopleUnion {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
     public PeopleUnionType getType() {
         return type;
