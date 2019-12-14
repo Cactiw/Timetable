@@ -1,6 +1,15 @@
 package classes;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
 import javax.persistence.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 @Entity
 public class PeopleUnionType {
@@ -33,5 +42,17 @@ public class PeopleUnionType {
 
     public Integer getId() {
         return id;
+    }
+
+    static public ObservableList getAll() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<PeopleUnionType> cq = cb.createQuery(PeopleUnionType.class);
+        Root<PeopleUnionType> rootEntry = cq.from(PeopleUnionType.class);
+        CriteriaQuery<PeopleUnionType> all = cq.select(rootEntry);
+
+        TypedQuery<PeopleUnionType> allQuery = session.createQuery(all);
+        ObservableList peopleUnionTypes = FXCollections.observableArrayList(allQuery.getResultList());
+        return peopleUnionTypes;
     }
 }

@@ -1,20 +1,21 @@
 //package main.java;
 
 import classes.*;
+import classes.Dialogs.AddAuditoriumDialog;
+import classes.Dialogs.AddPairDialog;
+import classes.Dialogs.AddPeopleUnionDialog;
+import classes.Dialogs.AddUserDialog;
 import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -178,8 +179,8 @@ public class Main extends Application{
             }
         });
 
-        var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
-        addPeopleUnion.setOnAction(new Dialog<Boolean>(addPeopleUnion));
+        //var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
+        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog().show();});
 
         addMenu.getItems().add(addUser);
         addMenu.getItems().add(addAuditorium);

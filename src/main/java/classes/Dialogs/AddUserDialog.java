@@ -1,5 +1,7 @@
-package classes;
+package classes.Dialogs;
 
+import classes.HibernateUtil;
+import classes.User;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleObjectProperty;

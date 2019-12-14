@@ -1,5 +1,7 @@
-package classes;
+package classes.Dialogs;
 
+import classes.Auditorium;
+import classes.HibernateUtil;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;

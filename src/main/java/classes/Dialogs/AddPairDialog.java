@@ -1,5 +1,9 @@
-package classes;
+package classes.Dialogs;
 
+import classes.Auditorium;
+import classes.HibernateUtil;
+import classes.Pair;
+import classes.User;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
