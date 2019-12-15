@@ -58,7 +58,7 @@ public class AddAuditoriumDialog {
         gridPane.add(new Label("Максимум студентов:"), 0, 1);
         gridPane.add(maxStudents, 1, 1);
 
-        gridPane.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../styles.css").toExternalForm());
 
 
         dialog.getDialogPane().setContent(gridPane);

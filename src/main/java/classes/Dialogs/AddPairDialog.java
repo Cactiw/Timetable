@@ -188,7 +188,7 @@ public class AddPairDialog {
         gridPane.add(repeatability, 1, 6);
 
 
-        gridPane.getStylesheets().add(getClass().getResource("../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../styles.css").toExternalForm());
 
 
 
