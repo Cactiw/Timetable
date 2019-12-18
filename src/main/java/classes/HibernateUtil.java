@@ -3,7 +3,6 @@ package classes;
 import javafx.collections.ObservableList;
 import org.hibernate.*;
 import org.hibernate.boot.spi.SessionFactoryOptions;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.spi.FilterDefinition;
 import org.hibernate.metadata.ClassMetadata;

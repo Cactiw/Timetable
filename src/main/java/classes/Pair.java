@@ -1,14 +1,14 @@
 package classes;
 
-import com.sun.istack.NotNull;
 import javafx.scene.control.DatePicker;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Entity
+@Component
 public class Pair {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,30 +16,24 @@ public class Pair {
     private Integer id;
 
     @Column
-    @NotNull
     private String subject;
 
     @Column
     private Integer teacherId;
 
     @Column
-    @NotNull
     private Integer auditoriumId;
 
     @Column
-    @NotNull
     private LocalDate beginDate;
 
     @Column
-    @NotNull
     private LocalTime beginTime;
 
     @Column
-    @NotNull
     private LocalTime endTime;
 
     @Column
-    @NotNull
     @ColumnDefault("0")
     private Integer repeatability;  // 0 - нет, 1 - каждую неделю, so on
 

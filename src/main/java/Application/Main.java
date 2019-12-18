@@ -1,11 +1,10 @@
-//package main.java;
+package Application;
 
-import classes.*;
+import classes.Auditorium;
 import classes.Dialogs.AddAuditoriumDialog;
 import classes.Dialogs.AddPairDialog;
 import classes.Dialogs.AddPeopleUnionDialog;
 import classes.Dialogs.AddUserDialog;
-import javafx.application.Application;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -21,11 +20,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Lazy;
 
 import java.util.*;
 
 
-public class Main extends Application{
+@Lazy
+@SpringBootApplication
+public class Main extends AbstractJavaFxApplicationSupport {
 
     Button button;
     Stage mainStage;
@@ -268,5 +271,6 @@ public class Main extends Application{
 
 
 
-    public static void main(String[] args) {launch(args);}
+    public static void main(String[] args) {
+        AbstractJavaFxApplicationSupport.launchApp(Main.class, args);}
 }
