@@ -1,4 +1,4 @@
-package Timetable.classes;
+package Timetable.model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

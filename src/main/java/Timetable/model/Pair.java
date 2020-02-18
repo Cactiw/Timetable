@@ -1,4 +1,4 @@
-package Timetable.classes;
+package Timetable.model;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.stereotype.Component;

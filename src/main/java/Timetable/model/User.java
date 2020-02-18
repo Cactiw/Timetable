@@ -1,4 +1,4 @@
-package Timetable.classes;
+package Timetable.model;
 
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;

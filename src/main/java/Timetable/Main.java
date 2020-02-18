@@ -1,10 +1,10 @@
 package Timetable;
 
-import Timetable.classes.Auditorium;
-import Timetable.classes.Dialogs.AddAuditoriumDialog;
-import Timetable.classes.Dialogs.AddPairDialog;
-import Timetable.classes.Dialogs.AddPeopleUnionDialog;
-import Timetable.classes.Dialogs.AddUserDialog;
+import Timetable.model.Auditorium;
+import Timetable.model.Dialogs.AddAuditoriumDialog;
+import Timetable.model.Dialogs.AddPairDialog;
+import Timetable.model.Dialogs.AddPeopleUnionDialog;
+import Timetable.model.Dialogs.AddUserDialog;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -26,7 +26,7 @@ import java.util.*;
 
 @Lazy
 @EntityScan
-@SpringBootApplication(scanBasePackages = "Timetable.classes")
+@SpringBootApplication(scanBasePackages = "Timetable.model")
 @EnableJpaRepositories("Timetable.repositories")
 public class Main extends AbstractJavaFxApplicationSupport {
 

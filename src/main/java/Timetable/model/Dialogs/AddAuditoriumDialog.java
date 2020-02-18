@@ -1,7 +1,7 @@
-package Timetable.classes.Dialogs;
+package Timetable.model.Dialogs;
 
-import Timetable.classes.Auditorium;
-import Timetable.classes.HibernateUtil;
+import Timetable.model.Auditorium;
+import Timetable.model.HibernateUtil;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;

@@ -1,4 +1,4 @@
-package Timetable.classes;
+package Timetable.model;
 
 import org.springframework.stereotype.Component;
 
