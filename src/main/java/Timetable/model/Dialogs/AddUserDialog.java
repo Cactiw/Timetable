@@ -73,7 +73,7 @@ public class AddUserDialog {
         gridPane.add(role, 1, 4);
 
 
-        gridPane.getStylesheets().add(getClass().getResource("../../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
         dialog.getDialogPane().setContent(gridPane);
         verifyAddUserDialog();

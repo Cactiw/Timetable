@@ -4,6 +4,7 @@ import Timetable.model.Auditorium;
 import Timetable.model.HibernateUtil;
 import Timetable.model.Pair;
 import Timetable.model.User;
+import Timetable.service.UserService;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
 import javafx.application.Platform;
@@ -20,12 +21,14 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 
 public class AddPairDialog {
     TextField subject, teacher, auditorium;
@@ -42,6 +45,14 @@ public class AddPairDialog {
     ChoiceBox<String> repeatability;
 
     LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
+
+    private final UserService userService;
+
+    @Autowired
+    public AddPairDialog(UserService userService) {
+
+        this.userService = userService;
+    }
 
 
     public void show() {
@@ -75,7 +86,7 @@ public class AddPairDialog {
                 if (observableValue.getValue().compareTo("") == 0) {
                     teacherPopup.hide();
                 } else {
-                    users = new SortedList<>(User.searchUserByName(observableValue.getValue(), 1));
+                    users = new SortedList<>(userService.searchUserByName(observableValue.getValue(), 1));
                     teacherPopup.getItems().clear();
                     for (var x : users) {
                         teacherPopup.getItems().add(new MenuItem(x.formatFIO()));
@@ -130,7 +141,7 @@ public class AddPairDialog {
                 MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
                 teacher.setText(text);
-                teacherId = User.searchUserByName(text, 1).get(0).getId();
+                teacherId = userService.searchUserByName(text, 1).get(0).getId();
                 Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
                 verifyAddUserDialog();
             }
@@ -177,7 +188,7 @@ public class AddPairDialog {
         gridPane.add(repeatability, 1, 6);
 
 
-        gridPane.getStylesheets().add(getClass().getResource("../../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
 
 

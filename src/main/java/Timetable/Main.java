@@ -5,6 +5,7 @@ import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
+import Timetable.service.UserService;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -26,7 +27,7 @@ import java.util.*;
 
 @Lazy
 @EntityScan
-@SpringBootApplication(scanBasePackages = "Timetable.model")
+@SpringBootApplication(scanBasePackages = "Timetable")
 @EnableJpaRepositories("Timetable.repositories")
 public class Main extends AbstractJavaFxApplicationSupport {
 
@@ -45,6 +46,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    UserService userService;
 
 
     @Override
@@ -186,7 +190,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addPair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddPairDialog().show();
+                new AddPairDialog(userService).show();
             }
         });
 
