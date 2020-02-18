@@ -1,7 +1,7 @@
-package Application.classes.Dialogs;
+package Timetable.classes.Dialogs;
 
-import Application.classes.HibernateUtil;
-import Application.classes.User;
+import Timetable.classes.HibernateUtil;
+import Timetable.classes.User;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;

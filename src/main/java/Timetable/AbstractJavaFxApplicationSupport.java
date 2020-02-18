@@ -1,4 +1,4 @@
-package Application;
+package Timetable;
 
 import javafx.application.Application;
 import org.springframework.boot.SpringApplication;

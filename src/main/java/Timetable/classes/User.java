@@ -1,4 +1,4 @@
-package Application.classes;
+package Timetable.classes;
 
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
@@ -17,7 +17,6 @@ import org.hibernate.annotations.TypeDefs;
 import org.hibernate.type.StringNVarcharType;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Map;
 

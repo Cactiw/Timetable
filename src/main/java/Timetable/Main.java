@@ -1,10 +1,10 @@
-package Application;
+package Timetable;
 
-import Application.classes.Auditorium;
-import Application.classes.Dialogs.AddAuditoriumDialog;
-import Application.classes.Dialogs.AddPairDialog;
-import Application.classes.Dialogs.AddPeopleUnionDialog;
-import Application.classes.Dialogs.AddUserDialog;
+import Timetable.classes.Auditorium;
+import Timetable.classes.Dialogs.AddAuditoriumDialog;
+import Timetable.classes.Dialogs.AddPairDialog;
+import Timetable.classes.Dialogs.AddPeopleUnionDialog;
+import Timetable.classes.Dialogs.AddUserDialog;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -19,16 +19,15 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import Application.repositories.UserRepository;
+import Timetable.repositories.UserRepository;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 
 @Lazy
 @EntityScan
-@SpringBootApplication(scanBasePackages = "Application.classes")
-@EnableJpaRepositories("Application.repositories")
+@SpringBootApplication(scanBasePackages = "Timetable.classes")
+@EnableJpaRepositories("Timetable.repositories")
 public class Main extends AbstractJavaFxApplicationSupport {
 
     Button button;

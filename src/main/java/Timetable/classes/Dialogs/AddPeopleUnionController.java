@@ -1,4 +1,4 @@
-package Application.classes.Dialogs;
+package Timetable.classes.Dialogs;
 
 import javafx.fxml.Initializable;
 

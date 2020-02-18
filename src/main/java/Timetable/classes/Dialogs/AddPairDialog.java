@@ -1,9 +1,9 @@
-package Application.classes.Dialogs;
+package Timetable.classes.Dialogs;
 
-import Application.classes.Auditorium;
-import Application.classes.HibernateUtil;
-import Application.classes.Pair;
-import Application.classes.User;
+import Timetable.classes.Auditorium;
+import Timetable.classes.HibernateUtil;
+import Timetable.classes.Pair;
+import Timetable.classes.User;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
 import javafx.application.Platform;

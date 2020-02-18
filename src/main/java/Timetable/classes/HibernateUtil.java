@@ -1,4 +1,4 @@
-package Application.classes;
+package Timetable.classes;
 
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;

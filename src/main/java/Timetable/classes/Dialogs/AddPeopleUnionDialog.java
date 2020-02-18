@@ -1,7 +1,7 @@
-package Application.classes.Dialogs;
+package Timetable.classes.Dialogs;
 
-import Application.classes.Pair;
-import Application.classes.PeopleUnionType;
+import Timetable.classes.Pair;
+import Timetable.classes.PeopleUnionType;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;

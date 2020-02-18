@@ -44,7 +44,7 @@ public class ConfigurationControllers {
 
     /**
      * Класс - оболочка: контроллер мы обязаны указать в качестве бина,
-     * а view - представление, нам предстоит использовать в точке входа {@link Application}.
+     * а view - представление, нам предстоит использовать в точке входа {@link Timetable}.
      */
     public class View {
         private Parent view;
