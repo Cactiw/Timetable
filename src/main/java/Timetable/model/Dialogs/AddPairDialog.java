@@ -4,6 +4,7 @@ import Timetable.model.Auditorium;
 import Timetable.model.HibernateUtil;
 import Timetable.model.Pair;
 import Timetable.model.User;
+import Timetable.service.AuditoriumService;
 import Timetable.service.UserService;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
@@ -47,11 +48,12 @@ public class AddPairDialog {
     LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
 
     private final UserService userService;
+    private final AuditoriumService auditoriumService;
 
     @Autowired
-    public AddPairDialog(UserService userService) {
-
+    public AddPairDialog(UserService userService, AuditoriumService auditoriumService) {
         this.userService = userService;
+        this.auditoriumService = auditoriumService;
     }
 
 
@@ -107,7 +109,7 @@ public class AddPairDialog {
                     auditoriumPopup.hide();
                     //auditoriums = new SortedList<>(Auditorium.getAuditoriums());
                 } else {
-                    auditoriums = new SortedList<>(Auditorium.searchAuditoriums(observableValue.getValue()));
+                    auditoriums = new SortedList<>(auditoriumService.searchAuditoriums(observableValue.getValue()));
 
                     ArrayList<String> auditoriumNames = new ArrayList<>();
                     auditoriumPopup.getItems().clear();
@@ -128,7 +130,7 @@ public class AddPairDialog {
                 MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
                 auditorium.setText(text);
-                auditoriumId = Auditorium.getAuditoriumByName(text).getId();
+                auditoriumId = auditoriumService.getAuditoriumByName(text).getId();
                 Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
                 verifyAddUserDialog();
             }
