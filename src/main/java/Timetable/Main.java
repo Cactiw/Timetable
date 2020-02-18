@@ -191,7 +191,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addAuditorium.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddAuditoriumDialog().show();
+                new AddAuditoriumDialog(auditoriumService).show();
                 auditoriumTableView.setItems(auditoriumService.getAuditoriums());
             }
         });

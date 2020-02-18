@@ -60,5 +60,4 @@ public class Auditorium {
         this.additional = additional;
     }
 
-
 }

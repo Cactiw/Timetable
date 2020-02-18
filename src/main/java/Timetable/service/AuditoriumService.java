@@ -16,6 +16,10 @@ public class AuditoriumService {
         this.auditoriumRepository = auditoriumRepository;
     }
 
+    public Auditorium save(Auditorium auditorium) {
+        return auditoriumRepository.save(auditorium);
+    }
+
     public ObservableList<Auditorium> getAuditoriums() {
         return FXCollections.observableArrayList(auditoriumRepository.findAll());
     }

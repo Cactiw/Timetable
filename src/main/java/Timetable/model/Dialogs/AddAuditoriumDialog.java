@@ -1,7 +1,7 @@
 package Timetable.model.Dialogs;
 
 import Timetable.model.Auditorium;
-import Timetable.model.HibernateUtil;
+import Timetable.service.AuditoriumService;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -19,7 +19,13 @@ public class AddAuditoriumDialog {
     List<TextField> emptyList;
     Button okButton;
 
+    AuditoriumService auditoriumService;
+
     public static final Pattern NUM_PATTERN = Pattern.compile("^\\d+$");
+
+    public AddAuditoriumDialog(AuditoriumService auditoriumService) {
+        this.auditoriumService = auditoriumService;
+    }
 
 
     public void show() {
@@ -71,12 +77,7 @@ public class AddAuditoriumDialog {
                 Auditorium auditorium = new Auditorium();
                 auditorium.setName(name.getText());
                 auditorium.setMaxStudents(Integer.valueOf(maxStudents.getText()));
-                int code = HibernateUtil.createObject(auditorium);
-                if (code == -1) {
-                    System.out.println("Error");
-                } else {
-                    return auditorium;
-                }
+                return auditoriumService.save(auditorium);
             }
             return null;
         });
