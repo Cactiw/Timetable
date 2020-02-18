@@ -6,6 +6,7 @@ import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
 import Timetable.service.AuditoriumService;
+import Timetable.service.PairService;
 import Timetable.service.UserService;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -57,6 +58,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     UserService userService;
     @Autowired
     AuditoriumService auditoriumService;
+    @Autowired
+    PairService pairService;
 
 
     @Override
@@ -198,7 +201,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addPair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddPairDialog(userService, auditoriumService).show();
+                new AddPairDialog(userService, auditoriumService, pairService).show();
             }
         });
 

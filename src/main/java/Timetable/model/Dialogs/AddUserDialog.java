@@ -1,6 +1,5 @@
 package Timetable.model.Dialogs;
 
-import Timetable.model.HibernateUtil;
 import Timetable.model.User;
 import Timetable.service.UserService;
 import javafx.application.Platform;
@@ -10,7 +9,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;

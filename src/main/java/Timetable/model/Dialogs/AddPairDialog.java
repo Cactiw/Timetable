@@ -1,10 +1,10 @@
 package Timetable.model.Dialogs;
 
 import Timetable.model.Auditorium;
-import Timetable.model.HibernateUtil;
 import Timetable.model.Pair;
 import Timetable.model.User;
 import Timetable.service.AuditoriumService;
+import Timetable.service.PairService;
 import Timetable.service.UserService;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
@@ -22,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -49,10 +48,12 @@ public class AddPairDialog {
 
     private final UserService userService;
     private final AuditoriumService auditoriumService;
+    private final PairService pairService;
 
-    public AddPairDialog(UserService userService, AuditoriumService auditoriumService) {
+    public AddPairDialog(UserService userService, AuditoriumService auditoriumService, PairService pairService) {
         this.userService = userService;
         this.auditoriumService = auditoriumService;
+        this.pairService = pairService;
     }
 
 
@@ -216,12 +217,7 @@ public class AddPairDialog {
                 pair.setRepeatability(repeatability.getSelectionModel().getSelectedIndex());
 //                auditorium.setsubject(subject.getText());
 //                auditorium.setteacher(Integer.valueOf(teacher.getText()));
-                int code = HibernateUtil.createObject(pair);
-                if (code == -1) {
-                    System.out.println("Error");
-                } else {
-                    return pair;
-                }
+                return pairService.save(pair);
             }
             return null;
         });
