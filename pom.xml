@@ -26,17 +26,6 @@
             <scope>test</scope>
             <version>2.1.8.RELEASE</version>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-annotations</artifactId>-->
-<!--            <version>3.5.6-Final</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.hibernate</groupId>-->
-<!--            <artifactId>hibernate-entitymanager</artifactId>-->
-<!--            <version>5.4.3.Final</version>-->
-<!--        </dependency>-->
         <!-- SQLite JDBC library -->
         <dependency>
             <groupId>org.xerial</groupId>
