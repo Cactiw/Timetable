@@ -43,16 +43,4 @@ public class PeopleUnionType {
     public Integer getId() {
         return id;
     }
-
-    static public ObservableList getAll() {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<PeopleUnionType> cq = cb.createQuery(PeopleUnionType.class);
-        Root<PeopleUnionType> rootEntry = cq.from(PeopleUnionType.class);
-        CriteriaQuery<PeopleUnionType> all = cq.select(rootEntry);
-
-        TypedQuery<PeopleUnionType> allQuery = session.createQuery(all);
-        ObservableList peopleUnionTypes = FXCollections.observableArrayList(allQuery.getResultList());
-        return peopleUnionTypes;
-    }
 }
