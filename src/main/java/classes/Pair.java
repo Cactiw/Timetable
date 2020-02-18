@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Component
+@Entity
+@Table
 public class Pair {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

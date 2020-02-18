@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
+@Component
 public class Auditorium {
     @Id
     @Column

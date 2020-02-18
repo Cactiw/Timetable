@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -12,6 +13,7 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Entity
+@Component
 public class PeopleUnionType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

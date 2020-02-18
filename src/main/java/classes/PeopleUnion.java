@@ -1,10 +1,13 @@
 package classes;
 
+import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Component
 public class PeopleUnion {
 
     @Column

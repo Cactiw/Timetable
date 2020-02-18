@@ -22,14 +22,18 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import repositories.UserRepository;
 
 import java.util.*;
 
 
 @Lazy
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "classes")
+@EnableJpaRepositories("repositories")
 public class Main extends AbstractJavaFxApplicationSupport {
 
     Button button;
@@ -45,6 +49,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     @Autowired
     ResourceLoader resourceLoader;
 
+    @Autowired
+    UserRepository userRepository;
 
 
     @Override
@@ -209,9 +215,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
         primaryStage.show();
     }
 
-    
-
-
 
 
     private VBox sidePane() {
@@ -273,8 +276,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
             pane.setStyle("-fx-background-color: #212121");
         });
     }
-
-
 
 
     public static void main(String[] args) {

@@ -17,6 +17,7 @@ import org.hibernate.annotations.TypeDefs;
 import org.hibernate.query.Query;
 import org.hibernate.type.StringNVarcharType;
 import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 @Entity
+@Component
 @Table
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
