@@ -23,7 +23,6 @@ import java.util.Map;
 
 @Entity
 @Table
-@Transactional
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class),

@@ -21,6 +21,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import Application.repositories.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 
