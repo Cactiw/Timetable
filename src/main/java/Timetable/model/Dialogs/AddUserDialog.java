@@ -2,6 +2,7 @@ package Timetable.model.Dialogs;
 
 import Timetable.model.HibernateUtil;
 import Timetable.model.User;
+import Timetable.service.UserService;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -9,8 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +21,12 @@ public class AddUserDialog {
     List<TextField> emptyList;
     ChoiceBox<String> role;
     Button okButton;
+
+    UserService userService;
+
+    public AddUserDialog(UserService userService) {
+        this.userService = userService;
+    }
 
     public void show() {
 
@@ -90,12 +96,8 @@ public class AddUserDialog {
                 user.setSurName(surName.getText());
                 user.setEmail(email.getText());
                 user.setRole(role.getSelectionModel().getSelectedIndex() + 1);
-                int code = HibernateUtil.createObject(user);
-                if (code == -1) {
-                    System.out.println("Error");
-                } else {
-                    return user;
-                }
+                userService.save(user);
+                return user;
             }
             return null;
         });
@@ -155,25 +157,5 @@ public class AddUserDialog {
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }
-    }
-
-
-
-    private int createUser(User user) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction tx = null;
-        try  {
-            tx = session.beginTransaction();
-            session.save(user);
-            tx.commit();
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            return -1;
-        }
-        finally {
-            session.close();
-        }
-        return 0;
     }
 }

@@ -50,7 +50,6 @@ public class AddPairDialog {
     private final UserService userService;
     private final AuditoriumService auditoriumService;
 
-    @Autowired
     public AddPairDialog(UserService userService, AuditoriumService auditoriumService) {
         this.userService = userService;
         this.auditoriumService = auditoriumService;

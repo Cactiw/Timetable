@@ -8,7 +8,5 @@ import org.springframework.stereotype.Repository;
 import javax.transaction.Transactional;
 
 @Repository
-@Component
-@Transactional
 public interface UserRepository extends JpaRepository <User, Integer> {
 }

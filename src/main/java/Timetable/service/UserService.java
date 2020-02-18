@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 @Service
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
 
@@ -20,6 +22,10 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
 

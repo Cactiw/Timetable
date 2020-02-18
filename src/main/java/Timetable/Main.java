@@ -67,7 +67,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         StackPane mainStack = new StackPane();
 
-        System.out.println(userRepository.getOne(1).formatFIO());
+//        System.out.println(userRepository.getOne(1).formatFIO());
 
         TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
         nameColumn.setMinWidth(200);
@@ -185,7 +185,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddUserDialog().show();
+                new AddUserDialog(userService).show();
             }
         });
         addAuditorium.setOnAction(new EventHandler<ActionEvent>() {
