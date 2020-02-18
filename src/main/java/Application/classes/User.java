@@ -1,4 +1,4 @@
-package classes;
+package Application.classes;
 
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import com.vladmihalcea.hibernate.type.array.StringArrayType;
@@ -14,23 +14,16 @@ import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.hibernate.query.Query;
 import org.hibernate.type.StringNVarcharType;
-import org.hibernate.type.descriptor.sql.VarcharTypeDescriptor;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.sql.Types;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Map;
 
 @Entity
-@Component
 @Table
+@Transactional
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class),

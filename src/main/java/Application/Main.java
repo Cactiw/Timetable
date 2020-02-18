@@ -1,39 +1,33 @@
 package Application;
 
-import classes.Auditorium;
-import classes.Dialogs.AddAuditoriumDialog;
-import classes.Dialogs.AddPairDialog;
-import classes.Dialogs.AddPeopleUnionDialog;
-import classes.Dialogs.AddUserDialog;
-import javafx.beans.property.ReadOnlyObjectWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.SortedList;
+import Application.classes.Auditorium;
+import Application.classes.Dialogs.AddAuditoriumDialog;
+import Application.classes.Dialogs.AddPairDialog;
+import Application.classes.Dialogs.AddPeopleUnionDialog;
+import Application.classes.Dialogs.AddUserDialog;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import repositories.UserRepository;
+import Application.repositories.UserRepository;
 
 import java.util.*;
 
 
 @Lazy
-@SpringBootApplication(scanBasePackages = "classes")
-@EnableJpaRepositories("repositories")
+@EntityScan
+@SpringBootApplication(scanBasePackages = "Application.classes")
+@EnableJpaRepositories("Application.repositories")
 public class Main extends AbstractJavaFxApplicationSupport {
 
     Button button;
@@ -60,6 +54,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         primaryStage.setTitle("Timetable");
 
         StackPane mainStack = new StackPane();
+
+        System.out.println(userRepository.getOne(1).formatFIO());
 
 //        TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
 //        nameColumn.setMinWidth(200);
@@ -100,11 +96,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
 //
 //
 //
-//        classes = new HBox();
-//        classes.toBack();
-//        //classes.setPrefSize(100000, 100000);
-//        classes.getChildren().add(new Text("Занятия"));
-//        classes.setStyle("-fx-background-color: white");
+//        Application.classes = new HBox();
+//        Application.classes.toBack();
+//        //Application.classes.setPrefSize(100000, 100000);
+//        Application.classes.getChildren().add(new Text("Занятия"));
+//        Application.classes.setStyle("-fx-background-color: white");
 //
 //
 //        auditoriumBox = new VBox();
@@ -115,7 +111,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 //        //mainStack.getChildren().add(root_pane);
 //
 //        modes = new StackPane();
-//        //modes.getChildren().add(classes);
+//        //modes.getChildren().add(Application.classes);
 //
 //        TextField auditoriumSearch = new TextField();
 //        auditoriumSearch.setPromptText("Начните вводить для поиска");
@@ -155,14 +151,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
 //        HBox.setHgrow(auditoriumInfo, Priority.ALWAYS);
 //        VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
 //
-//        modes.getChildren().addAll(classes, auditoriumBox);
-//        classes.toBack();
-//        classes.setVisible(false);
+//        modes.getChildren().addAll(Application.classes, auditoriumBox);
+//        Application.classes.toBack();
+//        Application.classes.setVisible(false);
 //
 //        root_pane.getChildren().add(modes);
 //        HBox.setHgrow(modes, Priority.ALWAYS);
 //
-//        //root_pane.setRight(classes);
+//        //root_pane.setRight(Application.classes);
 //        mainStack.getChildren().add(root_pane);
 //        //menu.toFront();
 
@@ -241,9 +237,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
             @Override
             public void handle(ActionEvent actionEvent) {
                  //to_pane.toFront();
-//                 classes.toBack();
+//                 Application.classes.toBack();
 //                 auditoriumBox.toFront();
-//                 classes.toBack();
+//                 Application.classes.toBack();
 //                modes.getChildren().clear();
                 for (var pane: panes) {
                     if (pane != to_pane) {

@@ -1,10 +1,9 @@
-package classes.Dialogs;
+package Application.classes.Dialogs;
 
-import classes.Auditorium;
-import classes.HibernateUtil;
-import classes.Pair;
-import classes.User;
-import com.jfoenix.controls.JFXDatePicker;
+import Application.classes.Auditorium;
+import Application.classes.HibernateUtil;
+import Application.classes.Pair;
+import Application.classes.User;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
 import javafx.application.Platform;
@@ -14,8 +13,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
-import javafx.css.Style;
-import javafx.css.converter.PaintConverter;
 import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
@@ -23,20 +20,12 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.stage.Popup;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import javax.xml.datatype.DatatypeConstants;
-import java.lang.reflect.Array;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 public class AddPairDialog {
     TextField subject, teacher, auditorium;

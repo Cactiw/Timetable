@@ -1,16 +1,13 @@
-package classes.Dialogs;
+package Application.classes.Dialogs;
 
-import classes.Auditorium;
-import classes.HibernateUtil;
+import Application.classes.Auditorium;
+import Application.classes.HibernateUtil;
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
 import java.util.Arrays;
 import java.util.List;

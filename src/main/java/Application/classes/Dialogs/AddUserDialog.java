@@ -1,19 +1,14 @@
-package classes.Dialogs;
+package Application.classes.Dialogs;
 
-import classes.HibernateUtil;
-import classes.User;
+import Application.classes.HibernateUtil;
+import Application.classes.User;
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 

@@ -1,4 +1,4 @@
-package classes.Dialogs;
+package Application.classes.Dialogs;
 
 import javafx.fxml.Initializable;
 

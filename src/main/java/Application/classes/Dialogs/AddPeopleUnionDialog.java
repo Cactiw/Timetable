@@ -1,15 +1,10 @@
-package classes.Dialogs;
+package Application.classes.Dialogs;
 
-import classes.Pair;
-import classes.PeopleUnionType;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+import Application.classes.Pair;
+import Application.classes.PeopleUnionType;
 import javafx.geometry.Insets;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-
-import java.io.IOException;
 
 public class AddPeopleUnionDialog {
 

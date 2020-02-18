@@ -1,6 +1,5 @@
-package classes;
+package Application.classes;
 
-import javafx.scene.control.DatePicker;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.stereotype.Component;
 
