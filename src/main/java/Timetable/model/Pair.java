@@ -1,6 +1,7 @@
 package Timetable.model;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -19,11 +20,11 @@ public class Pair {
     @Column
     private String subject;
 
-    @Column
-    private Integer teacherId;
+    @ManyToOne
+    private User teacher;
 
-    @Column
-    private Integer auditoriumId;
+    @ManyToOne
+    private Auditorium auditorium;
 
     @Column
     private LocalDate beginDate;
@@ -38,6 +39,17 @@ public class Pair {
     @ColumnDefault("0")
     private Integer repeatability;  // 0 - нет, 1 - каждую неделю, so on
 
+//    @Column
+//    @Nullable
+//    private Integer pairChangedId;
+
+    @OneToOne
+    @JoinColumn(name = "pair_to_change_id")
+    private Pair pairToChange;
+
+    @OneToOne(mappedBy = "pairToChange")
+    private Pair newPair;
+
     public Integer getId() {
         return id;
     }
@@ -50,20 +62,36 @@ public class Pair {
         this.subject = subject;
     }
 
-    public Integer getTeacherId() {
-        return teacherId;
+    public User getTeacher() {
+        return teacher;
     }
 
-    public void setTeacherId(Integer teacherId) {
-        this.teacherId = teacherId;
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
     }
 
-    public Integer getAuditoriumId() {
-        return auditoriumId;
+    public Auditorium getAuditorium() {
+        return auditorium;
     }
 
-    public void setAuditoriumId(Integer auditoriumId) {
-        this.auditoriumId = auditoriumId;
+    public void setAuditorium(Auditorium auditorium) {
+        this.auditorium = auditorium;
+    }
+
+    public Pair getPairToChange() {
+        return pairToChange;
+    }
+
+    public void setPairToChange(Pair pairToChange) {
+        this.pairToChange = pairToChange;
+    }
+
+    public Pair getNewPair() {
+        return newPair;
+    }
+
+    public void setNewPair(Pair newPair) {
+        this.newPair = newPair;
     }
 
     public LocalDate getBeginDate() { return beginDate; }

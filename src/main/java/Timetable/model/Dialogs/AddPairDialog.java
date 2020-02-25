@@ -22,6 +22,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -35,12 +38,16 @@ public class AddPairDialog {
     List<TextField> emptyList;
     List<ComboBoxBase> notNullList;
     Button okButton;
+    Text conflicts;
 
     ContextMenu auditoriumPopup, teacherPopup;
     TextField currentParentField;
-    Integer auditoriumId = -1, teacherId = -1;
+    Auditorium auditoriumEntity;
+    User teacherEntity;
     JFXDatePicker beginDate;
     JFXTimePicker beginTime, endTime;
+
+    Boolean beginTimeChanged = false;
 
     ChoiceBox<String> repeatability;
 
@@ -63,6 +70,7 @@ public class AddPairDialog {
         Dialog<Pair> dialog = new Dialog<>();
         dialog.setTitle("Добавление занятия");
 
+
         // Set the button types.
         ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
@@ -74,6 +82,7 @@ public class AddPairDialog {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
+        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
         subject = new TextField();
         subject.setPromptText("Введите предмет");
@@ -83,7 +92,7 @@ public class AddPairDialog {
         teacher.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                teacherId = -1;
+                teacherEntity = null;
                 SortedList<User> users;
                 if (observableValue.getValue().compareTo("") == 0) {
                     teacherPopup.hide();
@@ -103,7 +112,7 @@ public class AddPairDialog {
         auditorium.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                auditoriumId = -1;
+                auditoriumEntity = null;
                 SortedList<Auditorium> auditoriums;
                 if (observableValue.getValue().compareTo("") == 0) {
                     auditoriumPopup.hide();
@@ -130,7 +139,7 @@ public class AddPairDialog {
                 MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
                 auditorium.setText(text);
-                auditoriumId = auditoriumService.getAuditoriumByName(text).getId();
+                auditoriumEntity = auditoriumService.getAuditoriumByName(text);
                 Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
                 verifyAddUserDialog();
             }
@@ -143,7 +152,7 @@ public class AddPairDialog {
                 MenuItem src = (MenuItem) actionEvent.getTarget();
                 String text = src.getText();
                 teacher.setText(text);
-                teacherId = userService.searchUserByName(text, 1).get(0).getId();
+                teacherEntity = userService.searchUserByName(text, 1).get(0);
                 Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
                 verifyAddUserDialog();
             }
@@ -152,7 +161,12 @@ public class AddPairDialog {
         endTime = new JFXTimePicker();
         endTime.set24HourView(true);
 //        endTime.setDefaultColor(Color.valueOf("#009688"));
-        endTime.valueProperty().addListener((observableValue, localTime, t1) -> { verifyAddUserDialog(); });
+        endTime.valueProperty().addListener((observableValue, localTime, t1) -> {
+            if (!beginTimeChanged) {
+                verifyAddUserDialog();
+            }
+            beginTimeChanged = false;
+        });
 
         beginDate = new JFXDatePicker();
         beginDate.valueProperty().addListener((observableValue, localDate, t1) -> { verifyAddUserDialog(); });
@@ -160,6 +174,7 @@ public class AddPairDialog {
         beginTime.set24HourView(true);
         beginTime.valueProperty().addListener((observableValue, localTime, t1) -> {
             if (observableValue.getValue() != null) {
+                beginTimeChanged = true;
                 endTime.setValue(LocalTime.of(observableValue.getValue().getHour(), observableValue.getValue().
                         getMinute()).plusHours(PAIR_LENGTH.getHour()).plusMinutes(PAIR_LENGTH.getMinute()));
             }
@@ -189,9 +204,10 @@ public class AddPairDialog {
         gridPane.add(new Label("Периодичность:"), 0, 6);
         gridPane.add(repeatability, 1, 6);
 
-
-        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
-
+        conflicts = new Text("");
+        setNoConflicts();
+        conflicts.setFont(Font.font("Calibri", 15));
+        gridPane.add(conflicts, 2, 4, 5, 5);
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
@@ -208,8 +224,8 @@ public class AddPairDialog {
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
                 Pair pair = new Pair();
-                pair.setAuditoriumId(auditoriumId);
-                pair.setTeacherId(teacherId);
+                pair.setAuditorium(auditoriumEntity);
+                pair.setTeacher(teacherEntity);
                 pair.setSubject(subject.getText());
                 pair.setBeginDate(beginDate.valueProperty().get());
                 pair.setBeginTime(beginTime.valueProperty().get());
@@ -262,11 +278,11 @@ public class AddPairDialog {
                 correct = !bool;
             }
         }
-        if (auditoriumId == -1) {
+        if (auditoriumEntity == null) {
             correct = false;
             red(auditorium, true);
         }
-        if (teacherId == -1) {
+        if (teacherEntity == null) {
             correct = false;
             red(teacher, true);
         }
@@ -278,10 +294,37 @@ public class AddPairDialog {
             red(x, bool);
 //            beginDate.setDefaultColor(Color.RED);
         }
+        if (correct) {
+            // Проверка на конфликты
+            setNoConflicts();
+            var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
+            for (var pair: teacherPairs) {
+                if (endTime.valueProperty().get().compareTo(pair.getBeginTime()) < 0 ||
+                        beginTime.valueProperty().get().compareTo(pair.getEndTime()) > 0) {
+                    // Не пересекаются, всё норм
+                } else {
+                    // Пересекаются, алёрт
+                    setConflict("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
+                            pair.getAuditorium().getName() + " " + pair.getBeginTime().toString() + " - " +
+                            pair.getEndTime().toString());
+                    correct = false;
+                }
+            }
+        }
         okButton.setDisable(!correct);
 
         ;
         //role.valueProperty().getValue()
+    }
+
+    private void setNoConflicts() {
+        conflicts.setText("✅Нет конфликтов");
+        conflicts.setFill(Color.GREEN);
+    }
+
+    private void setConflict(String conflict) {
+        conflicts.setText(conflict);
+        conflicts.setFill(Color.ORANGERED);
     }
 
     private void red(Control field, boolean red) {
