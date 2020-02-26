@@ -7,6 +7,8 @@ import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class AuditoriumService {
     private final AuditoriumRepository auditoriumRepository;
@@ -26,6 +28,10 @@ public class AuditoriumService {
 
     public ObservableList<Auditorium> searchAuditoriums(String text) {
         return FXCollections.observableArrayList(auditoriumRepository.findByNameIgnoreCaseContaining(text));
+    }
+
+    public ObservableList<Auditorium> getAvailableAuditoriums(LocalDateTime beginTime, LocalDateTime endTime) {
+        return FXCollections.observableArrayList(auditoriumRepository.findAvailableAuditorium(beginTime, endTime));
     }
 
     public Auditorium getAuditoriumByName(String name){

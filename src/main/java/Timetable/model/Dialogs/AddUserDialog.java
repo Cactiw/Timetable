@@ -113,6 +113,7 @@ public class AddUserDialog {
         verifyAddUserDialog();
     }
 
+
     private void verifyAddUserDialog() {
         boolean correct = true;
         for (var x: emptyList) {

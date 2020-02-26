@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.*;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
@@ -25,6 +26,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
+import javafx.scene.text.TextFlow;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -39,7 +42,8 @@ public class AddPairDialog {
     List<TextField> emptyList;
     List<ComboBoxBase> notNullList;
     Button okButton;
-    Text conflicts;
+    Text conflicts, suggestions;
+    TextFlow conflictsCheck;
 
     ContextMenu auditoriumPopup, teacherPopup;
     TextField currentParentField;
@@ -206,9 +210,17 @@ public class AddPairDialog {
         gridPane.add(repeatability, 1, 6);
 
         conflicts = new Text("");
+        suggestions = new Text("\n");
+        suggestions.setFont(Font.font("Calibri", 15));
         setNoConflicts();
         conflicts.setFont(Font.font("Calibri", 15));
-        gridPane.add(conflicts, 2, 1, 5, 5);
+//        gridPane.add(conflicts, 2, 1, 5, 5);
+
+        conflictsCheck = new TextFlow(conflicts, suggestions);
+        conflictsCheck.setPrefWidth(250);
+//        conflictsCheck.setLayoutY();
+
+        gridPane.add(conflictsCheck, 2, 2, 7, 7);
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
@@ -314,7 +326,7 @@ public class AddPairDialog {
                     // Пересекаются, алёрт
                     setConflict("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
                             pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                            pair.getEndTime().toLocalTime().toString());
+                            pair.getEndTime().toLocalTime().toString(), "");
                     correct = false;
                 }
             }
@@ -322,9 +334,13 @@ public class AddPairDialog {
             var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
                     getBeginTime(), getEndTime());
             for (var pair: auditoriumConflictPairs) {
+                var availableAuditoriums = auditoriumService.getAvailableAuditoriums(getBeginTime(), getEndTime());
+                String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
+                        availableAuditoriums.get(0).getName() + ", вместимость: " +
+                        availableAuditoriums.get(0).getMaxStudents() : "Подходящих аудиторий не найдено.";
                 setConflict("Аудитория в это время занята:\n" + pair.getSubject() + " " +
                         pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                        pair.getEndTime().toLocalTime().toString());
+                        pair.getEndTime().toLocalTime().toString(), suggestion);
                 correct = false;
             }
         }
@@ -337,9 +353,15 @@ public class AddPairDialog {
     private void setNoConflicts() {
         conflicts.setText("✅Нет конфликтов");
         conflicts.setFill(Color.GREEN);
+
+        suggestions.setVisible(false);
+        suggestions.setText("\n");
+        suggestions.setFill(Color.YELLOWGREEN);
     }
 
-    private void setConflict(String conflict) {
+    private void setConflict(String conflict, String suggestion) {
+        suggestions.setText(suggestions.getText() + "\n" + suggestion);
+        suggestions.setVisible(true);
         if (conflicts.getFill() == Color.ORANGERED) {
             // Добавляем конфликт
             conflicts.setText(conflicts.getText() + "\n" + conflict);
