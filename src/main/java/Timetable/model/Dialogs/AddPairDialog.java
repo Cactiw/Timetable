@@ -22,6 +22,7 @@ import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -211,6 +212,10 @@ public class AddPairDialog {
 
         conflicts = new Text("");
         suggestions = new Text("\n");
+        suggestions.setStyle("-fx-underline: true");
+        suggestions.setOnMouseClicked( e -> {
+
+        });
         suggestions.setFont(Font.font("Calibri", 15));
         setNoConflicts();
         conflicts.setFont(Font.font("Calibri", 15));
