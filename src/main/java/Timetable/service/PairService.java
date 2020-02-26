@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Service
@@ -40,7 +41,7 @@ public class PairService {
         return FXCollections.observableArrayList(pairRepository.getAllByAuditoriumEquals(auditorium));
     }
 
-    public ObservableList<Pair> getAuditoriumConflictPairs(Auditorium auditorium, LocalTime beginTime, LocalTime endTime) {
+    public ObservableList<Pair> getAuditoriumConflictPairs(Auditorium auditorium, LocalDateTime beginTime, LocalDateTime endTime) {
         return FXCollections.observableArrayList(pairRepository.getAllAuditoriumConflicts(auditorium, beginTime, endTime));
     }
 }

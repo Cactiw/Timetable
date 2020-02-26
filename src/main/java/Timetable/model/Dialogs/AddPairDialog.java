@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -227,9 +228,8 @@ public class AddPairDialog {
                 pair.setAuditorium(auditoriumEntity);
                 pair.setTeacher(teacherEntity);
                 pair.setSubject(subject.getText());
-                pair.setBeginDate(beginDate.valueProperty().get());
-                pair.setBeginTime(beginTime.valueProperty().get());
-                pair.setEndTime(endTime.valueProperty().get());
+                pair.setBeginTime(getBeginTime());
+                pair.setEndTime(getEndTime());
                 pair.setRepeatability(repeatability.getSelectionModel().getSelectedIndex());
 //                auditorium.setsubject(subject.getText());
 //                auditorium.setteacher(Integer.valueOf(teacher.getText()));
@@ -269,6 +269,14 @@ public class AddPairDialog {
         verifyAddUserDialog();
     }
 
+    private LocalDateTime getBeginTime() {
+        return LocalDateTime.of(beginDate.valueProperty().get(), beginTime.valueProperty().get());
+    }
+
+    private LocalDateTime getEndTime() {
+        return LocalDateTime.of(beginDate.valueProperty().get(), endTime.valueProperty().get());
+    }
+
     private void verifyAddUserDialog() {
         boolean correct = true;
         for (var x : emptyList) {
@@ -299,27 +307,24 @@ public class AddPairDialog {
             // Проверка на конфликты преподавателя
             var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
             for (var pair: teacherPairs) {
-                System.out.println(beginDate.valueProperty().get().toString() + " " + pair.getBeginDate().toString() +
-                        Boolean.toString(beginDate.valueProperty().get() != pair.getBeginDate()));
-                if (beginDate.valueProperty().get().compareTo(pair.getBeginDate()) != 0 ||
-                        endTime.valueProperty().get().compareTo(pair.getBeginTime()) < 0 ||
-                        beginTime.valueProperty().get().compareTo(pair.getEndTime()) > 0) {
+                if (getBeginTime().compareTo(pair.getEndTime()) > 0 ||
+                getEndTime().compareTo(pair.getBeginTime()) < 0) {
                     // Не пересекаются, всё норм
                 } else {
                     // Пересекаются, алёрт
                     setConflict("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
-                            pair.getAuditorium().getName() + " " + pair.getBeginTime().toString() + " - " +
-                            pair.getEndTime().toString());
+                            pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                            pair.getEndTime().toLocalTime().toString());
                     correct = false;
                 }
             }
             // Проверка на конфликты аудитории
             var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
-                    beginTime.valueProperty().get(), endTime.valueProperty().get());
+                    getBeginTime(), getEndTime());
             for (var pair: auditoriumConflictPairs) {
                 setConflict("Аудитория в это время занята:\n" + pair.getSubject() + " " +
-                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toString() + " - " +
-                        pair.getEndTime().toString());
+                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                        pair.getEndTime().toLocalTime().toString());
                 correct = false;
             }
         }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Component
@@ -27,13 +28,10 @@ public class Pair {
     private Auditorium auditorium;
 
     @Column
-    private LocalDate beginDate;
+    private LocalDateTime beginTime;
 
     @Column
-    private LocalTime beginTime;
-
-    @Column
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
     @Column
     @ColumnDefault("0")
@@ -94,24 +92,20 @@ public class Pair {
         this.newPair = newPair;
     }
 
-    public LocalDate getBeginDate() { return beginDate; }
-
-    public void setBeginDate(LocalDate beginDate) { this.beginDate = beginDate; }
-
-    public LocalTime getBeginTime() {
+    public LocalDateTime getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(LocalTime beginTime) {
+    public void setBeginTime(LocalDateTime beginTime) {
         this.beginTime = beginTime;
     }
 
-    public LocalTime getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime duration) {
-        this.endTime = duration;
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     public Integer getRepeatability() {
