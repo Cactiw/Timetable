@@ -13,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -147,8 +148,10 @@ public class Main extends AbstractJavaFxApplicationSupport {
         );
         Label auditoriumSearchLabel = new Label("Поиск:");
         auditoriumSearchLabel.setMinWidth(50);
+        auditoriumSearchLabel.setAlignment(Pos.CENTER);
         HBox auditoriumSearchBox = new HBox();
         auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
+        HBox.setHgrow(auditoriumSearchBox, Priority.ALWAYS);
 
         auditoriumProperties =  new TableView<>();
         TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
@@ -156,6 +159,10 @@ public class Main extends AbstractJavaFxApplicationSupport {
         TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
         auditoriumPropertiesColumn2.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
         auditoriumProperties.getColumns().addAll(auditoriumPropertiesColumn1, auditoriumPropertiesColumn2);
+        auditoriumProperties.setPrefWidth(2000);
+        auditoriumProperties.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        auditoriumProperties.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        auditoriumProperties.setPrefHeight(Region.USE_COMPUTED_SIZE);
 
 
 
@@ -172,6 +179,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         root_pane.getChildren().add(modes);
         HBox.setHgrow(modes, Priority.ALWAYS);
+        HBox.setHgrow(root_pane, Priority.ALWAYS);
 
         //root_pane.setRight(classes);
         mainStack.getChildren().add(root_pane);
