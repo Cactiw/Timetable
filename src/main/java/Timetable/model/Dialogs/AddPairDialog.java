@@ -207,7 +207,7 @@ public class AddPairDialog {
         conflicts = new Text("");
         setNoConflicts();
         conflicts.setFont(Font.font("Calibri", 15));
-        gridPane.add(conflicts, 2, 3, 5, 5);
+        gridPane.add(conflicts, 2, 1, 5, 5);
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
