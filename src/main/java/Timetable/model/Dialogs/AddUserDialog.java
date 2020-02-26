@@ -64,11 +64,10 @@ public class AddUserDialog {
 
         emptyList = Arrays.asList(firstName, lastName, surName, email);
 
-
-        gridPane.add(firstName, 1, 0);
-        gridPane.add(new Label("Имя:"), 0, 0);
-        gridPane.add(new Label("Фамилия:"), 0, 1);
-        gridPane.add(lastName, 1, 1);
+        gridPane.add(new Label("Фамилия:"), 0, 0);
+        gridPane.add(lastName, 1, 0);
+        gridPane.add(new Label("Имя:"), 0, 1);
+        gridPane.add(firstName, 1, 1);
         gridPane.add(new Label("Отчество"), 0, 2);
         gridPane.add(surName, 1, 2);
         gridPane.add(new Label("Email"), 0, 3);
@@ -83,7 +82,7 @@ public class AddUserDialog {
         verifyAddUserDialog();
 
         // Request focus on the username field by default.
-        Platform.runLater(() -> firstName.requestFocus());
+        Platform.runLater(() -> lastName.requestFocus());
 
         // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
