@@ -299,7 +299,9 @@ public class AddPairDialog {
             // Проверка на конфликты преподавателя
             var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
             for (var pair: teacherPairs) {
-                if (beginDate.valueProperty().get() != pair.getBeginDate() ||
+                System.out.println(beginDate.valueProperty().get().toString() + " " + pair.getBeginDate().toString() +
+                        Boolean.toString(beginDate.valueProperty().get() != pair.getBeginDate()));
+                if (beginDate.valueProperty().get().compareTo(pair.getBeginDate()) != 0 ||
                         endTime.valueProperty().get().compareTo(pair.getBeginTime()) < 0 ||
                         beginTime.valueProperty().get().compareTo(pair.getEndTime()) > 0) {
                     // Не пересекаются, всё норм
