@@ -207,7 +207,7 @@ public class AddPairDialog {
         conflicts = new Text("");
         setNoConflicts();
         conflicts.setFont(Font.font("Calibri", 15));
-        gridPane.add(conflicts, 2, 4, 5, 5);
+        gridPane.add(conflicts, 2, 3, 5, 5);
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
@@ -295,11 +295,12 @@ public class AddPairDialog {
 //            beginDate.setDefaultColor(Color.RED);
         }
         if (correct) {
-            // Проверка на конфликты
             setNoConflicts();
+            // Проверка на конфликты преподавателя
             var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
             for (var pair: teacherPairs) {
-                if (endTime.valueProperty().get().compareTo(pair.getBeginTime()) < 0 ||
+                if (beginDate.valueProperty().get() != pair.getBeginDate() ||
+                        endTime.valueProperty().get().compareTo(pair.getBeginTime()) < 0 ||
                         beginTime.valueProperty().get().compareTo(pair.getEndTime()) > 0) {
                     // Не пересекаются, всё норм
                 } else {
@@ -309,6 +310,15 @@ public class AddPairDialog {
                             pair.getEndTime().toString());
                     correct = false;
                 }
+            }
+            // Проверка на конфликты аудитории
+            var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
+                    beginTime.valueProperty().get(), endTime.valueProperty().get());
+            for (var pair: auditoriumConflictPairs) {
+                setConflict("Аудитория в это время занята:\n" + pair.getSubject() + " " +
+                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toString() + " - " +
+                        pair.getEndTime().toString());
+                correct = false;
             }
         }
         okButton.setDisable(!correct);
@@ -323,8 +333,13 @@ public class AddPairDialog {
     }
 
     private void setConflict(String conflict) {
-        conflicts.setText(conflict);
-        conflicts.setFill(Color.ORANGERED);
+        if (conflicts.getFill() == Color.ORANGERED) {
+            // Добавляем конфликт
+            conflicts.setText(conflicts.getText() + "\n" + conflict);
+        } else {
+            conflicts.setText(conflict);
+            conflicts.setFill(Color.ORANGERED);
+        }
     }
 
     private void red(Control field, boolean red) {
