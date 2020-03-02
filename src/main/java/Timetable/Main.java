@@ -231,6 +231,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add(resourceLoader.getResource("styles.css").getInputStream().toString());
         primaryStage.setScene(scene);
+        primaryStage.getIcons().add(new Image("icon.png"));
         primaryStage.show();
     }
 
