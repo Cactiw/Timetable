@@ -51,13 +51,13 @@ public class User {
     @Column
     private String email;
 
-    @Type( type = "json" )
-    @Column( columnDefinition = "json" )
-    private Map<String, Integer> settings;
-
-    @Type( type = "json" )
-    @Column( columnDefinition = "json" )
-    private Map<String, Integer> additional;
+//    @Type( type = "json" )
+//    @Column( columnDefinition = "json" )
+//    private Map<String, Integer> settings;
+//
+//    @Type( type = "json" )
+//    @Column( columnDefinition = "json" )
+//    private Map<String, Integer> additional;
 
     public Integer getId() {
         return id;
@@ -109,21 +109,21 @@ public class User {
 
     public User() {}
 
-    public Map<String, Integer> getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Map<String, Integer> settings) {
-        this.settings = settings;
-    }
-
-    public Map<String, Integer> getAdditional() {
-        return additional;
-    }
-
-    public void setAdditional(Map<String, Integer> additional) {
-        this.additional = additional;
-    }
+//    public Map<String, Integer> getSettings() {
+//        return settings;
+//    }
+//
+//    public void setSettings(Map<String, Integer> settings) {
+//        this.settings = settings;
+//    }
+//
+//    public Map<String, Integer> getAdditional() {
+//        return additional;
+//    }
+//
+//    public void setAdditional(Map<String, Integer> additional) {
+//        this.additional = additional;
+//    }
 
     public String formatFIO() {
         return getLastName() + " " + getName() + " " + getSurName();

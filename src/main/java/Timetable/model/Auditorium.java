@@ -1,11 +1,19 @@
 package Timetable.model;
 
+import com.vladmihalcea.hibernate.type.array.IntArrayType;
+import com.vladmihalcea.hibernate.type.array.StringArrayType;
+import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
+import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.TypeDefs;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +26,14 @@ import java.util.Map;
 
 @Entity
 @Component
+@TypeDefs({
+        @TypeDef(name = "string-array", typeClass = StringArrayType.class),
+        @TypeDef(name = "int-array", typeClass = IntArrayType.class),
+        @TypeDef(name = "json", typeClass = JsonStringType.class),
+        @TypeDef(name = "jsonb", typeClass = JsonBinaryType.class),
+        @TypeDef(name = "jsonb-node", typeClass = JsonNodeBinaryType.class),
+        @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
+})
 public class Auditorium {
     @Id
     @Column
@@ -28,9 +44,9 @@ public class Auditorium {
     @Column
     private Integer maxStudents;
 
-    @Type( type = "json" )
-    @Column( columnDefinition = "json" )
-    private Map<String, Integer> additional;
+//    @Type( type = "json" )
+//    @Column( columnDefinition = "json" )
+//    private Map<String, Integer> additional;
 
     public Integer getId() {
         return id;
@@ -52,12 +68,12 @@ public class Auditorium {
         this.maxStudents = maxStudents;
     }
 
-    public Map<String, Integer> getAdditional() {
-        return additional;
-    }
+//    public Map<String, Integer> getAdditional() {
+//        return additional;
+//    }
 
-    public void setAdditional(Map<String, Integer> additional) {
-        this.additional = additional;
-    }
+//    public void setAdditional(Map<String, Integer> additional) {
+//        this.additional = additional;
+//    }
 
 }
