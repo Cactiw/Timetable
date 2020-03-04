@@ -22,7 +22,7 @@ public class PeopleUnionType {
     private String name;
 
     @ManyToOne()
-    private PeopleUnionType child;
+    private PeopleUnionType parent;
 
     public String getName() {
         return name;
@@ -32,12 +32,12 @@ public class PeopleUnionType {
         this.name = name;
     }
 
-    public PeopleUnionType getChild() {
-        return child;
+    public PeopleUnionType getParent() {
+        return parent;
     }
 
-    public void setChild(PeopleUnionType child) {
-        this.child = child;
+    public void setParent(PeopleUnionType parent) {
+        this.parent = parent;
     }
 
     public Integer getId() {

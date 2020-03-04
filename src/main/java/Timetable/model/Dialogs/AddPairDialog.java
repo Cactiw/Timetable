@@ -198,7 +198,7 @@ public class AddPairDialog {
         gridPane.add(new Label("Предмет:"), 0, 0);
         gridPane.add(new Label("Преподаватель:"), 0, 1);
         gridPane.add(teacher, 1, 1);
-        ;
+
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
         gridPane.add(new Label("Дата занятия:"), 0, 3);

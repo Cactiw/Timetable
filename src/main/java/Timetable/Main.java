@@ -7,6 +7,7 @@ import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
 import Timetable.service.AuditoriumService;
 import Timetable.service.PairService;
+import Timetable.service.PeopleUnionTypeService;
 import Timetable.service.UserService;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -31,7 +32,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import Timetable.repositories.UserRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 
@@ -61,10 +64,17 @@ public class Main extends AbstractJavaFxApplicationSupport {
     AuditoriumService auditoriumService;
     @Autowired
     PairService pairService;
+    @Autowired
+    PeopleUnionTypeService peopleUnionTypeService;
+    @Autowired
+    EntityManager entityManager;
+
+    private ArrayList<String> defaultTypes = new ArrayList<String>(List.of("Курс", "Поток", "Группа"));
 
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+        databaseInit();
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
         primaryStage.setTitle("Timetable");
@@ -295,6 +305,10 @@ public class Main extends AbstractJavaFxApplicationSupport {
             button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
             pane.setStyle("-fx-background-color: #212121");
         });
+    }
+
+    private void databaseInit() {
+        peopleUnionTypeService.createListOfDefaultTypes(defaultTypes);
     }
 
 
