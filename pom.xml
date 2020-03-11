@@ -26,18 +26,13 @@
             <scope>test</scope>
             <version>2.1.8.RELEASE</version>
         </dependency>
-        <!-- SQLite JDBC library -->
         <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.28.0</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.10.jre7</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.gwenn</groupId>
-            <artifactId>sqlite-dialect</artifactId>
-            <version>0.1.0</version>
-        </dependency>
-<!--        <dependency>-->
+
+        <!--        <dependency>-->
 <!--            <groupId>com.ibm.icu</groupId>-->
 <!--            <artifactId>icu4j</artifactId>-->
 <!--            <version>65.1</version>-->

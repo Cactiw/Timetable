@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @Entity
-@Table
+@Table(name="users")
 @TypeDefs({
         @TypeDef(name = "string-array", typeClass = StringArrayType.class),
         @TypeDef(name = "int-array", typeClass = IntArrayType.class),
