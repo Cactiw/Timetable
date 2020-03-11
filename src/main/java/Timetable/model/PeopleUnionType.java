@@ -24,6 +24,11 @@ public class PeopleUnionType {
     @ManyToOne()
     private PeopleUnionType parent;
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public String getName() {
         return name;
     }

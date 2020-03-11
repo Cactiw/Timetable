@@ -224,7 +224,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         });
 
         //var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
-        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog().show();});
+        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog(peopleUnionTypeService).show();});
 
         addMenu.getItems().add(addUser);
         addMenu.getItems().add(addAuditorium);

@@ -1,10 +1,14 @@
 package Timetable.model.Dialogs;
 
 import Timetable.model.Pair;
+import Timetable.model.PeopleUnion;
 import Timetable.model.PeopleUnionType;
+import Timetable.service.PeopleUnionTypeService;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+
+import java.util.Optional;
 
 public class AddPeopleUnionDialog {
 
@@ -12,23 +16,18 @@ public class AddPeopleUnionDialog {
     ChoiceBox<PeopleUnionType> unionType;
     Button okButton;
 
+    PeopleUnionTypeService peopleUnionTypeService;
+
+    public AddPeopleUnionDialog(PeopleUnionTypeService peopleUnionTypeService) {
+        this.peopleUnionTypeService = peopleUnionTypeService;
+    }
+
 
     public void show() {
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/addPeopleUnion.fxml"));
-//
-//
-//        loader.setRoot(this);
-//        loader.setController(this);
-//
-//        try {
-//            loader.load();
-//        } catch (IOException e) {
-//            System.out.println("Error opening AddPeopleUnionDialog: " + e.getMessage());
-//        }
 
         // Create the custom dialog.
-        Dialog<Pair> dialog = new Dialog<>();
-        dialog.setTitle("Добавление занятия");
+        Dialog<PeopleUnion> dialog = new Dialog<>();
+        dialog.setTitle("Добавление группы");
 
         // Set the button types.
         ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -41,14 +40,26 @@ public class AddPeopleUnionDialog {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
+        unionType = new ChoiceBox<>(peopleUnionTypeService.findAll());
 
-        name = new TextField();
-        name.setPromptText("Введите предмет");
+        gridPane.add(new Label("Тип:"), 0, 0);
+        gridPane.add(unionType, 1, 0);
+//        gridPane.add(new Label("Имя:"), 0, 1);
+//        gridPane.add(firstName, 1, 1);
+//        gridPane.add(new Label("Отчество"), 0, 2);
+//        gridPane.add(surName, 1, 2);
+//        gridPane.add(new Label("Email"), 0, 3);
+//        gridPane.add(email, 1, 3);
+//        gridPane.add(new Label("Роль"), 0, 4);
+//        gridPane.add(role, 1, 4);
         //name.textProperty().addListener(this::onTextChanged);
-        unionType = new ChoiceBox<>();
         //unionType.setItems();
 
+        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
+        dialog.getDialogPane().setContent(gridPane);
+
+        Optional<PeopleUnion> peopleUnion = dialog.showAndWait();
 
     }
 }

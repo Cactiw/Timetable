@@ -3,6 +3,8 @@ package Timetable.service;
 import Timetable.model.PeopleUnion;
 import Timetable.model.PeopleUnionType;
 import Timetable.repositories.PeopleUnionTypeRepository;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,10 @@ public class PeopleUnionTypeService {
     @Autowired
     PeopleUnionTypeService(PeopleUnionTypeRepository peopleUnionTypeRepository) {
         this.peopleUnionTypeRepository = peopleUnionTypeRepository;
+    }
+
+    public ObservableList<PeopleUnionType> findAll() {
+        return FXCollections.observableArrayList(peopleUnionTypeRepository.findAll());
     }
 
     public PeopleUnionType getByName(String name) {
@@ -41,7 +47,7 @@ public class PeopleUnionTypeService {
 
     public void createListOfDefaultTypes(ArrayList<String> types) {
         PeopleUnionType previousType = checkOrCreateType(types.get(0));
-        for (var type : types) {
+        for (var type : types.subList(1, types.size())) {
             previousType = checkOrCreateType(type, previousType);
         }
     }
