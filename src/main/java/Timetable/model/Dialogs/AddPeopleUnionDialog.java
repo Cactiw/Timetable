@@ -4,6 +4,7 @@ import Timetable.model.Pair;
 import Timetable.model.PeopleUnion;
 import Timetable.model.PeopleUnionType;
 import Timetable.service.PeopleUnionTypeService;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -40,20 +41,19 @@ public class AddPeopleUnionDialog {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-        unionType = new ChoiceBox<>(peopleUnionTypeService.findAll());
+        var allPeopleUnionTypes = peopleUnionTypeService.findAll();
+        unionType = new ChoiceBox<>(allPeopleUnionTypes);
+        unionType.setValue(allPeopleUnionTypes.get(0));
 
-        gridPane.add(new Label("Тип:"), 0, 0);
-        gridPane.add(unionType, 1, 0);
-//        gridPane.add(new Label("Имя:"), 0, 1);
-//        gridPane.add(firstName, 1, 1);
-//        gridPane.add(new Label("Отчество"), 0, 2);
-//        gridPane.add(surName, 1, 2);
-//        gridPane.add(new Label("Email"), 0, 3);
-//        gridPane.add(email, 1, 3);
-//        gridPane.add(new Label("Роль"), 0, 4);
-//        gridPane.add(role, 1, 4);
-        //name.textProperty().addListener(this::onTextChanged);
-        //unionType.setItems();
+        name = new TextField();
+        name.setPromptText("Введите название");
+
+        Platform.runLater(() -> name.requestFocus());
+
+        gridPane.add(new Label("Название"), 0, 0);
+        gridPane.add(name, 1, 0);
+        gridPane.add(new Label("Тип:"), 0, 1);
+        gridPane.add(unionType, 1, 1);
 
         gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
