@@ -5,10 +5,7 @@ import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
-import Timetable.service.AuditoriumService;
-import Timetable.service.PairService;
-import Timetable.service.PeopleUnionTypeService;
-import Timetable.service.UserService;
+import Timetable.service.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -66,6 +63,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
     PairService pairService;
     @Autowired
     PeopleUnionTypeService peopleUnionTypeService;
+    @Autowired
+    PeopleUnionService peopleUnionService;
+
     @Autowired
     EntityManager entityManager;
 
@@ -224,7 +224,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         });
 
         //var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
-        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog(peopleUnionTypeService).show();});
+        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog(peopleUnionTypeService, peopleUnionService).show();});
 
         addMenu.getItems().add(addUser);
         addMenu.getItems().add(addAuditorium);
