@@ -108,8 +108,8 @@ public class AddUserDialog {
         gridPane.add(email, 1, 3);
         gridPane.add(new Label("Роль"), 0, 4);
         gridPane.add(role, 1, 4);
-        gridPane.add(groupLabel, 2, 4);
-        gridPane.add(group, 2, 5);
+        gridPane.add(groupLabel, 2, 3, 2, 2);
+        gridPane.add(group, 2, 4, 2, 2);
 
 
         gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
