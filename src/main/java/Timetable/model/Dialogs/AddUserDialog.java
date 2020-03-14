@@ -81,6 +81,7 @@ public class AddUserDialog {
                 fillGroupPopupItems(group.getText());
                 groupPopup.show(group, Side.BOTTOM, 10, 10);
             }
+            verifyAddUserDialog();
         });
         groupLabel = new Label("Группа:");
 
