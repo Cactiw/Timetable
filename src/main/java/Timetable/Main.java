@@ -80,110 +80,22 @@ public class Main extends AbstractJavaFxApplicationSupport {
         primaryStage.setTitle("Timetable");
 
         StackPane mainStack = new StackPane();
+        HBox root_pane = new HBox();
+
+        modes = new StackPane();
 
 //        System.out.println(userRepository.getOne(1).formatFIO());
 
-        TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
-        nameColumn.setMinWidth(200);
-        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        addClassesWindow();
+        addAuditoriumWindow();
 
-        TableColumn<Auditorium, Integer> maxStudentsColumn = new TableColumn<>("Мест");
-        maxStudentsColumn.setMinWidth(200);
-        maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
-
-//        TableColumn<Auditorium, Button> edit = new TableColumn<>("Ред.");
-//        edit.setMinWidth(200);
-//        edit.setCellFactory(TableCell.<Person>forTableColumn("Remove", (Person p) -> {
-//            table.getItems().remove(p);
-//            return p;
-//        }));
-
-        auditoriumTableView = new TableView<>();
-        auditoriumTableView.setItems(auditoriumService.getAuditoriums());
-        auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
-        auditoriumTableView.setPrefHeight(1000);
-        auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 1) {
-                    Auditorium auditorium = auditoriumTableView.getSelectionModel().getSelectedItem();
-                    HashMap<String, String> map = new HashMap<>();
-                    map.put("Название", auditorium.getName());
-                    map.put("Число мест", Integer.toString(auditorium.getMaxStudents()));
-                    auditoriumProperties.setItems(FXCollections.observableArrayList(
-                            map.entrySet()
-                    ));
-                } else if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
-                }
-            }
-        });
-
-        //auditoriums.getChildren().addAll(auditoriumTableView);
-
-
-
-        classes = new HBox();
-        classes.toBack();
-        //classes.setPrefSize(100000, 100000);
-        classes.getChildren().add(new Text("Занятия"));
-        classes.setStyle("-fx-background-color: white");
-
-
-        auditoriumBox = new VBox();
-
-        HBox root_pane = new HBox();
         menu = sidePane();
         root_pane.getChildren().add(menu);
         //mainStack.getChildren().add(root_pane);
 
-        modes = new StackPane();
         //modes.getChildren().add(classes);
 
-        TextField auditoriumSearch = new TextField();
-        auditoriumSearch.setPromptText("Начните вводить для поиска");
-        auditoriumSearch.setMinWidth(300);
-        auditoriumSearch.textProperty().addListener((observable, oldValue, newValue) -> {
-                System.out.println("Searching");
-                String text = auditoriumSearch.getText();
-                SortedList<Auditorium> sortedData;
-                if (text.compareTo("") == 0) {
-                    sortedData = new SortedList<>(auditoriumService.getAuditoriums());
-                } else {
-                    sortedData = new SortedList<>(auditoriumService.searchAuditoriums(auditoriumSearch.getText()));
-                }
-                sortedData.comparatorProperty().bind(auditoriumTableView.comparatorProperty());
-                auditoriumTableView.setItems(sortedData);
 
-            }
-        );
-        Label auditoriumSearchLabel = new Label("Поиск:");
-        auditoriumSearchLabel.setMinWidth(50);
-        auditoriumSearchLabel.setAlignment(Pos.CENTER);
-        HBox auditoriumSearchBox = new HBox();
-        auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
-        HBox.setHgrow(auditoriumSearchBox, Priority.ALWAYS);
-
-        auditoriumProperties =  new TableView<>();
-        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
-        auditoriumPropertiesColumn1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
-        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
-        auditoriumPropertiesColumn2.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
-        auditoriumProperties.getColumns().addAll(auditoriumPropertiesColumn1, auditoriumPropertiesColumn2);
-        auditoriumProperties.setPrefWidth(2000);
-        auditoriumProperties.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        auditoriumProperties.setPrefWidth(Region.USE_COMPUTED_SIZE);
-        auditoriumProperties.setPrefHeight(Region.USE_COMPUTED_SIZE);
-
-
-
-        HBox auditoriumInfo = new HBox();
-        auditoriumInfo.getChildren().addAll(auditoriumTableView, auditoriumProperties);
-
-        auditoriumBox.getChildren().addAll(auditoriumSearchBox, auditoriumInfo);
-        HBox.setHgrow(auditoriumInfo, Priority.ALWAYS);
-        VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
-
-        modes.getChildren().addAll(classes, auditoriumBox);
         classes.toBack();
         classes.setVisible(false);
 
@@ -267,24 +179,16 @@ public class Main extends AbstractJavaFxApplicationSupport {
         button.setPrefSize(200, 100);
         button.setGraphic(view);
         button.setText(buttonName);
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                 //to_pane.toFront();
-//                 classes.toBack();
-//                 auditoriumBox.toFront();
-//                 classes.toBack();
-//                modes.getChildren().clear();
-                for (var pane: panes) {
-                    if (pane != to_pane) {
-                        pane.toBack();
-                        pane.setVisible(false);
-                    }
+        button.setOnAction(actionEvent -> {
+            for (var pane: panes) {
+                if (pane != to_pane) {
+                    pane.toBack();
+                    pane.setVisible(false);
                 }
-                to_pane.toFront();
-                to_pane.setVisible(true);
-                //modes.getChildren().add(to_pane);
             }
+            to_pane.toFront();
+            to_pane.setVisible(true);
+            //modes.getChildren().add(to_pane);
         });
         //button.setStyle("-fx-graphic-text-gap:white");
         button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
@@ -305,6 +209,103 @@ public class Main extends AbstractJavaFxApplicationSupport {
             button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
             pane.setStyle("-fx-background-color: #212121");
         });
+    }
+
+    private void addAuditoriumWindow() {
+        auditoriumBox = new VBox();
+
+        TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
+        nameColumn.setMinWidth(200);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Auditorium, Integer> maxStudentsColumn = new TableColumn<>("Мест");
+        maxStudentsColumn.setMinWidth(200);
+        maxStudentsColumn.setCellValueFactory(new PropertyValueFactory<>("maxStudents"));
+
+//        TableColumn<Auditorium, Button> edit = new TableColumn<>("Ред.");
+//        edit.setMinWidth(200);
+//        edit.setCellFactory(TableCell.<Person>forTableColumn("Remove", (Person p) -> {
+//            table.getItems().remove(p);
+//            return p;
+//        }));
+
+        auditoriumTableView = new TableView<>();
+        auditoriumTableView.setItems(auditoriumService.getAuditoriums());
+        auditoriumTableView.getColumns().addAll(nameColumn, maxStudentsColumn);
+        auditoriumTableView.setPrefHeight(1000);
+        auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 1) {
+                    Auditorium auditorium = auditoriumTableView.getSelectionModel().getSelectedItem();
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("Название", auditorium.getName());
+                    map.put("Число мест", Integer.toString(auditorium.getMaxStudents()));
+                    auditoriumProperties.setItems(FXCollections.observableArrayList(
+                            map.entrySet()
+                    ));
+                } else if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
+                }
+            }
+        });
+
+        //auditoriums.getChildren().addAll(auditoriumTableView);
+
+        TextField auditoriumSearch = new TextField();
+        auditoriumSearch.setPromptText("Начните вводить для поиска");
+        auditoriumSearch.setMinWidth(300);
+        auditoriumSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+                    System.out.println("Searching");
+                    String text = auditoriumSearch.getText();
+                    SortedList<Auditorium> sortedData;
+                    if (text.compareTo("") == 0) {
+                        sortedData = new SortedList<>(auditoriumService.getAuditoriums());
+                    } else {
+                        sortedData = new SortedList<>(auditoriumService.searchAuditoriums(auditoriumSearch.getText()));
+                    }
+                    sortedData.comparatorProperty().bind(auditoriumTableView.comparatorProperty());
+                    auditoriumTableView.setItems(sortedData);
+
+                }
+        );
+        Label auditoriumSearchLabel = new Label("Поиск:");
+        auditoriumSearchLabel.setMinWidth(50);
+        auditoriumSearchLabel.setAlignment(Pos.CENTER);
+        HBox auditoriumSearchBox = new HBox();
+        auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
+        HBox.setHgrow(auditoriumSearchBox, Priority.ALWAYS);
+
+        auditoriumProperties =  new TableView<>();
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
+        auditoriumPropertiesColumn1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
+        auditoriumPropertiesColumn2.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
+        auditoriumProperties.getColumns().addAll(auditoriumPropertiesColumn1, auditoriumPropertiesColumn2);
+        auditoriumProperties.setPrefWidth(2000);
+        auditoriumProperties.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        auditoriumProperties.setPrefWidth(Region.USE_COMPUTED_SIZE);
+        auditoriumProperties.setPrefHeight(Region.USE_COMPUTED_SIZE);
+
+
+
+        HBox auditoriumInfo = new HBox();
+        auditoriumInfo.getChildren().addAll(auditoriumTableView, auditoriumProperties);
+
+        auditoriumBox.getChildren().addAll(auditoriumSearchBox, auditoriumInfo);
+        HBox.setHgrow(auditoriumInfo, Priority.ALWAYS);
+        VBox.setVgrow(auditoriumBox, Priority.ALWAYS);
+
+        modes.getChildren().add(auditoriumBox);
+    }
+
+    private void addClassesWindow() {
+        classes = new HBox();
+        classes.toBack();
+        //classes.setPrefSize(100000, 100000);
+        classes.getChildren().add(new Text("Занятия"));
+        classes.setStyle("-fx-background-color: white");
+
+        modes.getChildren().add(classes);
     }
 
     private void databaseInit() {
