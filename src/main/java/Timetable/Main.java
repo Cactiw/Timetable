@@ -212,6 +212,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
     }
 
     private void addAuditoriumWindow() {
+        /*
+        * Функция, создающее окно, вызывающееся по кнопке "Аудитории"
+        * */
         auditoriumBox = new VBox();
 
         TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
@@ -299,6 +302,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
     }
 
     private void addClassesWindow() {
+        /*
+        Функция, создающее окно, вызывающееся по кнопке "Занятия"
+         */
         classes = new HBox();
         classes.toBack();
         //classes.setPrefSize(100000, 100000);
