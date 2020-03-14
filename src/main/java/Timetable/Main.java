@@ -219,7 +219,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addPair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddPairDialog(userService, auditoriumService, pairService).show();
+                new AddPairDialog(userService, auditoriumService, pairService, peopleUnionService).show();
             }
         });
 

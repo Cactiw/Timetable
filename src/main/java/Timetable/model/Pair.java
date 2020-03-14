@@ -27,6 +27,9 @@ public class Pair {
     @ManyToOne
     private Auditorium auditorium;
 
+    @ManyToOne
+    private PeopleUnion group;
+
     @Column
     private LocalDateTime beginTime;
 
@@ -74,6 +77,14 @@ public class Pair {
 
     public void setAuditorium(Auditorium auditorium) {
         this.auditorium = auditorium;
+    }
+
+    public PeopleUnion getGroup() {
+        return group;
+    }
+
+    public void setGroup(PeopleUnion group) {
+        this.group = group;
     }
 
     public Pair getPairToChange() {

@@ -2,9 +2,11 @@ package Timetable.model.Dialogs;
 
 import Timetable.model.Auditorium;
 import Timetable.model.Pair;
+import Timetable.model.PeopleUnion;
 import Timetable.model.User;
 import Timetable.service.AuditoriumService;
 import Timetable.service.PairService;
+import Timetable.service.PeopleUnionService;
 import Timetable.service.UserService;
 import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
@@ -39,17 +41,18 @@ import java.util.Optional;
 
 
 public class AddPairDialog {
-    TextField subject, teacher, auditorium;
+    TextField subject, teacher, auditorium, group;
     List<TextField> emptyList;
     List<ComboBoxBase> notNullList;
     Button okButton;
     Text conflicts, suggestions;
     TextFlow conflictsCheck;
 
-    ContextMenu auditoriumPopup, teacherPopup;
+    ContextMenu auditoriumPopup, teacherPopup, groupPopup;
     TextField currentParentField;
     Auditorium auditoriumEntity;
     User teacherEntity;
+    PeopleUnion groupEntity;
     JFXDatePicker beginDate;
     JFXTimePicker beginTime, endTime;
 
@@ -62,11 +65,14 @@ public class AddPairDialog {
     private final UserService userService;
     private final AuditoriumService auditoriumService;
     private final PairService pairService;
+    private final PeopleUnionService peopleUnionService;
 
-    public AddPairDialog(UserService userService, AuditoriumService auditoriumService, PairService pairService) {
+    public AddPairDialog(UserService userService, AuditoriumService auditoriumService, PairService pairService,
+                         PeopleUnionService peopleUnionService) {
         this.userService = userService;
         this.auditoriumService = auditoriumService;
         this.pairService = pairService;
+        this.peopleUnionService = peopleUnionService;
     }
 
 
@@ -95,73 +101,87 @@ public class AddPairDialog {
         subject.textProperty().addListener(this::onTextChanged);
         teacher = new TextField();
         teacher.setPromptText("ФИО преподавателя");
-        teacher.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                teacherEntity = null;
-                SortedList<User> users;
-                if (observableValue.getValue().compareTo("") == 0) {
-                    teacherPopup.hide();
-                } else {
-                    users = new SortedList<>(userService.searchUserByName(observableValue.getValue(), 1));
-                    teacherPopup.getItems().clear();
-                    for (var x : users) {
-                        teacherPopup.getItems().add(new MenuItem(x.formatFIO()));
-                    }
+        teacher.textProperty().addListener((observableValue, s, t1) -> {
+            teacherEntity = null;
+            SortedList<User> users;
+            if (observableValue.getValue().compareTo("") == 0) {
+                teacherPopup.hide();
+            } else {
+                users = new SortedList<>(userService.searchUserByName(observableValue.getValue(), 1));
+                teacherPopup.getItems().clear();
+                for (var x : users) {
+                    teacherPopup.getItems().add(new MenuItem(x.formatFIO()));
                 }
-                teacherPopup.show(teacher, Side.BOTTOM, 0, 0);
-                verifyAddUserDialog();
             }
+            teacherPopup.show(teacher, Side.BOTTOM, 0, 0);
+            verifyAddUserDialog();
         });
         auditorium = new TextField();
         auditorium.setPromptText("Введите аудиторию");
-        auditorium.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                auditoriumEntity = null;
-                SortedList<Auditorium> auditoriums;
-                if (observableValue.getValue().compareTo("") == 0) {
-                    auditoriumPopup.hide();
-                    //auditoriums = new SortedList<>(Auditorium.getAuditoriums());
-                } else {
-                    auditoriums = new SortedList<>(auditoriumService.searchAuditoriums(observableValue.getValue()));
+        auditorium.textProperty().addListener((observableValue, s, t1) -> {
+            auditoriumEntity = null;
+            SortedList<Auditorium> auditoriums;
+            if (observableValue.getValue().compareTo("") == 0) {
+                auditoriumPopup.hide();
+                //auditoriums = new SortedList<>(Auditorium.getAuditoriums());
+            } else {
+                auditoriums = new SortedList<>(auditoriumService.searchAuditoriums(observableValue.getValue()));
 
-                    ArrayList<String> auditoriumNames = new ArrayList<>();
-                    auditoriumPopup.getItems().clear();
-                    for (var x : auditoriums) {
-                        auditoriumNames.add(x.getName());
-                        auditoriumPopup.getItems().add(new MenuItem(x.getName()));
-                    }
-                    auditoriumPopup.show(auditorium, Side.BOTTOM, 0, 0);
+                ArrayList<String> auditoriumNames = new ArrayList<>();
+                auditoriumPopup.getItems().clear();
+                for (var x : auditoriums) {
+                    auditoriumNames.add(x.getName());
+                    auditoriumPopup.getItems().add(new MenuItem(x.getName()));
                 }
-                verifyAddUserDialog();
+                auditoriumPopup.show(auditorium, Side.BOTTOM, 0, 0);
             }
+            verifyAddUserDialog();
+        });
+        group = new TextField();
+        group.setPromptText("Введите название группы");
+        group.textProperty().addListener(e -> {
+            groupEntity = null;
+            if (group.getText().equals("")) {
+                groupPopup.hide();
+            } else {
+                fillGroupPopupItems(group.getText());
+                groupPopup.show(group, Side.BOTTOM, 10, 10);
+            }
+            verifyAddUserDialog();
         });
 
+        Label groupLabel = new Label("Группа:");
+
+        groupPopup = new ContextMenu();
+        groupPopup.setOnAction(e -> {
+            var text = ((MenuItem)e.getTarget()).getText();
+            group.setText(text);
+            groupEntity = peopleUnionService.getByName(text);
+            Platform.runLater(() -> group.positionCaret(group.getText().length()));
+            groupPopup.hide();
+            verifyAddUserDialog();
+        });
+        fillGroupPopupItems(group.getText());
+
+
         auditoriumPopup = new ContextMenu();
-        auditoriumPopup.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                MenuItem src = (MenuItem) actionEvent.getTarget();
-                String text = src.getText();
-                auditorium.setText(text);
-                auditoriumEntity = auditoriumService.getAuditoriumByName(text);
-                Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
-                verifyAddUserDialog();
-            }
+        auditoriumPopup.setOnAction(actionEvent -> {
+            MenuItem src = (MenuItem) actionEvent.getTarget();
+            String text = src.getText();
+            auditorium.setText(text);
+            auditoriumEntity = auditoriumService.getAuditoriumByName(text);
+            Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
+            verifyAddUserDialog();
         });
 
         teacherPopup = new ContextMenu();
-        teacherPopup.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                MenuItem src = (MenuItem) actionEvent.getTarget();
-                String text = src.getText();
-                teacher.setText(text);
-                teacherEntity = userService.searchUserByName(text, 1).get(0);
-                Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
-                verifyAddUserDialog();
-            }
+        teacherPopup.setOnAction(actionEvent -> {
+            MenuItem src = (MenuItem) actionEvent.getTarget();
+            String text = src.getText();
+            teacher.setText(text);
+            teacherEntity = userService.searchUserByName(text, 1).get(0);
+            Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
+            verifyAddUserDialog();
         });
 
         endTime = new JFXTimePicker();
@@ -201,14 +221,16 @@ public class AddPairDialog {
 
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
-        gridPane.add(new Label("Дата занятия:"), 0, 3);
-        gridPane.add(beginDate, 1, 3);
-        gridPane.add(new Label("Начало занятия:"), 0, 4);
-        gridPane.add(beginTime, 1, 4);
-        gridPane.add(new Label("Окончание занятия:"), 0, 5);
-        gridPane.add(endTime, 1, 5);
-        gridPane.add(new Label("Периодичность:"), 0, 6);
-        gridPane.add(repeatability, 1, 6);
+        gridPane.add(groupLabel, 0, 3);
+        gridPane.add(group, 1, 3);
+        gridPane.add(new Label("Дата занятия:"), 0, 4);
+        gridPane.add(beginDate, 1, 4);
+        gridPane.add(new Label("Начало занятия:"), 0, 5);
+        gridPane.add(beginTime, 1, 5);
+        gridPane.add(new Label("Окончание занятия:"), 0, 6);
+        gridPane.add(endTime, 1, 6);
+        gridPane.add(new Label("Периодичность:"), 0, 7);
+        gridPane.add(repeatability, 1, 7);
 
         conflicts = new Text("");
         suggestions = new Text("\n");
@@ -229,7 +251,7 @@ public class AddPairDialog {
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
-        emptyList = Arrays.asList(subject, teacher, auditorium);
+        emptyList = Arrays.asList(subject, teacher, auditorium, group);
         notNullList = Arrays.asList(beginDate, beginTime, endTime);
 
         dialog.getDialogPane().setContent(gridPane);
@@ -244,6 +266,7 @@ public class AddPairDialog {
                 Pair pair = new Pair();
                 pair.setAuditorium(auditoriumEntity);
                 pair.setTeacher(teacherEntity);
+                pair.setGroup(groupEntity);
                 pair.setSubject(subject.getText());
                 pair.setBeginTime(getBeginTime());
                 pair.setEndTime(getEndTime());
@@ -310,6 +333,10 @@ public class AddPairDialog {
         if (teacherEntity == null) {
             correct = false;
             red(teacher, true);
+        }
+        if (groupEntity == null) {
+            correct = false;
+            red(group, true);
         }
         for (var x : notNullList) {
             boolean bool = x.valueProperty().isNull().get();
@@ -396,6 +423,19 @@ public class AddPairDialog {
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }
+    }
+
+    private void fillGroupPopupItems(String name) {
+        ObservableList<PeopleUnion> peopleUnions;
+        if (!name.equals("")) {
+            peopleUnions = peopleUnionService.searchPeopleUnions(name);
+        } else {
+            peopleUnions = peopleUnionService.findAll();
+        }
+        groupPopup.getItems().clear();
+        peopleUnions.forEach(peopleUnion -> {
+            groupPopup.getItems().add(new MenuItem(peopleUnion.toString()));
+        });
     }
 
 
