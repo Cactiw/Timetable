@@ -28,6 +28,14 @@ public class PeopleUnionService {
         return FXCollections.observableArrayList(peopleUnionRepository.findAllByTypeEquals(peopleUnionType));
     }
 
+    public ObservableList<PeopleUnion> searchPeopleUnions(String name) {
+        return FXCollections.observableArrayList(peopleUnionRepository.findByNameIgnoreCaseContaining(name));
+    }
+
+    public PeopleUnion getByName(String name) {
+        return peopleUnionRepository.getByNameEquals(name);
+    }
+
     public PeopleUnion save(PeopleUnion peopleUnion) {
         return peopleUnionRepository.save(peopleUnion);
     }

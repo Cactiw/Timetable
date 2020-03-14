@@ -32,7 +32,7 @@ public class PeopleUnion {
     @OneToMany(mappedBy = "parent")
     List<PeopleUnion> unions = new ArrayList<PeopleUnion>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "group")
     private List<User> users;
 
     public Integer getId() {

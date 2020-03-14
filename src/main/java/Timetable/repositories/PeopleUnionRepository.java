@@ -11,5 +11,6 @@ import java.util.List;
 public interface PeopleUnionRepository extends JpaRepository<PeopleUnion, Integer> {
     public List<PeopleUnion> findAll();
     public List<PeopleUnion> findAllByTypeEquals(PeopleUnionType type);
-
+    public PeopleUnion getByNameEquals(String name);
+    public List<PeopleUnion> findByNameIgnoreCaseContaining(String name);
 }

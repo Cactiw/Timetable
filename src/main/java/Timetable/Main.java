@@ -206,7 +206,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addUser.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddUserDialog(userService).show();
+                new AddUserDialog(userService, peopleUnionService).show();
             }
         });
         addAuditorium.setOnAction(new EventHandler<ActionEvent>() {

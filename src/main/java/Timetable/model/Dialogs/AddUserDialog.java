@@ -1,12 +1,16 @@
 package Timetable.model.Dialogs;
 
+import Timetable.model.PeopleUnion;
 import Timetable.model.User;
+import Timetable.service.PeopleUnionService;
 import Timetable.service.UserService;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -15,15 +19,20 @@ import java.util.List;
 import java.util.Optional;
 
 public class AddUserDialog {
-    TextField firstName, lastName, surName, email;
+    TextField firstName, lastName, surName, email, group;
     List<TextField> emptyList;
     ChoiceBox<String> role;
     Button okButton;
+    Label groupLabel;
+    ContextMenu groupPopup;
+    PeopleUnion selectedGroup;
 
     UserService userService;
+    PeopleUnionService peopleUnionService;
 
-    public AddUserDialog(UserService userService) {
+    public AddUserDialog(UserService userService, PeopleUnionService peopleUnionService) {
         this.userService = userService;
+        this.peopleUnionService = peopleUnionService;
     }
 
     public void show() {
@@ -59,8 +68,33 @@ public class AddUserDialog {
         email.textProperty().addListener(this::onTextChanged);
         role = new ChoiceBox<String>();
         role.setItems(FXCollections.observableArrayList("Преподаватель", "Студент"));
-        role.setValue("Преподаватель");
+        role.setValue("Студент");
         role.valueProperty().addListener(this::onTextChanged);
+
+        group = new TextField();
+        group.setPromptText("Введите группу");
+        group.textProperty().addListener(e -> {
+            selectedGroup = null;
+            if (group.getText().equals("")) {
+                groupPopup.hide();
+            } else {
+                fillGroupPopupItems(group.getText());
+                groupPopup.show(group, Side.BOTTOM, 10, 10);
+            }
+        });
+        groupLabel = new Label("Группа:");
+
+        groupPopup = new ContextMenu();
+        groupPopup.setOnAction(e -> {
+            var text = ((MenuItem)e.getTarget()).getText();
+            group.setText(text);
+            selectedGroup = peopleUnionService.getByName(text);
+            Platform.runLater(() -> group.positionCaret(group.getText().length()));
+            groupPopup.hide();
+            verifyAddUserDialog();
+        });
+        fillGroupPopupItems(group.getText());
+
 
         emptyList = Arrays.asList(firstName, lastName, surName, email);
 
@@ -74,6 +108,8 @@ public class AddUserDialog {
         gridPane.add(email, 1, 3);
         gridPane.add(new Label("Роль"), 0, 4);
         gridPane.add(role, 1, 4);
+        gridPane.add(groupLabel, 2, 4);
+        gridPane.add(group, 2, 5);
 
 
         gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
@@ -93,6 +129,9 @@ public class AddUserDialog {
                 user.setSurName(surName.getText());
                 user.setEmail(email.getText());
                 user.setRole(role.getSelectionModel().getSelectedIndex() + 1);
+                if (selectedGroup != null) {
+                    user.setGroup(selectedGroup);
+                }
                 userService.save(user);
                 return user;
             }
@@ -128,9 +167,24 @@ public class AddUserDialog {
         if (bool) {
             correct = false;
         }
-        if (role.valueProperty().getValue() == "") {
+        if (role.valueProperty().getValue().equals("")) {
             correct = false;
         }
+
+        if (!role.valueProperty().getValue().equals("Студент")) {
+            group.setVisible(false);
+            groupLabel.setVisible(false);
+        } else {
+            group.setVisible(true);
+            groupLabel.setVisible(true);
+            if (selectedGroup == null) {
+                correct = false;
+                group.getStyleClass().add("error");
+            } else {
+                group.getStyleClass().removeAll("error");
+            }
+        }
+
         okButton.setDisable(!correct);
         //role.valueProperty().getValue()
     }
@@ -155,5 +209,18 @@ public class AddUserDialog {
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }
+    }
+
+    private void fillGroupPopupItems(String name) {
+        ObservableList<PeopleUnion> peopleUnions;
+        if (!name.equals("")) {
+            peopleUnions = peopleUnionService.searchPeopleUnions(name);
+        } else {
+            peopleUnions = peopleUnionService.findAll();
+        }
+        groupPopup.getItems().clear();
+        peopleUnions.forEach(peopleUnion -> {
+            groupPopup.getItems().add(new MenuItem(peopleUnion.toString()));
+        });
     }
 }

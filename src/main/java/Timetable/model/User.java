@@ -51,6 +51,9 @@ public class User {
     @Column
     private String email;
 
+    @ManyToOne
+    private PeopleUnion group;
+
     @Type( type = "json" )
     @Column( columnDefinition = "json" )
     private Map<String, Integer> settings;
@@ -123,6 +126,14 @@ public class User {
 
     public void setAdditional(Map<String, Integer> additional) {
         this.additional = additional;
+    }
+
+    public PeopleUnion getGroup() {
+        return group;
+    }
+
+    public void setGroup(PeopleUnion group) {
+        this.group = group;
     }
 
     public String formatFIO() {
