@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -47,6 +48,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
     VBox mainBox, menu, auditoriumBox;
     
     StackPane modes;
+    GridPane classesPane;
 
     TableView<Auditorium> auditoriumTableView;
     TableView<HashMap.Entry<String, String>> auditoriumProperties;
@@ -310,6 +312,16 @@ public class Main extends AbstractJavaFxApplicationSupport {
         //classes.setPrefSize(100000, 100000);
         classes.getChildren().add(new Text("Занятия"));
         classes.setStyle("-fx-background-color: white");
+
+        classesPane = new GridPane();
+        classesPane.setHgap(10);
+        classesPane.setVgap(10);
+        classesPane.setPadding(new Insets(20, 150, 10, 10));
+
+        classesPane.add(new Label("Группа"), 0, 0);
+        classesPane.add(new Label("Занятие"), 1, 0);
+
+        classes.getChildren().add(classesPane);
 
         modes.getChildren().add(classes);
     }
