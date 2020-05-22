@@ -30,7 +30,7 @@ public class UserService {
 
 
     public ObservableList<User> searchUserByName(String text, Integer role) {
-        var words = text.split(" ");
+        var words = text.toLowerCase().split(" ");
         StringBuilder QUERY = new StringBuilder("FROM User WHERE role = ").append(role).append(" AND ");
 
         for (int i = 0; i < words.length; ++i) {
