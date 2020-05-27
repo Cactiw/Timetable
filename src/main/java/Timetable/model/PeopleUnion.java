@@ -5,9 +5,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Component
@@ -59,10 +57,10 @@ public class PeopleUnion {
 
     public void setParent(PeopleUnion parent) {
         this.parent = parent;
-        parent.getUnions().add(this);
+        parent.getChildrenUnions().add(this);
     }
 
-    public List<PeopleUnion> getUnions() {
+    public List<PeopleUnion> getChildrenUnions() {
         return unions;
     }
 

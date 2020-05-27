@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import Timetable.repositories.UserRepository;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.persistence.EntityManager;
 import java.util.*;
@@ -318,23 +317,23 @@ public class Main extends AbstractJavaFxApplicationSupport {
 //        classesPane.setHgap(10);
         classesPane.setVgap(10);
         classesPane.setPadding(new Insets(20, 150, 10, 0));
-
-        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
-                Priority.SOMETIMES, HPos.CENTER, true));
-        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
-                Priority.SOMETIMES, HPos.CENTER, true));
-        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
-                Priority.SOMETIMES, HPos.CENTER, true));
         classesPane.setGridLinesVisible(true);
 
-        var groupLabel = new Label("Группа");
-//        GridPane.setHalignment(groupLabel, HPos.RIGHT);  // Выравнивание отдельной Label
-        var classesLabel = new Label("Занятие");
-        classesPane.add(groupLabel, 0, 0);
-        classesPane.add(classesLabel, 1, 0);
-        classesPane.add(new Label("Аудитория"), 2, 0);
+        int mode = 0;
 
-        classes.getChildren().add(classesPane);
+        if (mode == 0) {
+            var fatherPeopleUnion = peopleUnionService.getByName("1 поток");
+            var groups = fatherPeopleUnion.getChildrenUnions();
+            var groupsCount = groups.size();
+            for (int i = 0; i < groupsCount; ++i) {
+                classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
+                        Priority.SOMETIMES, HPos.CENTER, true));
+                classesPane.add(new Label(groups.get(i).toString()), i, 0);
+            }
+
+
+            classes.getChildren().add(classesPane);
+        }
 
         modes.getChildren().add(classes);
     }
