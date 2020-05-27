@@ -11,6 +11,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -314,12 +315,24 @@ public class Main extends AbstractJavaFxApplicationSupport {
         classes.setStyle("-fx-background-color: white");
 
         classesPane = new GridPane();
-        classesPane.setHgap(10);
+//        classesPane.setHgap(10);
         classesPane.setVgap(10);
-        classesPane.setPadding(new Insets(20, 150, 10, 10));
+        classesPane.setPadding(new Insets(20, 150, 10, 0));
 
-        classesPane.add(new Label("Группа"), 0, 0);
-        classesPane.add(new Label("Занятие"), 1, 0);
+        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
+                Priority.SOMETIMES, HPos.CENTER, true));
+        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
+                Priority.SOMETIMES, HPos.CENTER, true));
+        classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
+                Priority.SOMETIMES, HPos.CENTER, true));
+        classesPane.setGridLinesVisible(true);
+
+        var groupLabel = new Label("Группа");
+//        GridPane.setHalignment(groupLabel, HPos.RIGHT);  // Выравнивание отдельной Label
+        var classesLabel = new Label("Занятие");
+        classesPane.add(groupLabel, 0, 0);
+        classesPane.add(classesLabel, 1, 0);
+        classesPane.add(new Label("Аудитория"), 2, 0);
 
         classes.getChildren().add(classesPane);
 
