@@ -5,9 +5,11 @@ import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
+import Timetable.model.Pair;
 import Timetable.service.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -33,7 +35,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import Timetable.repositories.UserRepository;
 
 import javax.persistence.EntityManager;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Lazy
@@ -46,7 +50,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
     Stage mainStage;
     HBox classes;
     VBox mainBox, menu, auditoriumBox;
-    
+
     StackPane modes;
     GridPane classesPane;
 
@@ -75,7 +79,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         databaseInit();
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         mainStage = primaryStage;
@@ -138,7 +142,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
         });
 
         //var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
-        addPeopleUnion.setOnAction((e) -> {new AddPeopleUnionDialog(peopleUnionTypeService, peopleUnionService).show();});
+        addPeopleUnion.setOnAction((e) -> {
+            new AddPeopleUnionDialog(peopleUnionTypeService, peopleUnionService).show();
+        });
 
         addMenu.getItems().add(addUser);
         addMenu.getItems().add(addAuditorium);
@@ -158,7 +164,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
         primaryStage.getIcons().add(new Image("icon.png"));
         primaryStage.show();
     }
-
 
 
     private VBox sidePane() {
@@ -182,7 +187,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         button.setGraphic(view);
         button.setText(buttonName);
         button.setOnAction(actionEvent -> {
-            for (var pane: panes) {
+            for (var pane : panes) {
                 if (pane != to_pane) {
                     pane.toBack();
                     pane.setVisible(false);
@@ -215,8 +220,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     private void addAuditoriumWindow() {
         /*
-        * Функция, создающее окно, вызывающееся по кнопке "Аудитории"
-        * */
+         * Функция, создающее окно, вызывающееся по кнопке "Аудитории"
+         * */
         auditoriumBox = new VBox();
 
         TableColumn<Auditorium, String> nameColumn = new TableColumn<>("Название");
@@ -241,7 +246,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         auditoriumTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 1) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
                     Auditorium auditorium = auditoriumTableView.getSelectionModel().getSelectedItem();
                     HashMap<String, String> map = new HashMap<>();
                     map.put("Название", auditorium.getName());
@@ -249,7 +254,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                     auditoriumProperties.setItems(FXCollections.observableArrayList(
                             map.entrySet()
                     ));
-                } else if (mouseEvent.getButton().equals(MouseButton.PRIMARY)  && mouseEvent.getClickCount() == 2) {
+                } else if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 }
             }
         });
@@ -280,7 +285,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         auditoriumSearchBox.getChildren().addAll(auditoriumSearchLabel, auditoriumSearch);
         HBox.setHgrow(auditoriumSearchBox, Priority.ALWAYS);
 
-        auditoriumProperties =  new TableView<>();
+        auditoriumProperties = new TableView<>();
         TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
         auditoriumPropertiesColumn1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
         TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
@@ -290,7 +295,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
         auditoriumProperties.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         auditoriumProperties.setPrefWidth(Region.USE_COMPUTED_SIZE);
         auditoriumProperties.setPrefHeight(Region.USE_COMPUTED_SIZE);
-
 
 
         HBox auditoriumInfo = new HBox();
@@ -315,20 +319,62 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         classesPane = new GridPane();
 //        classesPane.setHgap(10);
-        classesPane.setVgap(10);
+//        classesPane.setVgap(10);
         classesPane.setPadding(new Insets(20, 150, 10, 0));
         classesPane.setGridLinesVisible(true);
+        classesPane.setAlignment(Pos.CENTER);
 
         int mode = 0;
+        var days = Arrays.asList("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье");
+
+        String pairTimePattern = "HH.mm";
+        DateTimeFormatter pairTimeFormatter = DateTimeFormatter.ofPattern(pairTimePattern);
 
         if (mode == 0) {
             var fatherPeopleUnion = peopleUnionService.getByName("1 поток");
             var groups = fatherPeopleUnion.getChildrenUnions();
             var groupsCount = groups.size();
+
+            classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
+                    Priority.SOMETIMES, HPos.CENTER, true));
+            classesPane.add(new Label(" "), 0, 0);
+
             for (int i = 0; i < groupsCount; ++i) {
                 classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
                         Priority.SOMETIMES, HPos.CENTER, true));
-                classesPane.add(new Label(groups.get(i).toString()), i, 0);
+                classesPane.add(new Label(groups.get(i).toString()), i + 1, 0);
+
+                int currentRow = 1;
+                ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekByPeopleUnionDividedByDays(fatherPeopleUnion);
+
+                for (int dayIndex = 0; dayIndex < week.size(); ++dayIndex) {
+                    if (i == 0) {
+                        // Пишем имя дня
+                        classesPane.add(new Label(days.get(dayIndex)), 0, currentRow);
+                    }
+                    ObservableList<Pair> todayPairs = week.get(dayIndex);
+                    System.out.println(days.get(dayIndex) + " " + todayPairs.size() + ", row: " + currentRow);
+                    for (int pairIndex = 0; pairIndex < todayPairs.size(); ++pairIndex) {
+                        Pair pair = todayPairs.get(pairIndex);
+                        currentRow += 1;
+
+                        classesPane.add(new Label(
+                                pair.getSubject() + "\n" + pair.getTeacher().formatFIO() + "\n" +
+                                        pair.getAuditorium().getName()),
+                                i + 1, currentRow);
+
+                        if (i == 0) {
+                            // Пишем время пары
+                            classesPane.add(new Label(
+                                            pair.getBeginTime().format(pairTimeFormatter) + " - " +
+                                                    pair.getEndTime().format(pairTimeFormatter)),
+                                    0, currentRow);
+                        }
+
+                    }
+                    currentRow += 2;
+                    classesPane.add(new Label(" "), 0, currentRow - 1);
+                }
             }
 
 
@@ -344,5 +390,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
 
     public static void main(String[] args) {
-        AbstractJavaFxApplicationSupport.launchApp(Main.class, args);}
+        AbstractJavaFxApplicationSupport.launchApp(Main.class, args);
+    }
 }
