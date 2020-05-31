@@ -2,6 +2,7 @@ package Timetable.repositories;
 
 import Timetable.model.Auditorium;
 import Timetable.model.Pair;
+import Timetable.model.PeopleUnion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,5 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
 
     List<Pair> getAllByRepeatabilityGreaterThan(int repeatability);
     List<Pair> getAllByRepeatabilityGreaterThanAndTeacherIdEquals(int repeatability, int teacherId);
+    List<Pair> getAllByGroupEquals(PeopleUnion peopleUnion);
 }
