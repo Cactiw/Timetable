@@ -1,0 +1,18 @@
+
+.classes-grid {
+    -fx-background-color: white ;
+    -fx-padding: 10 ;
+}
+.classes-grid-cell {
+    -fx-background-color: black, white ;
+    -fx-background-insets: 0, 0 1 1 0 ;
+}
+.classes-grid-cell.first-row {
+    -fx-background-insets: 0, 1 1 1 0 ;
+}
+.classes-grid-cell.first-column {
+    -fx-background-insets: 0, 0 1 1 1 ;
+}
+.classes-grid-cell.first-row.first-column {
+    -fx-background-insets: 0, 1 ;
+}
