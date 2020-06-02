@@ -16,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -25,7 +26,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -38,6 +41,8 @@ import javax.persistence.EntityManager;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static javafx.scene.control.PopupControl.USE_COMPUTED_SIZE;
 
 
 @Lazy
@@ -71,6 +76,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
     PeopleUnionTypeService peopleUnionTypeService;
     @Autowired
     PeopleUnionService peopleUnionService;
+    
+    @Autowired
+    GridPaneService gridPaneService;
 
     @Autowired
     EntityManager entityManager;
@@ -319,11 +327,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
         classes.setStyle("-fx-background-color: white");
 
         classesPane = new GridPane();
-//        classesPane.setHgap(10);
-//        classesPane.setVgap(10);
-        classesPane.setPadding(new Insets(20, 150, 10, 0));
-        classesPane.setGridLinesVisible(true);
-        classesPane.setAlignment(Pos.CENTER);
+
+        classesPane.getStyleClass().add("classes-grid");
+//        classesPane.setHgap(0.3);
+//        classesPane.setVgap(0.3);
+//        classesPane.setPadding(new Insets(1, 1, 1, 1));
+//        classesPane.setPadding(new Insets(20, 150, 10, 0));
+//        classesPane.setGridLinesVisible(true);
+//        classesPane.setAlignment(Pos.CENTER);
 
         int mode = 0;
         var days = Arrays.asList("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье");
@@ -336,14 +347,17 @@ public class Main extends AbstractJavaFxApplicationSupport {
             var groups = fatherPeopleUnion.getChildrenUnions();
             var groupsCount = groups.size();
 
-            classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
-                    Priority.SOMETIMES, HPos.CENTER, true));
-            classesPane.add(new Label(" "), 0, 0);
+            classesPane.getColumnConstraints().add(new ColumnConstraints(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE,
+                    USE_COMPUTED_SIZE, Priority.SOMETIMES, HPos.CENTER, true));
+//            classesPane.getRowConstraints().add(new RowConstraints(25, 25, 150,
+//                    Priority.NEVER, VPos.CENTER, true));
+           
+            GridPaneService.addToGridPane(classesPane, new Label(" "), 0, 0);
 
             for (int i = 0; i < groupsCount; ++i) {
-                classesPane.getColumnConstraints().add(new ColumnConstraints(100, 100, 10000,
-                        Priority.SOMETIMES, HPos.CENTER, true));
-                classesPane.add(new Label(groups.get(i).toString()), i + 1, 0);
+                classesPane.getColumnConstraints().add(new ColumnConstraints(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE,
+                        USE_COMPUTED_SIZE, Priority.SOMETIMES, HPos.CENTER, true));
+                GridPaneService.addToGridPane(classesPane, new Label(groups.get(i).toString()), i + 1, 0);
 
                 int currentRow = 1;
                 ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekByPeopleUnionDividedByDays(fatherPeopleUnion);
@@ -351,7 +365,10 @@ public class Main extends AbstractJavaFxApplicationSupport {
                 for (int dayIndex = 0; dayIndex < week.size(); ++dayIndex) {
                     if (i == 0) {
                         // Пишем имя дня
-                        classesPane.add(new Label(days.get(dayIndex)), 0, currentRow);
+                        GridPaneService.addToGridPane(classesPane, new Label(days.get(dayIndex)), 0, currentRow);
+
+//                        classesPane.getRowConstraints().add(new RowConstraints(50, 50, 10000,
+//                                Priority.SOMETIMES, VPos.CENTER, true));
                     }
                     ObservableList<Pair> todayPairs = week.get(dayIndex);
                     System.out.println(days.get(dayIndex) + " " + todayPairs.size() + ", row: " + currentRow);
@@ -359,14 +376,15 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         Pair pair = todayPairs.get(pairIndex);
                         currentRow += 1;
 
-                        classesPane.add(new Label(
+                        Label pairLabel = new Label(
                                 pair.getSubject() + "\n" + pair.getTeacher().formatFIO() + "\n" +
-                                        pair.getAuditorium().getName()),
-                                i + 1, currentRow);
+                                        pair.getAuditorium().getName());
+                        pairLabel.setTextAlignment(TextAlignment.CENTER);
+                        GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow);
 
                         if (i == 0) {
                             // Пишем время пары
-                            classesPane.add(new Label(
+                            GridPaneService.addToGridPane(classesPane, new Label(
                                             pair.getBeginTime().format(pairTimeFormatter) + " - " +
                                                     pair.getEndTime().format(pairTimeFormatter)),
                                     0, currentRow);
@@ -374,7 +392,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
                     }
                     currentRow += 2;
-                    classesPane.add(new Label(" "), 0, currentRow - 1);
+                    GridPaneService.addToGridPane(classesPane, new Label(" "), 0, currentRow - 1);
                 }
             }
 
