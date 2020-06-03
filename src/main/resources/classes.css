@@ -16,3 +16,13 @@
 .classes-grid-cell.first-row.first-column {
     -fx-background-insets: 0, 1 ;
 }
+
+.classes-grid-cell.no-right-border {
+    -fx-background-insets: 0, 1 0 1 1 ;
+}
+.classes-grid-cell.no-left-border {
+    -fx-background-insets: 0, 1 1 1 0 ;
+}
+.classes-grid-cell.no-right-border.no-left-border {
+    -fx-background-insets: 0, 1 0 1 0 ;
+}
