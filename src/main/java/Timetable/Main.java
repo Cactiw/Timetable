@@ -6,6 +6,8 @@ import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
 import Timetable.model.Pair;
+import Timetable.model.PeopleUnion;
+import Timetable.model.Properties.BorderProperties;
 import Timetable.service.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
@@ -28,7 +30,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -323,7 +324,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         classes = new HBox();
         classes.toBack();
         //classes.setPrefSize(100000, 100000);
-        classes.getChildren().add(new Text("Занятия"));
+//        classes.getChildren().add(new Text("Занятия"));
         classes.setStyle("-fx-background-color: white");
 
         classesPane = new GridPane();
@@ -347,40 +348,53 @@ public class Main extends AbstractJavaFxApplicationSupport {
             var groups = fatherPeopleUnion.getChildrenUnions();
             var groupsCount = groups.size();
 
-            classesPane.getColumnConstraints().add(new ColumnConstraints(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE,
-                    USE_COMPUTED_SIZE, Priority.SOMETIMES, HPos.CENTER, true));
+            ColumnConstraints columnConstraints = new ColumnConstraints();
+            columnConstraints.setHgrow(Priority.ALWAYS);
+            classesPane.getColumnConstraints().add(columnConstraints);
 //            classesPane.getRowConstraints().add(new RowConstraints(25, 25, 150,
 //                    Priority.NEVER, VPos.CENTER, true));
            
             GridPaneService.addToGridPane(classesPane, new Label(" "), 0, 0);
 
             for (int i = 0; i < groupsCount; ++i) {
-                classesPane.getColumnConstraints().add(new ColumnConstraints(USE_COMPUTED_SIZE, USE_COMPUTED_SIZE,
-                        USE_COMPUTED_SIZE, Priority.SOMETIMES, HPos.CENTER, true));
+                PeopleUnion group = groups.get(i);
+                columnConstraints = new ColumnConstraints();
+                columnConstraints.setHgrow(Priority.ALWAYS);
+                classesPane.getColumnConstraints().add(columnConstraints);
                 GridPaneService.addToGridPane(classesPane, new Label(groups.get(i).toString()), i + 1, 0);
 
                 int currentRow = 1;
-                ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekByPeopleUnionDividedByDays(fatherPeopleUnion);
+                ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekByPeopleUnionDividedByDays(group);
+                ArrayList<Integer> filledLines = new ArrayList<>();
 
                 for (int dayIndex = 0; dayIndex < week.size(); ++dayIndex) {
                     if (i == 0) {
                         // Пишем имя дня
                         GridPaneService.addToGridPane(classesPane, new Label(days.get(dayIndex)), 0, currentRow);
-
-//                        classesPane.getRowConstraints().add(new RowConstraints(50, 50, 10000,
-//                                Priority.SOMETIMES, VPos.CENTER, true));
+                        GridPaneService.addToGridPane(classesPane, new Label(""), 0, currentRow - 1);
                     }
+
+                    currentRow += 1;
                     ObservableList<Pair> todayPairs = week.get(dayIndex);
                     System.out.println(days.get(dayIndex) + " " + todayPairs.size() + ", row: " + currentRow);
                     for (int pairIndex = 0; pairIndex < todayPairs.size(); ++pairIndex) {
                         Pair pair = todayPairs.get(pairIndex);
-                        currentRow += 1;
 
                         Label pairLabel = new Label(
-                                pair.getSubject() + "\n" + pair.getTeacher().formatFIO() + "\n" +
+                                pair.getSubject() + "\n" + pair.getTeacher().formatShortFIO() + "\n" +
                                         pair.getAuditorium().getName());
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
-                        GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow);
+                        if (pair.getGroup().getId().equals(fatherPeopleUnion.getId())) {
+                            // Общая пара у всего потока
+                            if (i == 0) {
+                                GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow,
+                                        groupsCount);
+                            }
+                        }
+                        else {
+                            GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow);
+                        }
+                        filledLines.add(currentRow);
 
                         if (i == 0) {
                             // Пишем время пары
@@ -389,16 +403,21 @@ public class Main extends AbstractJavaFxApplicationSupport {
                                                     pair.getEndTime().format(pairTimeFormatter)),
                                     0, currentRow);
                         }
-
+                        currentRow += 1;
                     }
-                    currentRow += 2;
-                    GridPaneService.addToGridPane(classesPane, new Label(" "), 0, currentRow - 1);
+                    currentRow += 1;
+                }
+                for (int lineIndex = 1; lineIndex <= currentRow - 2; ++lineIndex) {
+                    if (!filledLines.contains(lineIndex)) {
+                        GridPaneService.addToGridPane(classesPane, new Label(""), i + 1, lineIndex);
+                    }
                 }
             }
 
 
-            classes.getChildren().add(classesPane);
         }
+        classes.getChildren().add(classesPane);
+        HBox.setHgrow(classesPane, Priority.ALWAYS);
 
         modes.getChildren().add(classes);
     }
