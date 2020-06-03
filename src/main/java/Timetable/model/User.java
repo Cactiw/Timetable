@@ -140,4 +140,8 @@ public class User {
         return getLastName() + " " + getName() + " " + getSurName();
     }
 
+    public String formatShortFIO() {
+        return getLastName() + " " + getName().substring(0, 1) + ". " + getSurName().substring(0, 1) + ".";
+    }
+
 }
