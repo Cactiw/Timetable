@@ -80,4 +80,13 @@ public class PeopleUnion {
     public String toString() {
         return getName();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof PeopleUnion)) {
+            return false;
+        }
+        PeopleUnion other = (PeopleUnion) obj;
+        return this.getId().equals(other.getId());
+    }
 }
