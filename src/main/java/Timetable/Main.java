@@ -350,8 +350,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setHgrow(Priority.ALWAYS);
             classesPane.getColumnConstraints().add(columnConstraints);
-//            classesPane.getRowConstraints().add(new RowConstraints(25, 25, 150,
-//                    Priority.NEVER, VPos.CENTER, true));
 
             for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
                 var group = groups.get(groupIndex);
@@ -413,64 +411,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
                     GridPaneService.fillRowEmpty(classesPane, currentRow - 1, groupsCount);
                 }
             }
-
-            // WRONG
-//            for (int i = 0; i < groupsCount; ++i) {
-//                PeopleUnion group = groups.get(i);
-//                columnConstraints = new ColumnConstraints();
-//                columnConstraints.setHgrow(Priority.ALWAYS);
-//                classesPane.getColumnConstraints().add(columnConstraints);
-//                GridPaneService.addToGridPane(classesPane, new Label(groups.get(i).toString()), i + 1, 0);
-//
-//                int currentRow = 1;
-//                ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekByPeopleUnionDividedByDays(group);
-//                ArrayList<Integer> filledLines = new ArrayList<>();
-//
-//                for (int dayIndex = 0; dayIndex < week.size(); ++dayIndex) {
-//                    if (i == 0) {
-//                        // Пишем имя дня
-//
-//                    }
-//
-//                    currentRow += 1;
-//                    ObservableList<Pair> todayPairs = week.get(dayIndex);
-//                    System.out.println(days.get(dayIndex) + " " + todayPairs.size() + ", row: " + currentRow);
-//                    for (int pairIndex = 0; pairIndex < todayPairs.size(); ++pairIndex) {
-//                        Pair pair = todayPairs.get(pairIndex);
-//
-//                        Label pairLabel = new Label(pair.formatPair());
-//                        pairLabel.setTextAlignment(TextAlignment.CENTER);
-//                        if (pair.getGroup().getId().equals(fatherPeopleUnion.getId())) {
-//                            // Общая пара у всего потока
-//                            if (i == 0) {
-//                                GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow,
-//                                        groupsCount);
-//                            }
-//                        }
-//                        else {
-//                            GridPaneService.addToGridPane(classesPane, pairLabel, i + 1, currentRow);
-//                        }
-//                        filledLines.add(currentRow);
-//
-//                        if (i == 0) {
-//                            // Пишем время пары
-//                            GridPaneService.addToGridPane(classesPane, new Label(
-//                                            pair.getBeginTime().format(pairTimeFormatter) + " - " +
-//                                                    pair.getEndTime().format(pairTimeFormatter)),
-//                                    0, currentRow);
-//                        }
-//                        currentRow += 1;
-//                    }
-//                    currentRow += 1;
-//                }
-//                for (int lineIndex = 1; lineIndex <= currentRow - 2; ++lineIndex) {
-//                    if (!filledLines.contains(lineIndex)) {
-//                        GridPaneService.addToGridPane(classesPane, new Label(""), i + 1, lineIndex);
-//                    }
-//                }
-//            }
-
-
         }
         classes.getChildren().add(classesPane);
         HBox.setHgrow(classesPane, Priority.ALWAYS);
