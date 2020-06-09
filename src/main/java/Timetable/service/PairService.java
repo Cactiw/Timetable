@@ -11,13 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.time.DayOfWeek;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 @Service
 @Transactional
@@ -51,11 +48,17 @@ public class PairService {
         ObservableList<Pair> pairs = FXCollections.observableArrayList();
         PeopleUnion currentPeopleUnion = peopleUnion;
         while (currentPeopleUnion != null) {
-            pairs.addAll(FXCollections.observableArrayList(pairRepository.getAllByGroupEquals(currentPeopleUnion)));
+            pairs.addAll(FXCollections.observableArrayList(pairRepository.getAllByGroupEqualsAndRepeatabilityEquals(
+                    currentPeopleUnion, 1)));
 
             currentPeopleUnion = currentPeopleUnion.getParent();
         }
         return pairs;
+    }
+
+    public ObservableList<ObservableList<Pair>> getDefaultWeekForStream(List<PeopleUnion> peopleUnions) {
+        return dividePairsByDaysOfWeek(FXCollections.observableArrayList(
+                pairRepository.getAllByGroupInAndRepeatabilityEqualsOrderByEndTimeAsc(peopleUnions, 1)));
     }
 
     // Получает на вход список пар в неделю, возвращает список из семи списков пар - по одному на каждый день недели.
