@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 @Entity
@@ -50,6 +51,7 @@ public class Pair {
 
     @OneToOne(mappedBy = "pairToChange")
     private Pair newPair;
+
 
     public Integer getId() {
         return id;
@@ -125,5 +127,19 @@ public class Pair {
 
     public void setRepeatability(Integer repeation) {
         this.repeatability = repeation;
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        String pairTimePattern = "HH.mm";
+        return DateTimeFormatter.ofPattern(pairTimePattern);
+    }
+
+    public String formatPair() {
+        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "\n" +  this.getAuditorium().getName();
+    }
+
+    public String formatPairTime() {
+        var pairTimeFormatter = getDateTimeFormatter();
+        return this.getBeginTime().format(pairTimeFormatter) + " - " + this.getEndTime().format(pairTimeFormatter);
     }
 }
