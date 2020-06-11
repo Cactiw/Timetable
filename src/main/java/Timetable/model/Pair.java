@@ -1,6 +1,7 @@
 package Timetable.model;
 
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.Formula;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -34,8 +35,17 @@ public class Pair {
     @Column
     private LocalDateTime beginTime;
 
+    @Formula(value="begin_time::time")
+    private LocalTime clearBeginTIme;
+
     @Column
     private LocalDateTime endTime;
+
+    @Formula(value="to_char(end_time, 'ID')")
+    private Integer dayOfTheWeek;
+
+    @Formula(value="end_time::time")
+    private LocalTime clearEndTIme;
 
     @Column
     @ColumnDefault("0")
@@ -129,13 +139,41 @@ public class Pair {
         this.repeatability = repeation;
     }
 
+    public LocalTime getClearBeginTIme() {
+        return clearBeginTIme;
+    }
+
+    public void setClearBeginTIme(LocalTime clearBeginTIme) {
+        this.clearBeginTIme = clearBeginTIme;
+    }
+
+    public Integer getDayOfTheWeek() {
+        return dayOfTheWeek;
+    }
+
+    public void setDayOfTheWeek(int dayOfTheWeek) {
+        this.dayOfTheWeek = dayOfTheWeek;
+    }
+
+    public LocalTime getClearEndTIme() {
+        return clearEndTIme;
+    }
+
+    public void setClearEndTIme(LocalTime clearEndTIme) {
+        this.clearEndTIme = clearEndTIme;
+    }
+
     public DateTimeFormatter getDateTimeFormatter() {
         String pairTimePattern = "HH.mm";
         return DateTimeFormatter.ofPattern(pairTimePattern);
     }
 
     public String formatPair() {
-        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "\n" +  this.getAuditorium().getName();
+        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "       " +  this.getAuditorium().getName();
+    }
+
+    public String formatStreamPair() {
+        return this.getSubject() + "  " +  this.getAuditorium().getName() + "\n" + this.getTeacher().formatFIO();
     }
 
     public String formatPairTime() {
