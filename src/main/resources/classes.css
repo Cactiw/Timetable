@@ -17,3 +17,16 @@
 .classes-grid-cell.first-row.first-column {
     -fx-border-width: 1 ;
 }
+
+.classes-grid-cell.grey {
+    -fx-background-color: #3d4058;
+}
+
+.label.white-text {
+    -fx-text-fill: white;
+}
+
+.label.big {
+    /*-fx-font-weight: bold;*/
+    -fx-font-size: 14pt;
+}

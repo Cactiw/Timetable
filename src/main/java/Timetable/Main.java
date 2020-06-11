@@ -6,6 +6,7 @@ import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
 import Timetable.model.Pair;
+import Timetable.model.Parameters.StyleParameter;
 import Timetable.model.PeopleUnion;
 import Timetable.model.Properties.BorderProperties;
 import Timetable.service.*;
@@ -354,8 +355,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
             for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
                 var group = groups.get(groupIndex);
                 classesPane.getColumnConstraints().add(columnConstraints);
-                GridPaneService.addToGridPane(classesPane, new Label(group.getName()), groupIndex + 1,
-                        0);
+//                GridPaneService.addToGridPane(classesPane, new Label(group.getName()), groupIndex + 1,
+//                        0);
             }
 
             var groupsTmp = FXCollections.observableArrayList(groups);
@@ -363,19 +364,18 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
             GridPaneService.addToGridPane(classesPane, new Label(" "), 0, 0);
             var week = pairService.getDefaultWeekForStream(groupsTmp);
-            int currentRow = 1;
+            int currentRow = 0;
+            var labelStyle = new StyleParameter();
+            labelStyle.setLabelStyle("white-text");
             for (int dayIndex = 0; dayIndex < days.size(); ++dayIndex) {
                 var currentDayPairs = week.get(dayIndex);
                 var dayName = days.get(dayIndex);
 
                 // Записываем имя дня
-                GridPaneService.fillRowEmpty(classesPane, currentRow, groupsCount);
-                GridPaneService.addToGridPane(classesPane, new Label(dayName), 0, currentRow);
-                if (dayIndex != 0) {
-                    writeAllGroups(classesPane, groups, currentRow, 1);
-                    GridPaneService.addToGridPane(classesPane, new Label(""), 0, currentRow - 1,
-                            groupsCount);
-                }
+                GridPaneService.fillRowEmpty(classesPane, currentRow, groupsCount, new
+                        StyleParameter("grey"));
+                GridPaneService.addToGridPane(classesPane, new Label(dayName), 0, currentRow, labelStyle);
+                writeAllGroups(classesPane, groups, currentRow, 1, labelStyle);
                 currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
 
                 if (!currentDayPairs.isEmpty()) {
@@ -398,8 +398,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
                             // Общепоточная пара
                             classesPane.getChildren().remove(classesPane.getChildren().size() -
                                     groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
+                            var streamStyle = new StyleParameter();
+                            streamStyle.setLabelStyle("big");
+//                            pairLabel.setText(pair.formatStreamPair());
                             GridPaneService.addToGridPane(classesPane, pairLabel, 1,
-                                    currentRow, groupsCount);
+                                    currentRow, groupsCount, streamStyle);
                         } else {
                             // Пара отдельной группы
                             GridPaneService.addToGridPane(classesPane, pairLabel,
@@ -428,10 +431,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
         return rowIndex;
     }
 
-    private void writeAllGroups(GridPane gridPane, List<PeopleUnion> groups, int rowIndex, int beginColumn) {
+    private void writeAllGroups(GridPane gridPane, List<PeopleUnion> groups, int rowIndex, int beginColumn,
+                                StyleParameter style) {
         int colIndex = beginColumn;
         for (var group: groups) {
-            GridPaneService.addToGridPane(gridPane, new Label(group.getName()), colIndex, rowIndex);
+            GridPaneService.addToGridPane(gridPane, new Label(group.getName()), colIndex, rowIndex, style);
             colIndex += 1;
         }
     }
