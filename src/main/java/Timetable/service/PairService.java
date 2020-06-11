@@ -58,7 +58,7 @@ public class PairService {
 
     public ObservableList<ObservableList<Pair>> getDefaultWeekForStream(List<PeopleUnion> peopleUnions) {
         return dividePairsByDaysOfWeek(FXCollections.observableArrayList(
-                pairRepository.getAllByGroupInAndRepeatabilityEqualsOrderByEndTimeAsc(peopleUnions, 1)));
+                pairRepository.getGroupsDefaultWeek(peopleUnions)));
     }
 
     // Получает на вход список пар в неделю, возвращает список из семи списков пар - по одному на каждый день недели.
@@ -66,13 +66,14 @@ public class PairService {
         if (pairs.isEmpty()) {
             return FXCollections.observableArrayList();
         }
-        var currentDay = pairs.get(0).getBeginTime().toLocalDate().with(DayOfWeek.MONDAY);
+//        var currentDay = pairs.get(0).getBeginTime().toLocalDate().with(DayOfWeek.MONDAY);
+        var currentDay = 1;
         ObservableList<ObservableList<Pair>> returnList = FXCollections.observableArrayList();;
         for (int i = 0; i < 7; ++i) {
             final var finalCurrentDay = currentDay;
-            returnList.add(pairs.filtered(e -> e.getBeginTime().toLocalDate().equals(finalCurrentDay)).sorted(
-                    Comparator.comparing(Pair::getBeginTime)));
-            currentDay = currentDay.plusDays(1);
+            returnList.add(pairs.filtered(e -> e.getDayOfTheWeek().equals(finalCurrentDay)).sorted(
+                    Comparator.comparing(Pair::getClearBeginTIme)));
+            currentDay += 1;
         }
         return returnList;
     }

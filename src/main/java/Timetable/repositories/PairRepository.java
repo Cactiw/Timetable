@@ -18,6 +18,9 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
     @Query("select p from Pair p where p.auditorium = ?1 and (p.beginTime < ?3 and p.endTime > ?2)")
     List<Pair> getAllAuditoriumConflicts(Auditorium auditorium, LocalDateTime beginTime, LocalDateTime endTime);
 
+    @Query("select p from Pair p where p.repeatability > 0 order by p.dayOfTheWeek asc, p.clearEndTIme asc")
+    List<Pair> getGroupsDefaultWeek(List<PeopleUnion> peopleUnions);
+
     List<Pair> getAllByGroupInAndRepeatabilityEqualsOrderByEndTimeAsc(List<PeopleUnion> peopleUnions, int repeatability);
 
     List<Pair> getAllByRepeatabilityGreaterThan(int repeatability);
