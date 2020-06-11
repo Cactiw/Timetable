@@ -396,6 +396,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
                         if (pair.getGroup().equals(fatherPeopleUnion)) {
                             // Общепоточная пара
+                            classesPane.getChildren().remove(classesPane.getChildren().size() -
+                                    groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
                             GridPaneService.addToGridPane(classesPane, pairLabel, 1,
                                     currentRow, groupsCount);
                         } else {
