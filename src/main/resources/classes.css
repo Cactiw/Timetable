@@ -26,7 +26,11 @@
     -fx-text-fill: white;
 }
 
+.label.pair {
+    -fx-font-size: 11pt;
+}
+
 .label.big {
     /*-fx-font-weight: bold;*/
-    -fx-font-size: 14pt;
+    -fx-font-size: 13pt;
 }
