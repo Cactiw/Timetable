@@ -57,11 +57,15 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     Button button;
     Stage mainStage;
-    HBox classes;
-    VBox mainBox, menu, auditoriumBox;
+    HBox classesSettings;
+    VBox mainBox, menu, auditoriumBox, classes;
+
+    Label courseLabel, streamLabel;
 
     StackPane modes;
     GridPane classesPane;
+
+    ChoiceBox<PeopleUnion> courseSelect, streamSelect;
 
     TableView<Auditorium> auditoriumTableView;
     TableView<HashMap.Entry<String, String>> auditoriumProperties;
@@ -104,7 +108,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
 //        System.out.println(userRepository.getOne(1).formatFIO());
 
-        addClassesWindow();
+        initiateClassesWindow();
         addAuditoriumWindow();
 
         menu = sidePane();
@@ -150,6 +154,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
             @Override
             public void handle(ActionEvent actionEvent) {
                 new AddPairDialog(userService, auditoriumService, pairService, peopleUnionService).show();
+                updateClasses();
             }
         });
 
@@ -173,6 +178,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().add("styles.css");
         scene.getStylesheets().add("classes.css");
+
+//        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
         primaryStage.getIcons().add(new Image("icon.png"));
         primaryStage.show();
@@ -182,6 +189,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private VBox sidePane() {
         VBox vbox = new VBox();
         vbox.setPrefWidth(200);
+        vbox.setMinWidth(200);
         //vbox.setStyle("-fx-background-color: red");
         List<String> names = Arrays.asList("Аудитории", "Занятия");
         List<Pane> panes = Arrays.asList(auditoriumBox, classes);
@@ -320,31 +328,88 @@ public class Main extends AbstractJavaFxApplicationSupport {
         modes.getChildren().add(auditoriumBox);
     }
 
+
+    private void initiateClassesWindow() {
+        classes = new VBox();
+        classes.toBack();
+        classes.setStyle("-fx-background-color: white");
+
+        var courses = peopleUnionService.findAllByTypeEquals(peopleUnionTypeService.checkOrCreateType("Курс"));
+        var streams = peopleUnionService.findAllByTypeEquals(peopleUnionTypeService.checkOrCreateType("Поток"));
+
+        classesSettings = new HBox();
+        classesSettings.setPadding(new Insets(25, 10, 0, 10));
+        classesSettings.setAlignment(Pos.CENTER_LEFT);
+
+        classesSettings.spacingProperty().setValue(10);
+
+        courseLabel = new Label("Курс:");
+        streamLabel = new Label("Поток:");
+
+        courseSelect = new ChoiceBox<>(courses);
+        if (!courses.isEmpty()) {
+            courseSelect.setValue(courses.get(0));
+        }
+        streamSelect = new ChoiceBox<>(streams);
+        if (!streams.isEmpty()) {
+            streamSelect.setValue(streams.get(0));
+        }
+
+        courseSelect.setOnAction(e -> {
+//            streams = peopleUnionService.findAllByTypeEquals(courseSelect.getValue());
+            var currentStreams = FXCollections.observableArrayList(courseSelect.getValue().getChildrenUnions());
+            streamSelect.setItems(currentStreams);
+            if (!currentStreams.isEmpty()) {
+                streamSelect.setValue(currentStreams.get(0));
+            }
+        });
+
+        streamSelect.setOnAction(e -> {
+            updateClasses();
+        });
+
+        classesSettings.getChildren().addAll(courseLabel, courseSelect, new Label("      "),
+                streamLabel, streamSelect);
+
+        classes.getChildren().add(classesSettings);
+
+        addClassesWindow();
+
+        modes.getChildren().add(classes);
+    }
+
+    private void updateClasses() {
+        classes.getChildren().clear();
+        classes.getChildren().add(classesSettings);
+        addClassesWindow();
+    }
+
     private void addClassesWindow() {
         /*
         Функция, создающее окно, вызывающееся по кнопке "Занятия"
          */
-        classes = new HBox();
-        classes.toBack();
-        //classes.setPrefSize(100000, 100000);
-//        classes.getChildren().add(new Text("Занятия"));
-        classes.setStyle("-fx-background-color: white");
+
+        if (classes != null && classesPane != null) {
+            classes.getChildren().remove(classesPane);
+        }
+
+        classesPane = getClassesPane();
+        classes.getChildren().add(classesPane);
+        HBox.setHgrow(classesPane, Priority.ALWAYS);
+
+    }
+
+    private GridPane getClassesPane() {
 
         classesPane = new GridPane();
 
         classesPane.getStyleClass().add("classes-grid");
-//        classesPane.setHgap(0.3);
-//        classesPane.setVgap(0.3);
-//        classesPane.setPadding(new Insets(1, 1, 1, 1));
-//        classesPane.setPadding(new Insets(20, 150, 10, 0));
-//        classesPane.setGridLinesVisible(true);
-//        classesPane.setAlignment(Pos.CENTER);
 
         int mode = 0;
         var days = Arrays.asList("Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье");
 
         if (mode == 0) {
-            var fatherPeopleUnion = peopleUnionService.getByName("1 поток");
+            var fatherPeopleUnion = streamSelect.getValue();
             var groups = fatherPeopleUnion.getChildrenUnions();
             var groupsCount = groups.size();
 
@@ -364,6 +429,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
             GridPaneService.addToGridPane(classesPane, new Label(" "), 0, 0);
             var week = pairService.getDefaultWeekForStream(groupsTmp);
+            if (week.isEmpty()) {
+                return classesPane;
+            }
             int currentRow = 0;
             var labelStyle = new StyleParameter();
             labelStyle.setLabelStyle("white-text");
@@ -394,33 +462,30 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
                         Label pairLabel = new Label(pair.formatPair());
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
+                        var style = new StyleParameter();
                         if (pair.getGroup().equals(fatherPeopleUnion)) {
                             // Общепоточная пара
                             classesPane.getChildren().remove(classesPane.getChildren().size() -
                                     groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
-                            var streamStyle = new StyleParameter();
-                            streamStyle.setLabelStyle("big");
-//                            pairLabel.setText(pair.formatStreamPair());
+                            style.setLabelStyle("big");
+                            pairLabel.setText(pair.formatStreamPair());
                             GridPaneService.addToGridPane(classesPane, pairLabel, 1,
-                                    currentRow, groupsCount, streamStyle);
+                                    currentRow, groupsCount, style);
                         } else {
                             // Пара отдельной группы
+                            style.setLabelStyle("pair");
                             GridPaneService.addToGridPane(classesPane, pairLabel,
-                                    groups.indexOf(pair.getGroup()) + 1, currentRow);
+                                    groups.indexOf(pair.getGroup()) + 1, currentRow, style);
                         }
                     }
                 }
 
                 if (dayIndex != days.size() - 1) {
-                    currentRow = increaseGridRowIndex(classesPane, currentRow, 2, groupsCount);
-                    GridPaneService.fillRowEmpty(classesPane, currentRow - 1, groupsCount);
+                    currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
                 }
             }
         }
-        classes.getChildren().add(classesPane);
-        HBox.setHgrow(classesPane, Priority.ALWAYS);
-
-        modes.getChildren().add(classes);
+        return classesPane;
     }
 
     private int increaseGridRowIndex(GridPane gridPane, int rowIndex, int increaseValue, int groupsCount) {
