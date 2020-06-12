@@ -173,7 +173,7 @@ public class Pair {
     }
 
     public String formatStreamPair() {
-        return this.getSubject() + "  " +  this.getAuditorium().getName() + "\n" + this.getTeacher().formatFIO();
+        return this.getSubject() + "\n" + this.getTeacher().formatFIO() + "       " +  this.getAuditorium().getName();
     }
 
     public String formatPairTime() {
