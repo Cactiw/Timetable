@@ -307,10 +307,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
         HBox.setHgrow(auditoriumSearchBox, Priority.ALWAYS);
 
         auditoriumProperties = new TableView<>();
-        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 = new TableColumn<>("Свойство");
-        auditoriumPropertiesColumn1.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
-        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 = new TableColumn<>("Значение");
-        auditoriumPropertiesColumn2.setCellValueFactory(param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn1 =
+                new TableColumn<>("Свойство");
+        auditoriumPropertiesColumn1.setCellValueFactory(
+                param -> new ReadOnlyObjectWrapper<>(param.getValue().getKey()));
+        TableColumn<HashMap.Entry<String, String>, String> auditoriumPropertiesColumn2 =
+                new TableColumn<>("Значение");
+        auditoriumPropertiesColumn2.setCellValueFactory(
+                param -> new ReadOnlyObjectWrapper<>(param.getValue().getValue()));
         auditoriumProperties.getColumns().addAll(auditoriumPropertiesColumn1, auditoriumPropertiesColumn2);
         auditoriumProperties.setPrefWidth(2000);
         auditoriumProperties.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
