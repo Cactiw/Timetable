@@ -89,7 +89,6 @@ public class AddAuditoriumDialog {
         result.ifPresent(pair -> {
             System.out.println("Auditorium created");
         });
-        return;
     }
 
     private void onTextChanged(Observable observable) {
@@ -105,7 +104,7 @@ public class AddAuditoriumDialog {
                 correct = !bool;
             }
         }
-        Boolean bool = !NUM_PATTERN.matcher(maxStudents.getText()).matches();
+        boolean bool = !NUM_PATTERN.matcher(maxStudents.getText()).matches();
         if (correct) {
             correct = !bool;
         }
