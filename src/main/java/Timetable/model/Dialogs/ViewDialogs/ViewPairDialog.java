@@ -87,4 +87,8 @@ public class ViewPairDialog {
         rootPane.add(new Label("Продолжительность:"), 0, 3);
         rootPane.add(new Label(pair.formatPairTime()), 1, 3, 2, 1);
     }
+
+    public JFXDialog getDialog() {
+        return dialog;
+    }
 }
