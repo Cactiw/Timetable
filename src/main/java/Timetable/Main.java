@@ -460,7 +460,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                             0, currentRow);
                     for (int pairIndex = 0; pairIndex < currentDayPairs.size(); ++pairIndex) {
                         var pair = currentDayPairs.get(pairIndex);
-                        if (pair.getEndTime().compareTo(currentTime) > 0) {
+                        if (pair.getEndTime().toLocalTime().compareTo(currentTime.toLocalTime()) > 0) {
                             // Пара следующая по времени
                             currentTime = pair.getEndTime();
                             currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
