@@ -489,7 +489,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         }
                         pairPane.setOnMouseClicked(e -> {
                             if (e.getClickCount() >= 2) {  // On double click
-                                new ViewPairDialog(modes).show(pair);
+                                new ViewPairDialog(modes, pair).show();
                             }
                         });
                     }

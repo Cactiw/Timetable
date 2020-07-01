@@ -7,10 +7,12 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
+import javafx.scene.image.Image;
 
 import java.awt.*;
 
@@ -22,15 +24,27 @@ public class ViewPairDialog {
 
     JFXButton okButton;
 
-    public ViewPairDialog(StackPane container) {
+    Pair pair;
+
+    public ViewPairDialog(StackPane container, Pair pair) {
         this.container = container;
+        this.pair = pair;
     }
 
-    public void show(Pair pair) {
+    public void show() {
         dialog = new JFXDialog();
         content = new JFXDialogLayout();
-        rootPane = new GridPane();
 
+        updateContent();
+
+        content.setActions(okButton);
+        dialog.setContent(content);
+
+        dialog.show(container);
+
+    }
+
+    private void updateContent() {
         okButton = new JFXButton("Ок");
         okButton.setPrefSize(50, 25);
         okButton.styleProperty().setValue("-fx-font-size: 13pt; -fx-text-fill: green; -fx-background-color: whitesmoke");
@@ -38,20 +52,29 @@ public class ViewPairDialog {
             this.dialog.close();
         });
 
-        content.setHeading(new Text(pair.formatPair()));
+        rootPane = new GridPane();
+
+        var heading = new Text(pair.formatPair());
+        heading.styleProperty().setValue("-fx-font-size: 14pt;");
+        content.setHeading(heading);
         content.setBody(rootPane);
 
-        rootPane.add(new Label("Предмет:"), 0, 0);
-        rootPane.add(new Label(pair.getSubject()), 1, 0);
         rootPane.setPadding(new Insets(10, 0, 10, 0));
         rootPane.setHgap(10);
 
+        Image editIcon = new Image("/icons/edit.png");
+        rootPane.add(new ImageView(editIcon), 3, 0);
 
+        rootPane.add(new Label("Предмет:"), 0, 0);
+        rootPane.add(new Label(pair.getSubject()), 1, 0, 2, 1);
 
-        content.setActions(okButton);
-        dialog.setContent(content);
+        rootPane.add(new Label("Преподаватель:"), 0, 1);
+        rootPane.add(new Label(pair.getTeacher().formatFIO()), 1, 1, 2, 1);
 
-        dialog.show(container);
+        rootPane.add(new Label("Аудитория:"), 0, 2);
+        rootPane.add(new Label(pair.getAuditorium().getName()), 1, 2, 2, 1);
 
+        rootPane.add(new Label("Продолжительность:"), 0, 3);
+        rootPane.add(new Label(pair.formatPairTime()), 1, 3, 2, 1);
     }
 }
