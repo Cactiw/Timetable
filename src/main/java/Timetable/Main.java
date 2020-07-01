@@ -64,6 +64,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     StackPane modes;
     GridPane classesPane;
+    ScrollPane classesScrollPane;
 
     ChoiceBox<PeopleUnion> courseSelect, streamSelect;
 
@@ -334,6 +335,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
 
     private void initiateClassesWindow() {
+
         classes = new VBox();
         classes.toBack();
         classes.setStyle("-fx-background-color: white");
@@ -379,7 +381,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         addClassesWindow();
 
-        modes.getChildren().add(classes);
+        classesScrollPane = new ScrollPane();
+        classesScrollPane.setContent(classes);
+        classesScrollPane.setFitToWidth(true);
+
+        modes.getChildren().add(classesScrollPane);
     }
 
     private void updateClasses() {
@@ -424,8 +430,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
             for (int groupIndex = 0; groupIndex < groups.size(); ++groupIndex) {
                 var group = groups.get(groupIndex);
                 classesPane.getColumnConstraints().add(columnConstraints);
-//                GridPaneService.addToGridPane(classesPane, new Label(group.getName()), groupIndex + 1,
-//                        0);
             }
 
             var groupsTmp = FXCollections.observableArrayList(groups);
