@@ -11,25 +11,25 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class GridPaneService {
-    public static <T extends Node> void addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex) {
-        Pane pane = finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, new StyleParameter());
+    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex) {
+        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, new StyleParameter());
     }
 
-    public static <T extends Node> void addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
+    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
                                                       int columnSpan) {
-        Pane pane = finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
+        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
     }
 
-    public static <T extends Node> void addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
+    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
                                                       int columnSpan, StyleParameter addStyle) {
         applyStyle(node, addStyle);
-        Pane pane = finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
+        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
     }
 
-    public static <T extends Node> void addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
+    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
                                                       StyleParameter addStyle) {
         applyStyle(node, addStyle);
-        Pane pane = finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, addStyle);
+        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, addStyle);
 
     }
 

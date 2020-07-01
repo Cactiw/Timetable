@@ -5,6 +5,7 @@ import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
+import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
 import Timetable.model.Pair;
 import Timetable.model.Parameters.StyleParameter;
 import Timetable.model.PeopleUnion;
@@ -471,20 +472,26 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         Label pairLabel = new Label(pair.formatPair());
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
                         var style = new StyleParameter();
+                        Pane pairPane = null;
                         if (pair.getGroup().equals(fatherPeopleUnion)) {
                             // Общепоточная пара
                             classesPane.getChildren().remove(classesPane.getChildren().size() -
                                     groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
                             style.setLabelStyle("big");
                             pairLabel.setText(pair.formatStreamPair());
-                            GridPaneService.addToGridPane(classesPane, pairLabel, 1,
+                            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel, 1,
                                     currentRow, groupsCount, style);
                         } else {
                             // Пара отдельной группы
                             style.setLabelStyle("pair");
-                            GridPaneService.addToGridPane(classesPane, pairLabel,
+                            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel,
                                     groups.indexOf(pair.getGroup()) + 1, currentRow, style);
                         }
+                        pairPane.setOnMouseClicked(e -> {
+                            if (e.getClickCount() >= 2) {  // On double click
+                                new ViewPairDialog(modes).show(pair);
+                            }
+                        });
                     }
                 }
 
