@@ -15,8 +15,10 @@ import java.util.List;
 public interface PairRepository extends JpaRepository<Pair, Integer> {
     List<Pair> getAllByAuditoriumEquals(Auditorium auditorium);
 
-    @Query("select p from Pair p where p.auditorium = ?1 and (p.beginTime < ?3 and p.endTime > ?2)")
-    List<Pair> getAllAuditoriumConflicts(Auditorium auditorium, LocalDateTime beginTime, LocalDateTime endTime);
+    @Query("select p from Pair p where p.auditorium = ?1 and p.dayOfTheWeek = ?2 and " +
+            "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
+    List<Pair> getAllAuditoriumConflicts(Auditorium auditorium, Integer dayOfWeek,
+                                         LocalTime beginTime, LocalTime endTime);
 
     @Query("select p from Pair p where p.repeatability > 0 and p.group in ?1 order by p.dayOfTheWeek asc, " +
             "p.clearEndTIme asc")

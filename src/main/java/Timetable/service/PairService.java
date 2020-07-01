@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -87,7 +88,9 @@ public class PairService {
         return FXCollections.observableArrayList(pairRepository.getAllByAuditoriumEquals(auditorium));
     }
 
-    public ObservableList<Pair> getAuditoriumConflictPairs(Auditorium auditorium, LocalDateTime beginTime, LocalDateTime endTime) {
-        return FXCollections.observableArrayList(pairRepository.getAllAuditoriumConflicts(auditorium, beginTime, endTime));
+    public ObservableList<Pair> getAuditoriumConflictPairs(Auditorium auditorium, Integer dayOfWeek,
+                                                           LocalTime beginTime, LocalTime endTime) {
+        return FXCollections.observableArrayList(pairRepository.getAllAuditoriumConflicts(auditorium, dayOfWeek,
+                beginTime, endTime));
     }
 }

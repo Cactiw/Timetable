@@ -41,7 +41,7 @@ public class Pair {
     @Column
     private LocalDateTime endTime;
 
-    @Formula(value="to_char(end_time, 'ID')")
+    @Formula(value="to_char(end_time, 'ID')::integer")
     private Integer dayOfTheWeek;
 
     @Formula(value="end_time::time")
@@ -179,5 +179,14 @@ public class Pair {
     public String formatPairTime() {
         var pairTimeFormatter = getDateTimeFormatter();
         return this.getBeginTime().format(pairTimeFormatter) + " - " + this.getEndTime().format(pairTimeFormatter);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof Pair)) {
+            return false;
+        }
+        Pair other = (Pair) obj;
+        return this.getId().equals(other.getId());
     }
 }

@@ -1,5 +1,6 @@
 package Timetable.model.Dialogs.ViewDialogs;
 
+import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Pair;
 import com.jfoenix.animation.alert.CenterTransition;
 import com.jfoenix.controls.JFXButton;
@@ -13,25 +14,29 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.scene.image.Image;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.awt.*;
 
+@Component
 public class ViewPairDialog {
     JFXDialog dialog;
     StackPane container;
     JFXDialogLayout content;
     GridPane rootPane;
 
-    JFXButton okButton;
+    JFXButton okButton, editPairButton;
 
     Pair pair;
 
-    public ViewPairDialog(StackPane container, Pair pair) {
+    @Autowired
+    AddPairDialog addPairDialog;
+
+    public void show(StackPane container, Pair pair) {
         this.container = container;
         this.pair = pair;
-    }
 
-    public void show() {
         dialog = new JFXDialog();
         content = new JFXDialogLayout();
 
@@ -63,7 +68,12 @@ public class ViewPairDialog {
         rootPane.setHgap(10);
 
         Image editIcon = new Image("/icons/edit.png");
-        rootPane.add(new ImageView(editIcon), 3, 0);
+        editPairButton = new JFXButton("", new ImageView(editIcon));
+        editPairButton.setOnAction(e -> {
+            addPairDialog.showFromPair(pair);
+            this.updateContent();
+        });
+        rootPane.add(editPairButton, 3, 0);
 
         rootPane.add(new Label("Предмет:"), 0, 0);
         rootPane.add(new Label(pair.getSubject()), 1, 0, 2, 1);

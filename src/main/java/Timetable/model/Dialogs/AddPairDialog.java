@@ -12,41 +12,40 @@ import com.jfoenix.controls.JFXDatePicker;
 import com.jfoenix.controls.JFXTimePicker;
 import javafx.application.Platform;
 import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.*;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
+@Component
 public class AddPairDialog {
+    Dialog<Pair> dialog;
+
     TextField subject, teacher, auditorium, group;
     List<TextField> emptyList;
     List<ComboBoxBase> notNullList;
     Button okButton;
     Text conflicts, suggestions;
     TextFlow conflictsCheck;
+    Pair pairFrom;
 
     ContextMenu auditoriumPopup, teacherPopup, groupPopup;
     TextField currentParentField;
@@ -62,26 +61,54 @@ public class AddPairDialog {
 
     LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
 
-    private final UserService userService;
-    private final AuditoriumService auditoriumService;
-    private final PairService pairService;
-    private final PeopleUnionService peopleUnionService;
-
-    public AddPairDialog(UserService userService, AuditoriumService auditoriumService, PairService pairService,
-                         PeopleUnionService peopleUnionService) {
-        this.userService = userService;
-        this.auditoriumService = auditoriumService;
-        this.pairService = pairService;
-        this.peopleUnionService = peopleUnionService;
-    }
-
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private AuditoriumService auditoriumService;
+    @Autowired
+    private PairService pairService;
+    @Autowired
+    private PeopleUnionService peopleUnionService;
 
     public void show() {
+        pairFrom = null;
+        this.init();
+        Optional<Pair> result = dialog.showAndWait();
+//        if (result.isPresent()) {
+//            return result.get();
+//        }
+        result.ifPresent(pair -> {
+            System.out.println("Pair created");
+        });
+        return;
+    }
 
+    public void showFromPair(Pair pair) {
+        pairFrom = pair;
+        this.init();
+
+        subject.setText(pair.getSubject());
+        setTeacher(pair.getTeacher());
+        setAuditorium(pair.getAuditorium());
+        setGroup(pair.getGroup());
+        beginDate.valueProperty().setValue(pair.getBeginTime().toLocalDate());
+        beginTime.valueProperty().setValue(pair.getBeginTime().toLocalTime());
+        endTime.valueProperty().setValue(pair.getEndTime().toLocalTime());
+
+        repeatability.setValue(repeatability.itemsProperty().get().get(pair.getRepeatability()));
+        Optional<Pair> result = dialog.showAndWait();
+        return;
+    }
+
+    public static void fromPair(Pair pair) {
+        var dialog = new AddPairDialog();
+        dialog.showFromPair(pair);
+    }
+
+    private void init() {
         // Create the custom dialog.
-        Dialog<Pair> dialog = new Dialog<>();
+        dialog = new Dialog<>();
         dialog.setTitle("Добавление занятия");
-
 
         // Set the button types.
         ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
@@ -155,33 +182,22 @@ public class AddPairDialog {
         groupPopup = new ContextMenu();
         groupPopup.setOnAction(e -> {
             var text = ((MenuItem)e.getTarget()).getText();
-            group.setText(text);
-            groupEntity = peopleUnionService.getByName(text);
-            Platform.runLater(() -> group.positionCaret(group.getText().length()));
+            setGroup(peopleUnionService.getByName(text));
             groupPopup.hide();
-            verifyAddUserDialog();
         });
         fillGroupPopupItems(group.getText());
 
 
         auditoriumPopup = new ContextMenu();
         auditoriumPopup.setOnAction(actionEvent -> {
-            MenuItem src = (MenuItem) actionEvent.getTarget();
-            String text = src.getText();
-            auditorium.setText(text);
-            auditoriumEntity = auditoriumService.getAuditoriumByName(text);
-            Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
-            verifyAddUserDialog();
+            String text = ((MenuItem)actionEvent.getTarget()).getText();
+            setAuditorium(auditoriumService.getAuditoriumByName(text));
         });
 
         teacherPopup = new ContextMenu();
         teacherPopup.setOnAction(actionEvent -> {
-            MenuItem src = (MenuItem) actionEvent.getTarget();
-            String text = src.getText();
-            teacher.setText(text);
-            teacherEntity = userService.searchUserByName(text, 1).get(0);
-            Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
-            verifyAddUserDialog();
+            String text = ((MenuItem)actionEvent.getTarget()).getText();
+            setTeacher(userService.searchUserByName(text, 1).get(0));
         });
 
         endTime = new JFXTimePicker();
@@ -263,7 +279,7 @@ public class AddPairDialog {
         // Convert the result to a usersubject-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                Pair pair = new Pair();
+                Pair pair = Objects.requireNonNullElseGet(pairFrom, Pair::new);
                 pair.setAuditorium(auditoriumEntity);
                 pair.setTeacher(teacherEntity);
                 pair.setGroup(groupEntity);
@@ -271,21 +287,12 @@ public class AddPairDialog {
                 pair.setBeginTime(getBeginTime());
                 pair.setEndTime(getEndTime());
                 pair.setRepeatability(repeatability.getSelectionModel().getSelectedIndex());
-//                auditorium.setsubject(subject.getText());
-//                auditorium.setteacher(Integer.valueOf(teacher.getText()));
+
                 return pairService.save(pair);
+
             }
             return null;
         });
-
-        Optional<Pair> result = dialog.showAndWait();
-//        if (result.isPresent()) {
-//            return result.get();
-//        }
-        result.ifPresent(pair -> {
-            System.out.println("Pair created");
-        });
-        return;
     }
 
     EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
@@ -315,6 +322,29 @@ public class AddPairDialog {
 
     private LocalDateTime getEndTime() {
         return LocalDateTime.of(beginDate.valueProperty().get(), endTime.valueProperty().get());
+    }
+
+
+
+    private void setTeacher(User newTeacher) {
+        teacher.setText(newTeacher.formatFIO());
+        teacherEntity = newTeacher;
+        Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
+        verifyAddUserDialog();
+    }
+
+    private void setAuditorium(Auditorium newAuditorium) {
+        auditorium.setText(newAuditorium.getName());
+        auditoriumEntity = newAuditorium;
+        Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
+        verifyAddUserDialog();
+    }
+
+    private void setGroup(PeopleUnion newGroup) {
+        group.setText(newGroup.getName());
+        groupEntity = newGroup;
+        Platform.runLater(() -> group.positionCaret(group.getText().length()));
+        verifyAddUserDialog();
     }
 
     private void verifyAddUserDialog() {
@@ -352,7 +382,7 @@ public class AddPairDialog {
             var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
             for (var pair: teacherPairs) {
                 if (getBeginTime().compareTo(pair.getEndTime()) > 0 ||
-                getEndTime().compareTo(pair.getBeginTime()) < 0) {
+                getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair))) {
                     // Не пересекаются, всё норм
                 } else {
                     // Пересекаются, алёрт
@@ -364,8 +394,12 @@ public class AddPairDialog {
             }
             // Проверка на конфликты аудитории
             var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
-                    getBeginTime(), getEndTime());
+                    getBeginTime().getDayOfWeek().getValue(),
+                    getBeginTime().toLocalTime(), getEndTime().toLocalTime());
             for (var pair: auditoriumConflictPairs) {
+                if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
+                    continue;
+                }
                 var availableAuditoriums = auditoriumService.getAvailableAuditoriums(getBeginTime(), getEndTime());
                 String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
                         availableAuditoriums.get(0).getName() + ", вместимость: " +

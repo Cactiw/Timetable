@@ -73,6 +73,12 @@ public class Main extends AbstractJavaFxApplicationSupport {
     TableView<HashMap.Entry<String, String>> auditoriumProperties;
 
     @Autowired
+    ViewPairDialog viewPairDialog;
+
+    @Autowired
+    AddPairDialog addPairDialog;
+
+    @Autowired
     ResourceLoader resourceLoader;
     @Autowired
     UserRepository userRepository;
@@ -155,7 +161,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addPair.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                new AddPairDialog(userService, auditoriumService, pairService, peopleUnionService).show();
+                addPairDialog.show();
                 updateClasses();
             }
         });
@@ -489,7 +495,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         }
                         pairPane.setOnMouseClicked(e -> {
                             if (e.getClickCount() >= 2) {  // On double click
-                                new ViewPairDialog(modes, pair).show();
+                                viewPairDialog.show(modes, pair);
+                                updateClasses();
                             }
                         });
                     }
