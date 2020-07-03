@@ -84,6 +84,18 @@ public class PairService {
         return pairs;
     }
 
+    public ObservableList<Pair> getGroupConflictPairs(PeopleUnion peopleUnion, Integer dayOfWeek,
+                                                      LocalTime beginTime, LocalTime endTime) {
+        ObservableList<Pair> pairs = FXCollections.observableArrayList();
+        PeopleUnion currentPeopleUnion = peopleUnion;
+        while (currentPeopleUnion != null) {
+            pairs.addAll(FXCollections.observableArrayList(pairRepository.getAllGroupConflicts(
+                    currentPeopleUnion, dayOfWeek, beginTime, endTime)));
+            currentPeopleUnion = currentPeopleUnion.getParent();
+        }
+        return pairs;
+    }
+
     public ObservableList<Pair> getAuditoriumPairs(Auditorium auditorium) {
         return FXCollections.observableArrayList(pairRepository.getAllByAuditoriumEquals(auditorium));
     }

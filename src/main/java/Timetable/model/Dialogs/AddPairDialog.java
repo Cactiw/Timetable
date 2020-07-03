@@ -409,6 +409,19 @@ public class AddPairDialog {
                         pair.getEndTime().toLocalTime().toString(), suggestion);
                 correct = false;
             }
+
+            // Проверка на конфликты групп
+            var pairs = pairService.getGroupConflictPairs(groupEntity, getBeginTime().getDayOfWeek().getValue(),
+                    getBeginTime().toLocalTime(), getEndTime().toLocalTime());
+            for (var pair: pairs) {
+                if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
+                    continue;
+                }
+                setConflict("Группа в это время занята:\n" + pair.getSubject() + " " +
+                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                        pair.getEndTime().toLocalTime().toString(), "");
+                correct = false;
+            }
         }
         okButton.setDisable(!correct);
 
