@@ -181,7 +181,7 @@ public class AddPairDialog {
 
         groupPopup = new ContextMenu();
         groupPopup.setOnAction(e -> {
-            var text = ((MenuItem)e.getTarget()).getText();
+            var text = ((MenuItem) e.getTarget()).getText();
             setGroup(peopleUnionService.getByName(text));
             groupPopup.hide();
         });
@@ -190,13 +190,13 @@ public class AddPairDialog {
 
         auditoriumPopup = new ContextMenu();
         auditoriumPopup.setOnAction(actionEvent -> {
-            String text = ((MenuItem)actionEvent.getTarget()).getText();
+            String text = ((MenuItem) actionEvent.getTarget()).getText();
             setAuditorium(auditoriumService.getAuditoriumByName(text));
         });
 
         teacherPopup = new ContextMenu();
         teacherPopup.setOnAction(actionEvent -> {
-            String text = ((MenuItem)actionEvent.getTarget()).getText();
+            String text = ((MenuItem) actionEvent.getTarget()).getText();
             setTeacher(userService.searchUserByName(text, 1).get(0));
         });
 
@@ -211,7 +211,9 @@ public class AddPairDialog {
         });
 
         beginDate = new JFXDatePicker();
-        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> { verifyAddUserDialog(); });
+        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> {
+            verifyAddUserDialog();
+        });
         beginTime = new JFXTimePicker();
         beginTime.set24HourView(true);
         beginTime.valueProperty().addListener((observableValue, localTime, t1) -> {
@@ -227,7 +229,6 @@ public class AddPairDialog {
         repeatability.setItems(FXCollections.observableArrayList(Arrays.asList("Один раз", "Еженедельно")));
         repeatability.setValue("Еженедельно");
         repeatability.valueProperty().addListener(this::onTextChanged);
-
 
 
         gridPane.add(subject, 1, 0);
@@ -251,7 +252,7 @@ public class AddPairDialog {
         conflicts = new Text("");
         suggestions = new Text("\n");
         suggestions.setStyle("-fx-underline: true");
-        suggestions.setOnMouseClicked( e -> {
+        suggestions.setOnMouseClicked(e -> {
 
         });
         suggestions.setFont(Font.font("Calibri", 15));
@@ -325,7 +326,6 @@ public class AddPairDialog {
     }
 
 
-
     private void setTeacher(User newTeacher) {
         teacher.setText(newTeacher.formatFIO());
         teacherEntity = newTeacher;
@@ -380,9 +380,9 @@ public class AddPairDialog {
             setNoConflicts();
             // Проверка на конфликты преподавателя
             var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
-            for (var pair: teacherPairs) {
+            for (var pair : teacherPairs) {
                 if (getBeginTime().compareTo(pair.getEndTime()) > 0 ||
-                getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair))) {
+                        getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair))) {
                     // Не пересекаются, всё норм
                 } else {
                     // Пересекаются, алёрт
@@ -396,7 +396,7 @@ public class AddPairDialog {
             var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
                     getBeginTime().getDayOfWeek().getValue(),
                     getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (var pair: auditoriumConflictPairs) {
+            for (var pair : auditoriumConflictPairs) {
                 if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
                     continue;
                 }
@@ -413,7 +413,7 @@ public class AddPairDialog {
             // Проверка на конфликты групп
             var pairs = pairService.getGroupConflictPairs(groupEntity, getBeginTime().getDayOfWeek().getValue(),
                     getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (var pair: pairs) {
+            for (var pair : pairs) {
                 if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
                     continue;
                 }
