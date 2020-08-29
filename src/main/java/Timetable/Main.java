@@ -6,31 +6,20 @@ import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
-import Timetable.model.Pair;
 import Timetable.model.Parameters.StyleParameter;
 import Timetable.model.PeopleUnion;
-import Timetable.model.Properties.BorderProperties;
+import Timetable.repositories.UserRepository;
 import Timetable.service.*;
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,15 +28,13 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import Timetable.repositories.UserRepository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static javafx.scene.control.PopupControl.USE_COMPUTED_SIZE;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 
 @Lazy
@@ -201,7 +188,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         vbox.setMinWidth(200);
         //vbox.setStyle("-fx-background-color: red");
         List<String> names = Arrays.asList("Аудитории", "Занятия");
-        List<Pane> panes = Arrays.asList(auditoriumBox, classes);
+        List<Pane> panes = Arrays.asList(auditoriumPane, classes);
         for (int i = 0; i < 2; ++i) {
             vbox.getChildren().add(boxItem(String.valueOf(i), names.get(i), panes.get(i), panes));
         }
@@ -344,6 +331,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     private void initiateAuditoriumWindow() {
         auditoriumPane = new GridPane();
+        auditoriumPane.setPadding(new Insets(15, 15, 15, 15));
+        auditoriumPane.setHgap(15);
+        auditoriumPane.setVgap(15);
         fillAuditoriumWindow(auditoriumService.getAuditoriums());
         modes.getChildren().add(auditoriumPane);
     }
@@ -353,7 +343,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         int COL_NUM = 3;
         for (int i = 0; i < auditoriums.size(); ++i) {
             var auditorium = auditoriums.get(i);
-            auditoriumPane.add(auditorium.getPane(), i % COL_NUM, i / COL_NUM);
+            var pane = auditorium.getPane();
+            auditoriumPane.add(pane, i % COL_NUM, i / COL_NUM);
         }
     }
 
