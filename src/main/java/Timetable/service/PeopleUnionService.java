@@ -6,6 +6,7 @@ import Timetable.repositories.PeopleUnionRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -13,30 +14,36 @@ import javax.transaction.Transactional;
 @Service
 @Transactional
 public class PeopleUnionService {
+    @NonNull
     private final PeopleUnionRepository peopleUnionRepository;
 
     @Autowired
-    PeopleUnionService(PeopleUnionRepository peopleUnionRepository) {
+    PeopleUnionService(@NonNull final PeopleUnionRepository peopleUnionRepository) {
         this.peopleUnionRepository = peopleUnionRepository;
     }
 
+    @NonNull
     public ObservableList<PeopleUnion> findAll() {
         return FXCollections.observableArrayList(peopleUnionRepository.findAll());
     }
 
-    public ObservableList<PeopleUnion> findAllByTypeEquals (PeopleUnionType peopleUnionType) {
+    @NonNull
+    public ObservableList<PeopleUnion> findAllByTypeEquals(@NonNull final PeopleUnionType peopleUnionType) {
         return FXCollections.observableArrayList(peopleUnionRepository.findAllByTypeEquals(peopleUnionType));
     }
 
-    public ObservableList<PeopleUnion> searchPeopleUnions(String name) {
+    @NonNull
+    public ObservableList<PeopleUnion> searchPeopleUnions(@NonNull final String name) {
         return FXCollections.observableArrayList(peopleUnionRepository.findByNameIgnoreCaseContaining(name));
     }
 
-    public PeopleUnion getByName(String name) {
+    @NonNull
+    public PeopleUnion getByName(@NonNull final String name) {
         return peopleUnionRepository.getByNameEquals(name);
     }
 
-    public PeopleUnion save(PeopleUnion peopleUnion) {
+    @NonNull
+    public PeopleUnion save(@NonNull final PeopleUnion peopleUnion) {
         return peopleUnionRepository.save(peopleUnion);
     }
 }

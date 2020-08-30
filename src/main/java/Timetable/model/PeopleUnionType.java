@@ -1,18 +1,15 @@
 package Timetable.model;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
 @Entity
 @Component
 public class PeopleUnionType {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column

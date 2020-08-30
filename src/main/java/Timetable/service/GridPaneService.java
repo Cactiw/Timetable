@@ -1,47 +1,68 @@
 package Timetable.service;
 
 import Timetable.model.Parameters.StyleParameter;
-import Timetable.model.Properties.BorderProperties;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GridPaneService {
-    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex) {
+    @NonNull
+    public static <T extends Node> Pane addToGridPane(@NonNull final GridPane gridPane,
+                                                      @NonNull final T node,
+                                                      final int columnIndex,
+                                                      final int rowIndex) {
         return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, new StyleParameter());
     }
 
-    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
-                                                      int columnSpan) {
+    @NonNull
+    public static <T extends Node> Pane addToGridPane(@NonNull final GridPane gridPane,
+                                                      @NonNull final T node,
+                                                      final int columnIndex,
+                                                      final int rowIndex,
+                                                      final int columnSpan) {
         return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
     }
 
-    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
-                                                      int columnSpan, StyleParameter addStyle) {
+    @NonNull
+    public static <T extends Node> Pane addToGridPane(@NonNull final GridPane gridPane,
+                                                      @NonNull final T node,
+                                                      final int columnIndex,
+                                                      final int rowIndex,
+                                                      final int columnSpan,
+                                                      @NonNull final StyleParameter addStyle) {
         applyStyle(node, addStyle);
         return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
     }
 
-    public static <T extends Node> Pane addToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
-                                                      StyleParameter addStyle) {
+    @NonNull
+    public static <T extends Node> Pane addToGridPane(@NonNull final GridPane gridPane,
+                                                      @NonNull final T node,
+                                                      final int columnIndex,
+                                                      final int rowIndex,
+                                                      @NonNull final StyleParameter addStyle) {
         applyStyle(node, addStyle);
         return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, 1, addStyle);
 
     }
-
-    private static <T extends Node> void applyStyle(T node, StyleParameter addStyle) {
+    private static <T extends Node> void applyStyle(@NonNull final T node, @NonNull final StyleParameter addStyle) {
         if (addStyle.hasLabelStyle()) {
             node.getStyleClass().add(addStyle.getLabelStyle());
         }
     }
 
-    private static <T extends Node> Pane finalAddToGridPane(GridPane gridPane, T node, int columnIndex, int rowIndex,
-                                                            int columnSpan, StyleParameter addStyle) {
-        BorderPane pane = new BorderPane();
+    @NonNull
+    private static <T extends Node> Pane finalAddToGridPane(@NonNull final GridPane gridPane,
+                                                            @NonNull final T node,
+                                                            final int columnIndex,
+                                                            final int rowIndex,
+                                                            final int columnSpan,
+                                                            @NonNull final StyleParameter addStyle) {
+        final BorderPane pane = new BorderPane();
         pane.centerProperty().set(node);
         pane.getStyleClass().add("classes-grid-cell");
         if (columnIndex == 0) {
@@ -61,13 +82,16 @@ public class GridPaneService {
         return pane;
     }
 
-    public static void fillRowEmpty(GridPane gridPane, int rowIndex, int colLimit) {
+    public static void fillRowEmpty(@NonNull final GridPane gridPane, final int rowIndex, final int colLimit) {
         for (int colIndex = 0; colIndex <= colLimit; ++colIndex) {
             addToGridPane(gridPane, new Label(""), colIndex, rowIndex);
         }
     }
 
-    public static void fillRowEmpty(GridPane gridPane, int rowIndex, int colLimit, StyleParameter addStyle) {
+    public static void fillRowEmpty(@NonNull final GridPane gridPane,
+                                    final int rowIndex,
+                                    final int colLimit,
+                                    @NonNull final StyleParameter addStyle) {
         for (int colIndex = 0; colIndex <= colLimit; ++colIndex) {
             addToGridPane(gridPane, new Label(""), colIndex, rowIndex, addStyle);
         }

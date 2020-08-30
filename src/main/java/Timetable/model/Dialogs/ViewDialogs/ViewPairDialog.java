@@ -2,39 +2,34 @@ package Timetable.model.Dialogs.ViewDialogs;
 
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Pair;
-import com.jfoenix.animation.alert.CenterTransition;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
-import javafx.scene.image.Image;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-
-import java.awt.*;
 
 @Component
 public class ViewPairDialog {
-    JFXDialog dialog;
-    StackPane container;
-    JFXDialogLayout content;
-    GridPane rootPane;
+    private JFXDialog dialog;
+    private JFXDialogLayout content;
 
-    JFXButton okButton, editPairButton;
+    private JFXButton okButton;
 
-    Pair pair;
+    private Pair pair;
 
     @Autowired
     AddPairDialog addPairDialog;
 
-    public void show(StackPane container, Pair pair) {
-        this.container = container;
+    public void show(@NonNull final StackPane container, @NonNull final Pair pair) {
         this.pair = pair;
 
         dialog = new JFXDialog();
@@ -53,13 +48,11 @@ public class ViewPairDialog {
         okButton = new JFXButton("Ок");
         okButton.setPrefSize(50, 25);
         okButton.styleProperty().setValue("-fx-font-size: 13pt; -fx-text-fill: green; -fx-background-color: whitesmoke");
-        okButton.setOnAction(e -> {
-            this.dialog.close();
-        });
+        okButton.setOnAction(e -> this.dialog.close());
 
-        rootPane = new GridPane();
+        final GridPane rootPane = new GridPane();
 
-        var heading = new Text(pair.formatPair());
+        final Text heading = new Text(pair.formatPair());
         heading.styleProperty().setValue("-fx-font-size: 14pt;");
         content.setHeading(heading);
         content.setBody(rootPane);
@@ -67,8 +60,8 @@ public class ViewPairDialog {
         rootPane.setPadding(new Insets(10, 0, 10, 0));
         rootPane.setHgap(10);
 
-        Image editIcon = new Image("/icons/edit.png");
-        editPairButton = new JFXButton("", new ImageView(editIcon));
+        final Image editIcon = new Image("/icons/edit.png");
+        final JFXButton editPairButton = new JFXButton("", new ImageView(editIcon));
         editPairButton.setOnAction(e -> {
             addPairDialog.showFromPair(pair);
             this.updateContent();
@@ -88,6 +81,7 @@ public class ViewPairDialog {
         rootPane.add(new Label(pair.formatPairTime()), 1, 3, 2, 1);
     }
 
+    @Nullable
     public JFXDialog getDialog() {
         return dialog;
     }

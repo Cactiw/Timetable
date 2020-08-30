@@ -6,18 +6,11 @@ import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonNodeBinaryType;
 import com.vladmihalcea.hibernate.type.json.JsonNodeStringType;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 import org.hibernate.annotations.TypeDefs;
-import org.hibernate.type.StringNVarcharType;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Map;
 
 @Entity
@@ -31,6 +24,9 @@ import java.util.Map;
         @TypeDef(name = "json-node", typeClass = JsonNodeStringType.class),
 })
 public class User {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)

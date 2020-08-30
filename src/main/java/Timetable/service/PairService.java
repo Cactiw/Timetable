@@ -8,11 +8,10 @@ import Timetable.repositories.PairRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -20,33 +19,38 @@ import java.util.List;
 @Service
 @Transactional
 public class PairService {
+    @NonNull
     private final PairRepository pairRepository;
 
     @Autowired
-    public PairService(PairRepository pairRepository) {
+    public PairService(@NonNull final PairRepository pairRepository) {
         this.pairRepository = pairRepository;
     }
 
-    public Pair save(Pair pair) {
+    @NonNull
+    public Pair save(@NonNull final Pair pair) {
         return pairRepository.save(pair);
     }
 
+    @NonNull
     public ObservableList<Pair> getDefaultWeek() {
-        ObservableList<Pair> pairs = FXCollections.observableArrayList(pairRepository.getAllByRepeatabilityGreaterThan(0));
-        return pairs;
+        return FXCollections.observableArrayList(pairRepository.getAllByRepeatabilityGreaterThan(0));
     }
 
+    // Never used
+    @NonNull
     public ObservableList<ObservableList<Pair>> getDefaultWeekByDays() {
-        ObservableList<Pair> pairs = getDefaultWeek();
-        return dividePairsByDaysOfWeek(pairs);
+        return dividePairsByDaysOfWeek(getDefaultWeek());
     }
 
-    public ObservableList<ObservableList<Pair>> getDefaultWeekByPeopleUnionDividedByDays(PeopleUnion peopleUnion) {
+    @NonNull
+    public ObservableList<ObservableList<Pair>> getDefaultWeekByPeopleUnionDividedByDays(@NonNull final PeopleUnion peopleUnion) {
         return dividePairsByDaysOfWeek(getDefaultWeekByPeopleUnion(peopleUnion));
     }
 
-    public ObservableList<Pair> getDefaultWeekByPeopleUnion(PeopleUnion peopleUnion) {
-        ObservableList<Pair> pairs = FXCollections.observableArrayList();
+    @NonNull
+    public ObservableList<Pair> getDefaultWeekByPeopleUnion(@NonNull final PeopleUnion peopleUnion) {
+        final ObservableList<Pair> pairs = FXCollections.observableArrayList();
         PeopleUnion currentPeopleUnion = peopleUnion;
         while (currentPeopleUnion != null) {
             pairs.addAll(FXCollections.observableArrayList(pairRepository.getAllByGroupEqualsAndRepeatabilityEquals(
@@ -57,19 +61,21 @@ public class PairService {
         return pairs;
     }
 
-    public ObservableList<ObservableList<Pair>> getDefaultWeekForStream(List<PeopleUnion> peopleUnions) {
+    @NonNull
+    public ObservableList<ObservableList<Pair>> getDefaultWeekForStream(@NonNull final List<PeopleUnion> peopleUnions) {
         return dividePairsByDaysOfWeek(FXCollections.observableArrayList(
                 pairRepository.getGroupsDefaultWeek(peopleUnions)));
     }
 
     // Получает на вход список пар в неделю, возвращает список из семи списков пар - по одному на каждый день недели.
-    private ObservableList<ObservableList<Pair>> dividePairsByDaysOfWeek(ObservableList<Pair> pairs) {
+    @NonNull
+    private ObservableList<ObservableList<Pair>> dividePairsByDaysOfWeek(@NonNull final ObservableList<Pair> pairs) {
         if (pairs.isEmpty()) {
             return FXCollections.observableArrayList();
         }
 //        var currentDay = pairs.get(0).getBeginTime().toLocalDate().with(DayOfWeek.MONDAY);
         var currentDay = 1;
-        ObservableList<ObservableList<Pair>> returnList = FXCollections.observableArrayList();;
+        final ObservableList<ObservableList<Pair>> returnList = FXCollections.observableArrayList();
         for (int i = 0; i < 7; ++i) {
             final var finalCurrentDay = currentDay;
             returnList.add(pairs.filtered(e -> e.getDayOfTheWeek().equals(finalCurrentDay)).sorted(
@@ -79,14 +85,18 @@ public class PairService {
         return returnList;
     }
 
-    public ObservableList<Pair> getDefaultWeekForTeacher(User teacher){
-        ObservableList<Pair> pairs = FXCollections.observableArrayList(pairRepository.getAllByRepeatabilityGreaterThanAndTeacherIdEquals(0, teacher.getId()));
-        return pairs;
+    @NonNull
+    public ObservableList<Pair> getDefaultWeekForTeacher(@NonNull final User teacher){
+        return FXCollections.observableArrayList(
+                pairRepository.getAllByRepeatabilityGreaterThanAndTeacherIdEquals(0, teacher.getId())
+        );
     }
 
-    public ObservableList<Pair> getGroupConflictPairs(PeopleUnion peopleUnion, Integer dayOfWeek,
-                                                      LocalTime beginTime, LocalTime endTime) {
-        ObservableList<Pair> pairs = FXCollections.observableArrayList();
+    public ObservableList<Pair> getGroupConflictPairs(@NonNull final PeopleUnion peopleUnion,
+                                                      @NonNull final Integer dayOfWeek,
+                                                      @NonNull final LocalTime beginTime,
+                                                      @NonNull final LocalTime endTime) {
+        final ObservableList<Pair> pairs = FXCollections.observableArrayList();
         PeopleUnion currentPeopleUnion = peopleUnion;
         while (currentPeopleUnion != null) {
             pairs.addAll(FXCollections.observableArrayList(pairRepository.getAllGroupConflicts(
@@ -96,13 +106,18 @@ public class PairService {
         return pairs;
     }
 
-    public ObservableList<Pair> getAuditoriumPairs(Auditorium auditorium) {
+    @NonNull
+    public ObservableList<Pair> getAuditoriumPairs(@NonNull final Auditorium auditorium) {
         return FXCollections.observableArrayList(pairRepository.getAllByAuditoriumEquals(auditorium));
     }
 
-    public ObservableList<Pair> getAuditoriumConflictPairs(Auditorium auditorium, Integer dayOfWeek,
-                                                           LocalTime beginTime, LocalTime endTime) {
-        return FXCollections.observableArrayList(pairRepository.getAllAuditoriumConflicts(auditorium, dayOfWeek,
-                beginTime, endTime));
+    @NonNull
+    public ObservableList<Pair> getAuditoriumConflictPairs(@NonNull final Auditorium auditorium,
+                                                           final int dayOfWeek,
+                                                           @NonNull final LocalTime beginTime,
+                                                           @NonNull final LocalTime endTime) {
+        return FXCollections.observableArrayList(
+                pairRepository.getAllAuditoriumConflicts(auditorium, dayOfWeek, beginTime, endTime)
+        );
     }
 }

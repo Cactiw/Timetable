@@ -7,30 +7,36 @@ import Timetable.service.UserService;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableArray;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 public class AddUserDialog {
-    TextField firstName, lastName, surName, email, group;
-    List<TextField> emptyList;
-    ChoiceBox<String> role;
-    Button okButton;
-    Label groupLabel;
-    ContextMenu groupPopup;
-    PeopleUnion selectedGroup;
+    private TextField firstName;
+    private TextField lastName;
+    private TextField surName;
+    private TextField email;
+    private TextField group;
+    private List<TextField> emptyList;
+    private ChoiceBox<String> role;
+    private Button okButton;
+    private Label groupLabel;
+    private ContextMenu groupPopup;
+    private PeopleUnion selectedGroup;
 
-    UserService userService;
-    PeopleUnionService peopleUnionService;
+    @NonNull
+    private final UserService userService;
+    @NonNull
+    private final PeopleUnionService peopleUnionService;
 
-    public AddUserDialog(UserService userService, PeopleUnionService peopleUnionService) {
+    public AddUserDialog(@NonNull final UserService userService, @NonNull final PeopleUnionService peopleUnionService) {
         this.userService = userService;
         this.peopleUnionService = peopleUnionService;
     }
@@ -38,21 +44,20 @@ public class AddUserDialog {
     public void show() {
 
         // Create the custom dialog.
-        Dialog<User> dialog = new Dialog<>();
+        final Dialog<User> dialog = new Dialog<>();
         dialog.setTitle("Добавление пользователя");
 
         // Set the button types.
-        ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        // Studio tells me there is a duplicate code here
+        final ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
         okButton = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
         okButton.setDisable(true);
 
-        GridPane gridPane = new GridPane();
+        final GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
-
-
 
         firstName = new TextField();
         firstName.setPromptText("Введите имя");
@@ -66,13 +71,14 @@ public class AddUserDialog {
         email = new TextField();
         email.setPromptText("Введите Email");
         email.textProperty().addListener(this::onTextChanged);
-        role = new ChoiceBox<String>();
+        role = new ChoiceBox<>();
         role.setItems(FXCollections.observableArrayList("Преподаватель", "Студент"));
         role.setValue("Студент");
         role.valueProperty().addListener(this::onTextChanged);
 
         group = new TextField();
         group.setPromptText("Введите группу");
+        // Studio tells me there is a duplicate code here
         group.textProperty().addListener(e -> {
             selectedGroup = null;
             if (group.getText().equals("")) {
@@ -139,17 +145,14 @@ public class AddUserDialog {
             return null;
         });
 
-        Optional<User> result = dialog.showAndWait();
+        final Optional<User> result = dialog.showAndWait();
 //        if (result.isPresent()) {
 //            return result.get();
 //        }
-        result.ifPresent(pair -> {
-            System.out.println("User created");
-        });
-        return;
+        result.ifPresent(pair -> System.out.println("User created"));
     }
 
-    private void onTextChanged(Observable observable) {
+    private void onTextChanged(@NonNull final Observable observable) {
         verifyAddUserDialog();
     }
 
@@ -190,7 +193,7 @@ public class AddUserDialog {
         //role.valueProperty().getValue()
     }
 
-    private void red(TextField textField, boolean red) {
+    private void red(@NonNull final TextField textField, final boolean red) {
         if (red) {
             setRed(textField);
         } else {
@@ -198,30 +201,30 @@ public class AddUserDialog {
         }
     }
 
-    private void setRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    // TODO these are common methods for all Add* classes, consider creating one parent class and implementing these methods there
+    private void setRed(@NonNull final TextField textField) {
+        final ObservableList<String> styleClass = textField.getStyleClass();
         if (! styleClass.contains("error")) {
             styleClass.add("error");
         }
     }
 
-    private void cancelRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void cancelRed(@NonNull final TextField textField) {
+        final ObservableList<String> styleClass = textField.getStyleClass();
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }
     }
 
-    private void fillGroupPopupItems(String name) {
-        ObservableList<PeopleUnion> peopleUnions;
+    private void fillGroupPopupItems(@NonNull final String name) {
+        // Studio tells me there is a duplicate code here
+        final ObservableList<PeopleUnion> peopleUnions;
         if (!name.equals("")) {
             peopleUnions = peopleUnionService.searchPeopleUnions(name);
         } else {
             peopleUnions = peopleUnionService.findAll();
         }
         groupPopup.getItems().clear();
-        peopleUnions.forEach(peopleUnion -> {
-            groupPopup.getItems().add(new MenuItem(peopleUnion.toString()));
-        });
+        peopleUnions.forEach(peopleUnion -> groupPopup.getItems().add(new MenuItem(peopleUnion.toString())));
     }
 }

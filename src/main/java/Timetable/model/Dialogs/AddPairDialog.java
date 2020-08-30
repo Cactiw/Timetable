@@ -15,7 +15,10 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
-import javafx.event.*;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventTarget;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
@@ -27,7 +30,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -37,29 +40,36 @@ import java.util.*;
 
 @Component
 public class AddPairDialog {
-    Dialog<Pair> dialog;
+    @NonNull
+    private static final LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
 
-    TextField subject, teacher, auditorium, group;
-    List<TextField> emptyList;
-    List<ComboBoxBase> notNullList;
-    Button okButton;
-    Text conflicts, suggestions;
-    TextFlow conflictsCheck;
-    Pair pairFrom;
+    private Dialog<Pair> dialog;
 
-    ContextMenu auditoriumPopup, teacherPopup, groupPopup;
-    TextField currentParentField;
-    Auditorium auditoriumEntity;
-    User teacherEntity;
-    PeopleUnion groupEntity;
-    JFXDatePicker beginDate;
-    JFXTimePicker beginTime, endTime;
+    private TextField subject;
+    private TextField teacher;
+    private TextField auditorium;
+    private TextField group;
+    private List<TextField> emptyList;
+    private List<ComboBoxBase<?>> notNullList;
+    private Button okButton;
+    private Text conflicts;
+    private Text suggestions;
+    private Pair pairFrom;
 
-    Boolean beginTimeChanged = false;
+    private ContextMenu auditoriumPopup;
+    private ContextMenu teacherPopup;
+    private ContextMenu groupPopup;
+    private Auditorium auditoriumEntity;
+    private User teacherEntity;
+    private PeopleUnion groupEntity;
+    private JFXDatePicker beginDate;
+    private JFXTimePicker beginTime;
+    private JFXTimePicker endTime;
 
-    ChoiceBox<String> repeatability;
+    private boolean beginTimeChanged = false;
 
-    LocalTime PAIR_LENGTH = LocalTime.of(1, 35);
+    private ChoiceBox<String> repeatability;
+
 
     @Autowired
     private UserService userService;
@@ -70,17 +80,19 @@ public class AddPairDialog {
     @Autowired
     private PeopleUnionService peopleUnionService;
 
+    public static void fromPair(Pair pair) {
+        var dialog = new AddPairDialog();
+        dialog.showFromPair(pair);
+    }
+
     public void show() {
         pairFrom = null;
         this.init();
-        Optional<Pair> result = dialog.showAndWait();
+        final Optional<Pair> result = dialog.showAndWait();
 //        if (result.isPresent()) {
 //            return result.get();
 //        }
-        result.ifPresent(pair -> {
-            System.out.println("Pair created");
-        });
-        return;
+        result.ifPresent(pair -> System.out.println("Pair created"));
     }
 
     public void showFromPair(Pair pair) {
@@ -96,13 +108,7 @@ public class AddPairDialog {
         endTime.valueProperty().setValue(pair.getEndTime().toLocalTime());
 
         repeatability.setValue(repeatability.itemsProperty().get().get(pair.getRepeatability()));
-        Optional<Pair> result = dialog.showAndWait();
-        return;
-    }
-
-    public static void fromPair(Pair pair) {
-        var dialog = new AddPairDialog();
-        dialog.showFromPair(pair);
+        final Optional<Pair> result = dialog.showAndWait(); // Never used
     }
 
     private void init() {
@@ -111,12 +117,13 @@ public class AddPairDialog {
         dialog.setTitle("Добавление занятия");
 
         // Set the button types.
-        ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        // Studio tells me there is a duplicate code here
+        final ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
         okButton = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
         okButton.setDisable(true);
 
-        GridPane gridPane = new GridPane();
+        final GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
@@ -130,7 +137,7 @@ public class AddPairDialog {
         teacher.setPromptText("ФИО преподавателя");
         teacher.textProperty().addListener((observableValue, s, t1) -> {
             teacherEntity = null;
-            SortedList<User> users;
+            final SortedList<User> users;
             if (observableValue.getValue().compareTo("") == 0) {
                 teacherPopup.hide();
             } else {
@@ -147,14 +154,14 @@ public class AddPairDialog {
         auditorium.setPromptText("Введите аудиторию");
         auditorium.textProperty().addListener((observableValue, s, t1) -> {
             auditoriumEntity = null;
-            SortedList<Auditorium> auditoriums;
+            final SortedList<Auditorium> auditoriums;
             if (observableValue.getValue().compareTo("") == 0) {
                 auditoriumPopup.hide();
                 //auditoriums = new SortedList<>(Auditorium.getAuditoriums());
             } else {
                 auditoriums = new SortedList<>(auditoriumService.searchAuditoriums(observableValue.getValue()));
 
-                ArrayList<String> auditoriumNames = new ArrayList<>();
+                final ArrayList<String> auditoriumNames = new ArrayList<>();    // never used for querying
                 auditoriumPopup.getItems().clear();
                 for (var x : auditoriums) {
                     auditoriumNames.add(x.getName());
@@ -166,6 +173,7 @@ public class AddPairDialog {
         });
         group = new TextField();
         group.setPromptText("Введите название группы");
+        // Studio tells me there is a duplicate code here
         group.textProperty().addListener(e -> {
             groupEntity = null;
             if (group.getText().equals("")) {
@@ -177,11 +185,11 @@ public class AddPairDialog {
             verifyAddUserDialog();
         });
 
-        Label groupLabel = new Label("Группа:");
+        final Label groupLabel = new Label("Группа:");
 
         groupPopup = new ContextMenu();
         groupPopup.setOnAction(e -> {
-            var text = ((MenuItem) e.getTarget()).getText();
+            final String text = ((MenuItem) e.getTarget()).getText();
             setGroup(peopleUnionService.getByName(text));
             groupPopup.hide();
         });
@@ -190,13 +198,18 @@ public class AddPairDialog {
 
         auditoriumPopup = new ContextMenu();
         auditoriumPopup.setOnAction(actionEvent -> {
-            String text = ((MenuItem) actionEvent.getTarget()).getText();
-            setAuditorium(auditoriumService.getAuditoriumByName(text));
+            final String text = ((MenuItem) actionEvent.getTarget()).getText();
+            final Auditorium auditorium = auditoriumService.getAuditoriumByName(text);
+            if (auditorium == null) {
+                // TODO
+            } else {
+                setAuditorium(auditorium);
+            }
         });
 
         teacherPopup = new ContextMenu();
         teacherPopup.setOnAction(actionEvent -> {
-            String text = ((MenuItem) actionEvent.getTarget()).getText();
+            final String text = ((MenuItem) actionEvent.getTarget()).getText();
             setTeacher(userService.searchUserByName(text, 1).get(0));
         });
 
@@ -211,9 +224,7 @@ public class AddPairDialog {
         });
 
         beginDate = new JFXDatePicker();
-        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> {
-            verifyAddUserDialog();
-        });
+        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> verifyAddUserDialog());
         beginTime = new JFXTimePicker();
         beginTime.set24HourView(true);
         beginTime.valueProperty().addListener((observableValue, localTime, t1) -> {
@@ -260,7 +271,7 @@ public class AddPairDialog {
         conflicts.setFont(Font.font("Calibri", 15));
 //        gridPane.add(conflicts, 2, 1, 5, 5);
 
-        conflictsCheck = new TextFlow(conflicts, suggestions);
+        final TextFlow conflictsCheck = new TextFlow(conflicts, suggestions);
         conflictsCheck.setPrefWidth(250);
 //        conflictsCheck.setLayoutY();
 
@@ -280,7 +291,7 @@ public class AddPairDialog {
         // Convert the result to a usersubject-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                Pair pair = Objects.requireNonNullElseGet(pairFrom, Pair::new);
+                final Pair pair = Objects.requireNonNullElseGet(pairFrom, Pair::new);
                 pair.setAuditorium(auditoriumEntity);
                 pair.setTeacher(teacherEntity);
                 pair.setGroup(groupEntity);
@@ -296,14 +307,15 @@ public class AddPairDialog {
         });
     }
 
-    EventHandler<KeyEvent> keyEventHandler = new EventHandler<KeyEvent>() {
-        public void handle(KeyEvent e) {
-            EventTarget target = e.getTarget();
-            currentParentField = (TextField) target;
-            EventType<? extends Event> type = e.getEventType();
+    // Never used
+    EventHandler<KeyEvent> keyEventHandler = new EventHandler<>() {
+        public void handle(@NonNull final KeyEvent e) {
+            final EventTarget target = e.getTarget();
+            final TextField currentParentField = (TextField) target;
+            final EventType<? extends Event> type = e.getEventType();
             if (type == KeyEvent.KEY_PRESSED) {
                 System.out.println("Changed");
-                KeyCode code = e.getCode();
+                final KeyCode code = e.getCode();
                 if (code == KeyCode.DOWN) {
                     auditoriumPopup.show(currentParentField, Side.BOTTOM, 0, 0); //<- this
                 } else {
@@ -313,7 +325,7 @@ public class AddPairDialog {
         }
     };
 
-    private void onTextChanged(Observable observable) {
+    private void onTextChanged(@NonNull final Observable observable) {
         verifyAddUserDialog();
     }
 
@@ -326,21 +338,21 @@ public class AddPairDialog {
     }
 
 
-    private void setTeacher(User newTeacher) {
+    private void setTeacher(@NonNull final User newTeacher) {
         teacher.setText(newTeacher.formatFIO());
         teacherEntity = newTeacher;
         Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
         verifyAddUserDialog();
     }
 
-    private void setAuditorium(Auditorium newAuditorium) {
+    private void setAuditorium(@NonNull final Auditorium newAuditorium) {
         auditorium.setText(newAuditorium.getName());
         auditoriumEntity = newAuditorium;
         Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
         verifyAddUserDialog();
     }
 
-    private void setGroup(PeopleUnion newGroup) {
+    private void setGroup(@NonNull final PeopleUnion newGroup) {
         group.setText(newGroup.getName());
         groupEntity = newGroup;
         Platform.runLater(() -> group.positionCaret(group.getText().length()));
@@ -379,12 +391,10 @@ public class AddPairDialog {
         if (correct) {
             setNoConflicts();
             // Проверка на конфликты преподавателя
-            var teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
-            for (var pair : teacherPairs) {
-                if (getBeginTime().compareTo(pair.getEndTime()) > 0 ||
-                        getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair))) {
-                    // Не пересекаются, всё норм
-                } else {
+            final ObservableList<Pair> teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
+            for (final Pair pair : teacherPairs) {
+                if (!(getBeginTime().compareTo(pair.getEndTime()) > 0 ||
+                        getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
                     // Пересекаются, алёрт
                     setConflict("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
                             pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
@@ -393,15 +403,15 @@ public class AddPairDialog {
                 }
             }
             // Проверка на конфликты аудитории
-            var auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
+            final ObservableList<Pair> auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
                     getBeginTime().getDayOfWeek().getValue(),
                     getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (var pair : auditoriumConflictPairs) {
+            for (final Pair pair : auditoriumConflictPairs) {
                 if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
                     continue;
                 }
-                var availableAuditoriums = auditoriumService.getAvailableAuditoriums(getBeginTime(), getEndTime());
-                String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
+                final ObservableList<Auditorium> availableAuditoriums = auditoriumService.getAvailableAuditoriums(getBeginTime(), getEndTime());
+                final String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
                         availableAuditoriums.get(0).getName() + ", вместимость: " +
                         availableAuditoriums.get(0).getMaxStudents() : "Подходящих аудиторий не найдено.";
                 setConflict("Аудитория в это время занята:\n" + pair.getSubject() + " " +
@@ -411,9 +421,9 @@ public class AddPairDialog {
             }
 
             // Проверка на конфликты групп
-            var pairs = pairService.getGroupConflictPairs(groupEntity, getBeginTime().getDayOfWeek().getValue(),
+            final ObservableList<Pair> pairs = pairService.getGroupConflictPairs(groupEntity, getBeginTime().getDayOfWeek().getValue(),
                     getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (var pair : pairs) {
+            for (final Pair pair : pairs) {
                 if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
                     continue;
                 }
@@ -425,7 +435,6 @@ public class AddPairDialog {
         }
         okButton.setDisable(!correct);
 
-        ;
         //role.valueProperty().getValue()
     }
 
@@ -438,7 +447,7 @@ public class AddPairDialog {
         suggestions.setFill(Color.YELLOWGREEN);
     }
 
-    private void setConflict(String conflict, String suggestion) {
+    private void setConflict(@NonNull final String conflict, @NonNull final String suggestion) {
         suggestions.setText(suggestions.getText() + "\n" + suggestion);
         suggestions.setVisible(true);
         if (conflicts.getFill() == Color.ORANGERED) {
@@ -450,7 +459,8 @@ public class AddPairDialog {
         }
     }
 
-    private void red(Control field, boolean red) {
+    // TODO these are common methods for all Add* classes, consider creating one parent class and implementing these methods there
+    private void red(@NonNull final Control field, final boolean red) {
         if (red) {
             setRed(field);
         } else {
@@ -458,32 +468,30 @@ public class AddPairDialog {
         }
     }
 
-    private void setRed(Control field) {
-        ObservableList<String> styleClass = field.getStyleClass();
+    private void setRed(@NonNull final Control field) {
+        final  ObservableList<String> styleClass = field.getStyleClass();
         if (!styleClass.contains("error")) {
             styleClass.add("error");
         }
     }
 
-    private void cancelRed(Control field) {
-        ObservableList<String> styleClass = field.getStyleClass();
+    private void cancelRed(@NonNull final Control field) {
+        final ObservableList<String> styleClass = field.getStyleClass();
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }
     }
 
-    private void fillGroupPopupItems(String name) {
-        ObservableList<PeopleUnion> peopleUnions;
+    private void fillGroupPopupItems(@NonNull final String name) {
+        // Studio tells me there is a duplicate code here
+        final ObservableList<PeopleUnion> peopleUnions;
         if (!name.equals("")) {
             peopleUnions = peopleUnionService.searchPeopleUnions(name);
         } else {
             peopleUnions = peopleUnionService.findAll();
         }
         groupPopup.getItems().clear();
-        peopleUnions.forEach(peopleUnion -> {
-            groupPopup.getItems().add(new MenuItem(peopleUnion.toString()));
-        });
+        peopleUnions.forEach(peopleUnion -> groupPopup.getItems().add(new MenuItem(peopleUnion.toString())));
     }
-
 
 }

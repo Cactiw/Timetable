@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.lang.NonNull;
 
 import java.io.IOException;
 
@@ -35,8 +36,8 @@ public abstract class AbstractJavaFxApplicationSupport extends Application {
         try {
             splashScreen = new Stage(StageStyle.TRANSPARENT);
             splashScreen.setTitle("Splash");
-            Parent root = FXMLLoader.load(getClass().getResource("../splash.fxml"));
-            Scene scene = new Scene(root, Color.TRANSPARENT);
+            final Parent root = FXMLLoader.load(getClass().getResource("../splash.fxml"));
+            final Scene scene = new Scene(root, Color.TRANSPARENT);
             splashScreen.setScene(scene);
             splashScreen.show();
         } catch (IOException e) {
@@ -57,7 +58,8 @@ public abstract class AbstractJavaFxApplicationSupport extends Application {
         context.close();
     }
 
-    protected static void launchApp(Class<? extends AbstractJavaFxApplicationSupport> clazz, String[] args) {
+    protected static void launchApp(@NonNull final Class<? extends AbstractJavaFxApplicationSupport> clazz, // claZZ?
+                                    @NonNull final String[] args) {
         AbstractJavaFxApplicationSupport.savedArgs = args;
         Application.launch(clazz, args);
     }
