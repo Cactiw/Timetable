@@ -435,6 +435,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         if (mode == 0) {
             var fatherPeopleUnion = streamSelect.getValue();
+            if (fatherPeopleUnion == null) {
+                return classesPane;
+            }
             var groups = fatherPeopleUnion.getChildrenUnions();
             var groupsCount = groups.size();
 
