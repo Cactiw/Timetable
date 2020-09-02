@@ -505,15 +505,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
     }
 
     private int increaseGridRowIndex(@NonNull final GridPane gridPane,
-                                     final int rowIndex,
+                                     int rowIndex,
                                      final int increaseValue, // It's always 1, consider removing it
                                      final int groupsCount) {
-        int innerRowIndex = rowIndex;
         for (int i = 0; i < increaseValue; ++i) {
-            innerRowIndex += 1;
+            rowIndex += 1;
             GridPaneService.fillRowEmpty(gridPane, rowIndex, groupsCount);
         }
-        return innerRowIndex;
+        return rowIndex;
     }
 
     private void writeAllGroups(@NonNull final GridPane gridPane,
