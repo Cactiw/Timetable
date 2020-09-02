@@ -2,6 +2,7 @@ package Timetable.model;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -64,12 +65,12 @@ public class Auditorium {
 
     public Pane getPane() {
         VBox root = new VBox();
-//        root.getStyleClass().add("auditorium-pane");
+        root.getStyleClass().add("auditorium-pane");
         root.setFillWidth(true);
 
         HBox top = new HBox();
         top.setFillHeight(true);
-        top.getStyleClass().add("auditorium-pane");
+//        top.getStyleClass().add("auditorium-pane");
         var image = new Image("auditorium.jpg");
         var imageView = new ImageView(image);
         imageView.setFitWidth(150);
@@ -77,10 +78,15 @@ public class Auditorium {
 
         var info = new VBox();
         info.setFillWidth(true);
-        info.setAlignment(Pos.CENTER_RIGHT);
+        info.setAlignment(Pos.CENTER);
+        info.prefWidthProperty().bind(root.widthProperty());
         Label name = new Label(this.getName());
+        name.setMaxHeight(Double.MAX_VALUE);
         name.getStyleClass().add("auditorium-name");
-        info.getChildren().addAll(name, new Line(), new Label("Test info"));
+        Separator separator = new Separator();
+        separator.setPrefWidth(name.getPrefWidth());
+        Label infoLabel = new Label("Test info");
+        info.getChildren().addAll(name, separator, infoLabel);
 
         top.getChildren().addAll(imageView, info);
 
