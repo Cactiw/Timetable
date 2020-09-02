@@ -11,3 +11,7 @@
     -fx-font-size: 20pt;
     -fx-font-weight: bold;
 }
+
+.auditorium-separator {
+    -fx-background-color: #212121;
+}

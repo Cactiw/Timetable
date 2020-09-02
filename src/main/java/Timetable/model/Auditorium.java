@@ -85,6 +85,7 @@ public class Auditorium {
         name.getStyleClass().add("auditorium-name");
         Separator separator = new Separator();
         separator.setPrefWidth(name.getPrefWidth());
+        separator.getStyleClass().add("auditorium-separator");
         Label infoLabel = new Label("Test info");
         info.getChildren().addAll(name, separator, infoLabel);
 
