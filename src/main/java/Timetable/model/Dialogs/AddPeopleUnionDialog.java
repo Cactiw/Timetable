@@ -1,6 +1,5 @@
 package Timetable.model.Dialogs;
 
-import Timetable.model.Pair;
 import Timetable.model.PeopleUnion;
 import Timetable.model.PeopleUnionType;
 import Timetable.service.PeopleUnionService;
@@ -11,22 +10,24 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.springframework.lang.NonNull;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class AddPeopleUnionDialog {
 
-    TextField name;
-    ChoiceBox<PeopleUnionType> unionType, parentUnionType;
-    ChoiceBox<PeopleUnion> parentPeopleUnion;
-    Button okButton;
+    private TextField name;
+    private ChoiceBox<PeopleUnionType> unionType;
+    private ChoiceBox<PeopleUnionType> parentUnionType;
+    private ChoiceBox<PeopleUnion> parentPeopleUnion;
+    private Button okButton;
 
-    PeopleUnionTypeService peopleUnionTypeService;
-    PeopleUnionService peopleUnionService;
+    private final PeopleUnionTypeService peopleUnionTypeService;
+    private final PeopleUnionService peopleUnionService;
 
-    public AddPeopleUnionDialog(PeopleUnionTypeService peopleUnionTypeService, PeopleUnionService peopleUnionService) {
+    public AddPeopleUnionDialog(@NonNull final PeopleUnionTypeService peopleUnionTypeService,
+                                @NonNull final PeopleUnionService peopleUnionService) {
         this.peopleUnionTypeService = peopleUnionTypeService;
         this.peopleUnionService = peopleUnionService;
     }
@@ -39,17 +40,18 @@ public class AddPeopleUnionDialog {
         dialog.setTitle("Добавление группы");
 
         // Set the button types.
-        ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        // Studio tells me there is a duplicate code here
+        final ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
         okButton = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
         okButton.setDisable(true);
 
-        GridPane gridPane = new GridPane();
+        final GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-        var allPeopleUnionTypes = peopleUnionTypeService.findAll();
+        final ObservableList<PeopleUnionType> allPeopleUnionTypes = peopleUnionTypeService.findAll();
         unionType = new ChoiceBox<>(allPeopleUnionTypes);
         unionType.setValue(allPeopleUnionTypes.get(0));
         unionType.setOnAction(e -> parentUnionType.setValue(unionType.getValue().getParent()));
@@ -62,13 +64,14 @@ public class AddPeopleUnionDialog {
                 parentPeopleUnion.setItems(peopleUnionService.findAllByTypeEquals(parentUnionType.getValue()));
             } else {
                 parentPeopleUnion.setValue(null);
-                parentPeopleUnion.setItems(FXCollections.observableArrayList(new ArrayList<PeopleUnion>()));
+                parentPeopleUnion.setItems(FXCollections.observableArrayList(new ArrayList<>()));
             }
             verifyDialog();
         });
 
         parentPeopleUnion = new ChoiceBox<>(peopleUnionService.findAll());
         if (parentUnionType.getValue() == null) {
+            // TODO fill in or remove
         }
         parentPeopleUnion.setOnAction(e -> verifyDialog());
 
@@ -93,7 +96,7 @@ public class AddPeopleUnionDialog {
 
         dialog.setResultConverter(e -> {
             if (e == loginButtonType) {
-                PeopleUnion peopleUnion = new PeopleUnion();
+                final PeopleUnion peopleUnion = new PeopleUnion();
                 peopleUnion.setName(name.getText());
                 peopleUnion.setType(unionType.getValue());
                 if (parentPeopleUnion.getValue() != null) {
@@ -104,7 +107,7 @@ public class AddPeopleUnionDialog {
             return null;
         });
         Platform.runLater(this::verifyDialog);
-        Optional<PeopleUnion> peopleUnion = dialog.showAndWait();
+        final Optional<PeopleUnion> peopleUnion = dialog.showAndWait(); // Never used
 
     }
 
@@ -112,6 +115,7 @@ public class AddPeopleUnionDialog {
         boolean correct = true;
         boolean bool = name.getText().isEmpty();
         red(name, bool);
+        // Always true
         if (correct) {
             correct = !bool;
         }
@@ -128,7 +132,8 @@ public class AddPeopleUnionDialog {
         okButton.setDisable(!correct);
     }
 
-    private void red(TextField textField, boolean red) {
+    // TODO these are common methods for all Add* classes, consider creating one parent class and implementing these methods there
+    private void red(@NonNull final TextField textField, final boolean red) {
         if (red) {
             setRed(textField);
         } else {
@@ -136,15 +141,15 @@ public class AddPeopleUnionDialog {
         }
     }
 
-    private void setRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void setRed(@NonNull final TextField textField) {
+        final ObservableList<String> styleClass = textField.getStyleClass();
         if (! styleClass.contains("error")) {
             styleClass.add("error");
         }
     }
 
-    private void cancelRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void cancelRed(@NonNull final TextField textField) {
+        final ObservableList<String> styleClass = textField.getStyleClass();
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");
         }

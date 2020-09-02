@@ -2,11 +2,9 @@ package Timetable.model;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
-import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -15,6 +13,9 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table
 public class Pair {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column

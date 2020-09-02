@@ -10,6 +10,8 @@ import java.util.List;
 @Entity
 @Component
 public class PeopleUnion {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
 
     @Column
     @Id
@@ -28,7 +30,7 @@ public class PeopleUnion {
     private PeopleUnion parent;
 
     @OneToMany(mappedBy = "parent")
-    List<PeopleUnion> unions = new ArrayList<PeopleUnion>();
+    List<PeopleUnion> unions = new ArrayList<>();
 
     @OneToMany(mappedBy = "group")
     private List<User> users;

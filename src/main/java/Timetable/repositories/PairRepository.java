@@ -5,34 +5,48 @@ import Timetable.model.Pair;
 import Timetable.model.PeopleUnion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 @Repository
 public interface PairRepository extends JpaRepository<Pair, Integer> {
-    List<Pair> getAllByAuditoriumEquals(Auditorium auditorium);
+    @NonNull
+    List<Pair> getAllByAuditoriumEquals(@NonNull final Auditorium auditorium);
 
     @Query("select p from Pair p where p.auditorium = ?1 and p.dayOfTheWeek = ?2 and " +
             "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
-    List<Pair> getAllAuditoriumConflicts(Auditorium auditorium, Integer dayOfWeek,
-                                         LocalTime beginTime, LocalTime endTime);
+    @NonNull
+    List<Pair> getAllAuditoriumConflicts(@NonNull final Auditorium auditorium,
+                                          final int dayOfWeek,
+                                         @NonNull final LocalTime beginTime,
+                                         @NonNull final LocalTime endTime);
 
     @Query("select p from Pair p where p.group = ?1 and p.dayOfTheWeek = ?2 and " +
             "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
-    List<Pair> getAllGroupConflicts(PeopleUnion peopleUnion, Integer dayOfWeek,
-                                         LocalTime beginTime, LocalTime endTime);
+    @NonNull
+    List<Pair> getAllGroupConflicts(@NonNull final PeopleUnion peopleUnion,
+                                    final int dayOfWeek,
+                                    @NonNull final LocalTime beginTime,
+                                    @NonNull final LocalTime endTime);
 
     @Query("select p from Pair p where p.repeatability > 0 and p.group in ?1 order by p.dayOfTheWeek asc, " +
             "p.clearEndTIme asc")
-    List<Pair> getGroupsDefaultWeek(List<PeopleUnion> peopleUnions);
+    @NonNull
+    List<Pair> getGroupsDefaultWeek(@NonNull final List<PeopleUnion> peopleUnions);
 
-    List<Pair> getAllByGroupInAndRepeatabilityEqualsOrderByEndTimeAsc(List<PeopleUnion> peopleUnions, int repeatability);
+    // No use
+    @NonNull
+    List<Pair> getAllByGroupInAndRepeatabilityEqualsOrderByEndTimeAsc(@NonNull final List<PeopleUnion> peopleUnions, int repeatability);
 
-    List<Pair> getAllByRepeatabilityGreaterThan(int repeatability);
-    List<Pair> getAllByRepeatabilityGreaterThanAndTeacherIdEquals(int repeatability, int teacherId);
-    List<Pair> getAllByGroupEquals(PeopleUnion peopleUnion);
-    List<Pair> getAllByGroupEqualsAndRepeatabilityEquals(PeopleUnion peopleUnion, int repeatability);
+    @NonNull
+    List<Pair> getAllByRepeatabilityGreaterThan(final int repeatability);
+    @NonNull
+    List<Pair> getAllByRepeatabilityGreaterThanAndTeacherIdEquals(final int repeatability, final int teacherId);
+    @NonNull
+    List<Pair> getAllByGroupEquals(@NonNull final PeopleUnion peopleUnion);    // Never used
+    @NonNull
+    List<Pair> getAllByGroupEqualsAndRepeatabilityEquals(@NonNull final PeopleUnion peopleUnion, final int repeatability);
 }

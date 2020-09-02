@@ -1,30 +1,42 @@
 package Timetable.model.Properties;
 
-public class BorderProperties {
-    private Boolean rightBorder = true;
-    private Boolean leftBorder = true;
+import org.springframework.lang.NonNull;
 
-    public BorderProperties(Boolean rightBorder, Boolean leftBorder) {
+public class BorderProperties {
+    private final boolean rightBorder;
+    private final boolean leftBorder;
+
+    public BorderProperties(final boolean rightBorder, final boolean leftBorder) {
         this.rightBorder = rightBorder;
         this.leftBorder = leftBorder;
     }
 
     public BorderProperties() {
+        this.rightBorder = true;
+        this.leftBorder = true;
     }
 
-    public Boolean getRightBorder() {
+    public boolean getRightBorder() {
         return rightBorder;
     }
 
-    public void setRightBorder(Boolean rightBorder) {
-        this.rightBorder = rightBorder;
+    @NonNull
+    public BorderProperties setRightBorder(final boolean newRightBorder) {
+        return new BorderProperties(
+                newRightBorder,
+                this.leftBorder
+        );
     }
 
-    public Boolean getLeftBorder() {
+    public boolean getLeftBorder() {
         return leftBorder;
     }
 
-    public void setLeftBorder(Boolean leftBorder) {
-        this.leftBorder = leftBorder;
+    @NonNull
+    public BorderProperties setLeftBorder(@NonNull final Boolean newLeftBorder) {
+        return new BorderProperties(
+                this.rightBorder,
+                newLeftBorder
+        );
     }
 }

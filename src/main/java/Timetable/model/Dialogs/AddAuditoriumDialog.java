@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.springframework.lang.NonNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,15 +16,17 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class AddAuditoriumDialog {
-    TextField name, maxStudents;
-    List<TextField> emptyList;
-    Button okButton;
-
-    AuditoriumService auditoriumService;
-
     public static final Pattern NUM_PATTERN = Pattern.compile("^\\d+$");
 
-    public AddAuditoriumDialog(AuditoriumService auditoriumService) {
+    private TextField name;
+    private TextField maxStudents;
+    private List<TextField> emptyList;
+    private Button okButton;
+
+    @NonNull
+    private final AuditoriumService auditoriumService;
+
+    public AddAuditoriumDialog(@NonNull final AuditoriumService auditoriumService) {
         this.auditoriumService = auditoriumService;
     }
 
@@ -31,16 +34,17 @@ public class AddAuditoriumDialog {
     public void show() {
 
         // Create the custom dialog.
-        Dialog<Auditorium> dialog = new Dialog<>();
+        final Dialog<Auditorium> dialog = new Dialog<>();
         dialog.setTitle("Добавление аудитории");
 
         // Set the button types.
-        ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        final ButtonType loginButtonType = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        // Studio tells me there is a duplicate code here
         dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
         okButton = (Button) dialog.getDialogPane().lookupButton(loginButtonType);
         okButton.setDisable(true);
 
-        GridPane gridPane = new GridPane();
+        final GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
@@ -74,7 +78,7 @@ public class AddAuditoriumDialog {
         // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                Auditorium auditorium = new Auditorium();
+                final Auditorium auditorium = new Auditorium();
                 auditorium.setName(name.getText());
                 auditorium.setMaxStudents(Integer.valueOf(maxStudents.getText()));
                 return auditoriumService.save(auditorium);
@@ -82,16 +86,14 @@ public class AddAuditoriumDialog {
             return null;
         });
 
-        Optional<Auditorium> result = dialog.showAndWait();
+        final Optional<Auditorium> result = dialog.showAndWait();
 //        if (result.isPresent()) {
 //            return result.get();
 //        }
-        result.ifPresent(pair -> {
-            System.out.println("Auditorium created");
-        });
+        result.ifPresent(pair -> System.out.println("Auditorium created"));
     }
 
-    private void onTextChanged(Observable observable) {
+    private void onTextChanged(@NonNull final Observable observable) {
         verifyAddUserDialog();
     }
 
@@ -104,7 +106,7 @@ public class AddAuditoriumDialog {
                 correct = !bool;
             }
         }
-        boolean bool = !NUM_PATTERN.matcher(maxStudents.getText()).matches();
+        final boolean bool = !NUM_PATTERN.matcher(maxStudents.getText()).matches();
         if (correct) {
             correct = !bool;
         }
@@ -113,7 +115,8 @@ public class AddAuditoriumDialog {
         //role.valueProperty().getValue()
     }
 
-    private void red(TextField textField, boolean red) {
+    // TODO these are common methods for all Add* classes, consider creating one parent class and implementing these methods there
+    private void red(@NonNull final TextField textField, final boolean red) {
         if (red) {
             setRed(textField);
         } else {
@@ -121,14 +124,14 @@ public class AddAuditoriumDialog {
         }
     }
 
-    private void setRed(TextField textField) {
-        ObservableList<String> styleClass = textField.getStyleClass();
+    private void setRed(@NonNull final TextField textField) {
+        final ObservableList<String> styleClass = textField.getStyleClass();
         if (!styleClass.contains("error")) {
             styleClass.add("error");
         }
     }
 
-    private void cancelRed(TextField textField) {
+    private void cancelRed(@NonNull final TextField textField) {
         ObservableList<String> styleClass = textField.getStyleClass();
         if (styleClass.contains("error")) {
             styleClass.removeAll("error");

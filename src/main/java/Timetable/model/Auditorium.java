@@ -16,6 +16,9 @@ import java.util.Map;
 @Entity
 @Component
 public class Auditorium {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)

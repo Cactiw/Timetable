@@ -5,46 +5,50 @@ import Timetable.repositories.UserRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 @Transactional
 public class UserService {
+    @NonNull
     private final UserRepository userRepository;
 
+    @NonNull
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(@NonNull final UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public User save(User user) {
+    @NonNull
+    public User save(@NonNull final User user) {
         return userRepository.save(user);
     }
 
 
-    public ObservableList<User> searchUserByName(String text, Integer role) {
-        var words = text.toLowerCase().split(" ");
-        StringBuilder QUERY = new StringBuilder("FROM User WHERE role = ").append(role).append(" AND ");
+    @NonNull
+    public ObservableList<User> searchUserByName(@NonNull final String text, @NonNull final Integer role) {
+        final List<String> words = Arrays.asList(text.toLowerCase().split(" ").clone());
+        final StringBuilder QUERY = new StringBuilder("FROM User WHERE role = ").append(role).append(" AND ");
 
-        for (int i = 0; i < words.length; ++i) {
-            QUERY.append("LOWER(lastName)  || ' ' || LOWER(name) || ' ' || LOWER(surName) LIKE ?").append(Integer.toString(i)).append(" AND ");
+        for (int i = 0; i < words.size(); ++i) {
+            QUERY.append("LOWER(lastName)  || ' ' || LOWER(name) || ' ' || LOWER(surName) LIKE ?").append(i).append(" AND ");
         }
-
-        ObservableList<User> users = null;
         // here get object
-        var q = entityManager.createQuery(QUERY.toString().substring(0, QUERY.length() - 4));
-        for (int i = 0; i < words.length; ++i) {
-            q.setParameter(i, "%" + words[i] + "%");
+        var q = entityManager.createQuery(QUERY.substring(0, QUERY.length() - 4));
+        for (int i = 0; i < words.size(); ++i) {
+            q.setParameter(i, "%" + words.get(i) + "%");
         }
-        users = FXCollections.observableArrayList(q.getResultList());
 
-        return users;
+        return FXCollections.observableArrayList(q.getResultList());   // Look into this warning, this is a potential crash
     }
 }

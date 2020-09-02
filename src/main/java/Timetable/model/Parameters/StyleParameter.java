@@ -1,6 +1,9 @@
 package Timetable.model.Parameters;
 
 public class StyleParameter {
+    // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
+    // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
+
     private String paneStyle = null;
     private String labelStyle = null;
 

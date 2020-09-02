@@ -5,36 +5,50 @@ import Timetable.repositories.AuditoriumRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class AuditoriumService {
+    @NonNull
     private final AuditoriumRepository auditoriumRepository;
 
     @Autowired
-    public AuditoriumService(AuditoriumRepository auditoriumRepository) {
+    public AuditoriumService(@NonNull final AuditoriumRepository auditoriumRepository) {
         this.auditoriumRepository = auditoriumRepository;
     }
 
-    public Auditorium save(Auditorium auditorium) {
+    @NonNull
+    public Auditorium save(@NonNull final Auditorium auditorium) {
         return auditoriumRepository.save(auditorium);
     }
 
+    @NonNull
     public ObservableList<Auditorium> getAuditoriums() {
         return FXCollections.observableArrayList(auditoriumRepository.findAll());
     }
 
-    public ObservableList<Auditorium> searchAuditoriums(String text) {
+    @NonNull
+    public ObservableList<Auditorium> searchAuditoriums(@NonNull final String text) {
         return FXCollections.observableArrayList(auditoriumRepository.findByNameIgnoreCaseContaining(text));
     }
 
-    public ObservableList<Auditorium> getAvailableAuditoriums(LocalDateTime beginTime, LocalDateTime endTime) {
+    @NonNull
+    public ObservableList<Auditorium> getAvailableAuditoriums(@NonNull final LocalDateTime beginTime,
+                                                              @NonNull final LocalDateTime endTime) {
         return FXCollections.observableArrayList(auditoriumRepository.findAvailableAuditorium(beginTime, endTime));
     }
 
-    public Auditorium getAuditoriumByName(String name){
-        return searchAuditoriums(name).get(0);
+    @Nullable
+    public Auditorium getAuditoriumByName(@NonNull final String name) {
+        final ObservableList<Auditorium> auditoriums = searchAuditoriums(name);
+        if (auditoriums.isEmpty()) {
+            return null;
+        } else {
+            return auditoriums.get(0);
+        }
     }
 }
