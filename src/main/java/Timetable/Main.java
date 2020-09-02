@@ -422,6 +422,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
         // Always true, consider removing
         if (mode == 0) {
             final PeopleUnion fatherPeopleUnion = streamSelect.getValue();
+            if (fatherPeopleUnion == null) {
+                return classesPane;
+            }
             final List<PeopleUnion> groups = fatherPeopleUnion.getChildrenUnions();
             final int groupsCount = groups.size();
 
