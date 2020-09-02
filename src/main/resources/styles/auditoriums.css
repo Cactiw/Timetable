@@ -1,0 +1,9 @@
+
+.auditorium-pane {
+    -fx-background-color: #bdbdbd;
+}
+
+.auditorium-name {
+    -fx-font-size: 30pt;
+    -fx-font-weight: bold;
+}

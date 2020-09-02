@@ -1,10 +1,12 @@
 package Timetable.model;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Line;
 import org.hibernate.annotations.Type;
@@ -62,14 +64,23 @@ public class Auditorium {
 
     public Pane getPane() {
         VBox root = new VBox();
+//        root.getStyleClass().add("auditorium-pane");
+        root.setFillWidth(true);
+
         HBox top = new HBox();
+        top.setFillHeight(true);
+        top.getStyleClass().add("auditorium-pane");
         var image = new Image("auditorium.jpg");
         var imageView = new ImageView(image);
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
+        imageView.setFitWidth(150);
+        imageView.setFitHeight(150);
 
         var info = new VBox();
-        info.getChildren().addAll(new Label(this.getName()), new Line(), new Label("Test info"));
+        info.setFillWidth(true);
+        info.setAlignment(Pos.CENTER_RIGHT);
+        Label name = new Label(this.getName());
+        name.getStyleClass().add("auditorium-name");
+        info.getChildren().addAll(name, new Line(), new Label("Test info"));
 
         top.getChildren().addAll(imageView, info);
 

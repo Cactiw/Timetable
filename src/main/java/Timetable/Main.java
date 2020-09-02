@@ -13,6 +13,7 @@ import Timetable.service.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -142,7 +143,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         VBox.setVgrow(mainStack, Priority.ALWAYS);
 
         final Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets().addAll(List.of("styles.css", "classes.css"));
+        scene.getStylesheets().addAll(List.of("styles.css", "styles/classes.css", "styles/auditoriums.css"));
 
 //        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
@@ -315,11 +316,19 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     private void fillAuditoriumWindow(@NonNull final List<Auditorium> auditoriums) {
         auditoriumPane.getChildren().clear();
+        auditoriumPane.getColumnConstraints().clear();
         int COL_NUM = 3;
+        for (int i = 0; i < COL_NUM; ++i) {
+            ColumnConstraints columnConstraints = new ColumnConstraints();
+            columnConstraints.setHgrow(Priority.ALWAYS);
+            columnConstraints.setHalignment(HPos.CENTER);
+            auditoriumPane.getColumnConstraints().add(columnConstraints);
+        }
         for (int i = 0; i < auditoriums.size(); ++i) {
             // Never use var in java code, keep everything as clear as possible
             final Auditorium auditorium = auditoriums.get(i);
             final Pane pane = auditorium.getPane();
+            pane.setMaxWidth(Double.MAX_VALUE);
             auditoriumPane.add(pane, i % COL_NUM, i / COL_NUM);
         }
     }
