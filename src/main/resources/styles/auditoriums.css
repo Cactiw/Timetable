@@ -15,3 +15,16 @@
 .auditorium-separator {
     -fx-background-color: #212121;
 }
+
+
+.auditorium-free {
+    -fx-background-color: green;
+    -fx-border-color: black;
+    -fx-border-width: 0 1 0 1;
+}
+
+.auditorium-busy {
+    -fx-background-color: red;
+    -fx-border-color: black;
+    -fx-border-width: 0 1 0 1;
+}

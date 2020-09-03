@@ -12,6 +12,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -112,6 +113,13 @@ public class PairService {
     }
 
     @NonNull
+    public ObservableList<Pair> getAuditoriumPairsByDayOfWeek(@NonNull final Auditorium auditorium,
+                                                              @NonNull final int dayOfWeek) {
+        return FXCollections.observableArrayList(pairRepository.getAllByAuditoriumEqualsAndDayOfTheWeekEquals(
+                auditorium, dayOfWeek));
+    }
+
+    @NonNull
     public ObservableList<Pair> getAuditoriumConflictPairs(@NonNull final Auditorium auditorium,
                                                            final int dayOfWeek,
                                                            @NonNull final LocalTime beginTime,
@@ -119,5 +127,14 @@ public class PairService {
         return FXCollections.observableArrayList(
                 pairRepository.getAllAuditoriumConflicts(auditorium, dayOfWeek, beginTime, endTime)
         );
+    }
+
+    @NonNull
+    public boolean checkConflict(@NonNull final Pair pair,
+                                 @NonNull final int dayOfWeek,
+                                 @NonNull final LocalTime beginTime,
+                                 @NonNull final LocalTime endTime) {
+        return pair.getDayOfTheWeek() == dayOfWeek && (
+                pair.getClearBeginTIme().compareTo(endTime) <=0 && pair.getClearEndTIme().compareTo(beginTime) >= 0);
     }
 }

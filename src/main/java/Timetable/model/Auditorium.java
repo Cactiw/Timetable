@@ -1,5 +1,9 @@
 package Timetable.model;
 
+import Timetable.service.AuditoriumService;
+import Timetable.service.DateService;
+import Timetable.service.PairService;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -14,6 +18,8 @@ import org.hibernate.annotations.Type;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Map;
 
 @Entity
@@ -63,14 +69,13 @@ public class Auditorium {
         this.additional = additional;
     }
 
-    public Pane getPane() {
+    public Pane getPane(PairService pairService) {
         VBox root = new VBox();
         root.getStyleClass().add("auditorium-pane");
         root.setFillWidth(true);
 
         HBox top = new HBox();
         top.setFillHeight(true);
-//        top.getStyleClass().add("auditorium-pane");
         var image = new Image("auditorium.jpg");
         var imageView = new ImageView(image);
         imageView.setFitWidth(150);
@@ -90,8 +95,37 @@ public class Auditorium {
         info.getChildren().addAll(name, separator, infoLabel);
 
         top.getChildren().addAll(imageView, info);
+        HBox availability = getAvailability(pairService);
+        root.getChildren().addAll(top, availability);
+        return root;
+    }
 
-        root.getChildren().add(top);
+    public HBox getAvailability(PairService pairService) {
+        HBox root = new HBox();
+        ObservableList<Pair> pairs = pairService.getAuditoriumPairs(this);
+
+        for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
+            String dayName = DateService.daysOfWeek.get(dayIndex);
+
+            VBox node = new VBox();
+            VBox availability = new VBox();
+            LocalTime endTime = LocalTime.of(21, 0);
+            for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
+                 beginTime = beginTime.plusHours(2)) {
+                Pane pane = new Pane();
+                pane.setPrefSize(15, 15);
+                LocalTime finalBeginTime = beginTime;
+                int finalDayIndex = dayIndex;
+                pane.getStyleClass().add(pairs.filtered(
+                        pair -> pairService.checkConflict(pair, finalDayIndex, finalBeginTime, endTime)).size() > 0 ?
+                        "auditorium-busy": "auditorium-free");
+                availability.getChildren().add(pane);
+            }
+            Label dayLabel = new Label(dayName.substring(0, 1));
+            dayLabel.alignmentProperty().set(Pos.CENTER);
+            node.getChildren().addAll(availability, dayLabel);
+            root.getChildren().add(node);
+        }
         return root;
     }
 

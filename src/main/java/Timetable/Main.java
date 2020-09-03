@@ -231,7 +231,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         for (int i = 0; i < auditoriums.size(); ++i) {
             // Never use var in java code, keep everything as clear as possible
             final Auditorium auditorium = auditoriums.get(i);
-            final Pane pane = auditorium.getPane();
+            final Pane pane = auditorium.getPane(pairService);
             pane.setMaxWidth(Double.MAX_VALUE);
             auditoriumPane.add(pane, i % COL_NUM, i / COL_NUM);
         }
@@ -322,15 +322,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
         classesPane.getStyleClass().add("classes-grid");
 
         int mode = 0;
-        var days = Arrays.asList(
-                "Понедельник",
-                "Вторник",
-                "Среда",
-                "Четверг",
-                "Пятница",
-                "Суббота",
-                "Воскресенье"
-        );
 
         // Always true, consider removing
         if (mode == 0) {
@@ -360,9 +351,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
             int currentRow = 0;
             final StyleParameter labelStyle = new StyleParameter();
             labelStyle.setLabelStyle("white-text");
-            for (int dayIndex = 0; dayIndex < days.size(); ++dayIndex) {
+            for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
                 final ObservableList<Pair> currentDayPairs = week.get(dayIndex);
-                final String dayName = days.get(dayIndex);
+                final String dayName = DateService.daysOfWeek.get(dayIndex);
 
                 // Записываем имя дня
                 GridPaneService.fillRowEmpty(classesPane, currentRow, groupsCount, new
@@ -412,7 +403,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                     }
                 }
 
-                if (dayIndex != days.size() - 1) {
+                if (dayIndex != DateService.daysOfWeek.size() - 1) {
                     currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
                 }
             }
