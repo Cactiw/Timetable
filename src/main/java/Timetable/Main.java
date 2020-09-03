@@ -221,7 +221,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private void fillAuditoriumWindow(@NonNull final List<Auditorium> auditoriums) {
         auditoriumPane.getChildren().clear();
         auditoriumPane.getColumnConstraints().clear();
-        int COL_NUM = 3;
+        int COL_NUM = 4;
         for (int i = 0; i < COL_NUM; ++i) {
             ColumnConstraints columnConstraints = new ColumnConstraints();
             columnConstraints.setHgrow(Priority.ALWAYS);

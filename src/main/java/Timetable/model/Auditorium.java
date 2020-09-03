@@ -4,6 +4,7 @@ import Timetable.service.AuditoriumService;
 import Timetable.service.DateService;
 import Timetable.service.PairService;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
@@ -73,13 +74,14 @@ public class Auditorium {
         VBox root = new VBox();
         root.getStyleClass().add("auditorium-pane");
         root.setFillWidth(true);
+        root.setSpacing(15);
 
         HBox top = new HBox();
         top.setFillHeight(true);
         var image = new Image("auditorium.jpg");
         var imageView = new ImageView(image);
-        imageView.setFitWidth(150);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(75);
+        imageView.setFitHeight(75);
 
         var info = new VBox();
         info.setFillWidth(true);
@@ -96,12 +98,14 @@ public class Auditorium {
 
         top.getChildren().addAll(imageView, info);
         HBox availability = getAvailability(pairService);
+        availability.prefWidthProperty().bind(root.widthProperty());
         root.getChildren().addAll(top, availability);
         return root;
     }
 
     public HBox getAvailability(PairService pairService) {
         HBox root = new HBox();
+        root.setSpacing(1);
         ObservableList<Pair> pairs = pairService.getAuditoriumPairs(this);
 
         for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
@@ -113,17 +117,19 @@ public class Auditorium {
             for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
                  beginTime = beginTime.plusHours(2)) {
                 Pane pane = new Pane();
-                pane.setPrefSize(15, 15);
+                pane.setPrefSize(30, 15);
                 LocalTime finalBeginTime = beginTime;
                 int finalDayIndex = dayIndex;
                 pane.getStyleClass().add(pairs.filtered(
-                        pair -> pairService.checkConflict(pair, finalDayIndex, finalBeginTime, endTime)).size() > 0 ?
+                        pair -> pairService.checkConflict(pair, finalDayIndex + 1, finalBeginTime, endTime)).size() > 0 ?
                         "auditorium-busy": "auditorium-free");
                 availability.getChildren().add(pane);
             }
             Label dayLabel = new Label(dayName.substring(0, 1));
             dayLabel.alignmentProperty().set(Pos.CENTER);
+            dayLabel.prefWidthProperty().bind(node.widthProperty());
             node.getChildren().addAll(availability, dayLabel);
+            availability.prefWidthProperty().bind(root.widthProperty());
             root.getChildren().add(node);
         }
         return root;
