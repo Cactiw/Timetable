@@ -18,13 +18,14 @@
 
 
 .auditorium-free {
-    -fx-background-color: green;
+    /*1 131 1*/
+    -fx-background-color: rgba(0, 190, 0, 0.75);
     -fx-border-color: black;
     -fx-border-width: 0 1 0 1;
 }
 
 .auditorium-busy {
-    -fx-background-color: red;
+    -fx-background-color: rgba(255, 35, 35, 0.7);
     -fx-border-color: black;
     -fx-border-width: 0 1 0 1;
 }
