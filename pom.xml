@@ -100,6 +100,13 @@
             <version>2.10.0.pr3</version>
         </dependency>
 
+        <!--To fix MAYBE warning-->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>annotations</artifactId>
+            <version>3.0.1</version>
+        </dependency>
+
 
     </dependencies>
     <build>
