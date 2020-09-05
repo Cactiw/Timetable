@@ -55,8 +55,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private ChoiceBox<PeopleUnion> courseSelect;
     private ChoiceBox<PeopleUnion> streamSelect;
 
-    private TableView<Auditorium> auditoriumTableView;  // Never assigned, may be null upon call
-
     @Autowired
     private ViewPairDialog viewPairDialog;
     @Autowired
@@ -127,7 +125,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                 new AddUserDialog(userService, peopleUnionService).show());
         addAuditorium.setOnAction((@NonNull final ActionEvent actionEvent) -> {
             new AddAuditoriumDialog(auditoriumService).show();
-            auditoriumTableView.setItems(auditoriumService.getAuditoriums());
+            fillAuditoriumWindow(auditoriumService.getAuditoriums());
         });
         addPair.setOnAction((@NonNull final ActionEvent actionEvent) -> {
             addPairDialog.show();
