@@ -68,6 +68,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private AddAuditoriumDialog addAuditoriumDialog;
 
     @Autowired
+    private DatabaseService databaseService;
+    @Autowired
     private UserService userService;
     @Autowired
     private AuditoriumService auditoriumService;
@@ -78,12 +80,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
     @Autowired
     private PeopleUnionService peopleUnionService;
 
-    private final ArrayList<String> defaultTypes = new ArrayList<>(List.of("Курс", "Поток", "Группа"));
-
-
     @Override
     public void start(@NonNull final Stage primaryStage) throws Exception {
-        databaseInit();
+        databaseService.appInit();
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Timetable");
 
@@ -516,11 +515,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
             colIndex += 1;
         }
     }
-
-    private void databaseInit() {
-        peopleUnionTypeService.createListOfDefaultTypes(defaultTypes);
-    }
-
 
     public static void main(String[] args) {
         AbstractJavaFxApplicationSupport.launchApp(Main.class, args);

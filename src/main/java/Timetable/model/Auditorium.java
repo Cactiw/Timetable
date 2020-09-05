@@ -1,28 +1,12 @@
 package Timetable.model;
 
-import Timetable.model.Dialogs.ViewDialogs.ViewAuditoriumDialog;
-import Timetable.service.AuditoriumService;
-import Timetable.service.DateService;
-import Timetable.service.PairService;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
+
 import org.hibernate.annotations.Type;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.time.LocalTime;
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 @Entity
 @Component
@@ -42,6 +26,9 @@ public class Auditorium {
     @Type( type = "json" )
     @Column( columnDefinition = "json" )
     private Map<String, Integer> additional;
+
+    @ManyToMany
+    Set<AuditoriumProperty> properties;
 
     public Integer getId() {
         return id;
@@ -71,4 +58,11 @@ public class Auditorium {
         this.additional = additional;
     }
 
+    public Set<AuditoriumProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Set<AuditoriumProperty> properties) {
+        this.properties = properties;
+    }
 }
