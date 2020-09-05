@@ -5,6 +5,7 @@ import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddUserDialog;
+import Timetable.model.Dialogs.ViewDialogs.ViewAuditoriumDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
 import Timetable.model.Pair;
 import Timetable.model.Parameters.StyleParameter;
@@ -32,6 +33,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,9 +59,13 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     @Autowired
     private ViewPairDialog viewPairDialog;
+    @Autowired
+    private ViewAuditoriumDialog viewAuditoriumDialog;
 
     @Autowired
     private AddPairDialog addPairDialog;
+    @Autowired
+    private AddAuditoriumDialog addAuditoriumDialog;
 
     @Autowired
     private UserService userService;
@@ -231,7 +237,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         for (int i = 0; i < auditoriums.size(); ++i) {
             // Never use var in java code, keep everything as clear as possible
             final Auditorium auditorium = auditoriums.get(i);
-            final Pane pane = auditorium.getPane(pairService);
+            final Pane pane = getAuditoriumPane(modes, auditorium);
             pane.setMaxWidth(Double.MAX_VALUE);
             auditoriumPane.add(pane, i % COL_NUM, i / COL_NUM);
         }
@@ -409,6 +415,82 @@ public class Main extends AbstractJavaFxApplicationSupport {
             }
         }
         return classesPane;
+    }
+
+
+
+    public Pane getAuditoriumPane(@NonNull final StackPane container,
+                        @NonNull final Auditorium auditorium) {
+        VBox root = new VBox();
+        root.getStyleClass().add("auditorium-pane");
+        root.setFillWidth(true);
+        root.setSpacing(15);
+
+        HBox top = new HBox();
+        top.setFillHeight(true);
+        var image = new Image("auditorium.jpg");
+        var imageView = new ImageView(image);
+        imageView.setFitWidth(75);
+        imageView.setFitHeight(75);
+
+        var info = new VBox();
+        info.setFillWidth(true);
+        info.setAlignment(Pos.CENTER);
+        info.prefWidthProperty().bind(root.widthProperty());
+        Label name = new Label(auditorium.getName());
+        name.setMaxHeight(Double.MAX_VALUE);
+        name.getStyleClass().add("auditorium-name");
+        Separator separator = new Separator();
+        separator.setPrefWidth(name.getPrefWidth());
+        separator.getStyleClass().add("auditorium-separator");
+        Label infoLabel = new Label("Test info");
+        info.getChildren().addAll(name, separator, infoLabel);
+
+        top.getChildren().addAll(imageView, info);
+        HBox availability = getAuditoriumAvailability(pairService, auditorium);
+        availability.prefWidthProperty().bind(root.widthProperty());
+        root.getChildren().addAll(top, availability);
+
+        root.setOnMouseClicked(e -> {
+            if (e.getClickCount() >= 2) {  // On double click
+                viewAuditoriumDialog.show(container, auditorium);
+//                viewAuditoriumDialog.
+            }
+        });
+
+        return root;
+    }
+
+    public HBox getAuditoriumAvailability(PairService pairService, Auditorium auditorium) {
+        HBox root = new HBox();
+        root.setSpacing(1);
+        ObservableList<Pair> pairs = pairService.getAuditoriumPairs(auditorium);
+
+        for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
+            String dayName = DateService.daysOfWeek.get(dayIndex);
+
+            VBox node = new VBox();
+            VBox availability = new VBox();
+            LocalTime endTime = LocalTime.of(21, 0);
+            for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
+                 beginTime = beginTime.plusHours(2)) {
+                Pane pane = new Pane();
+                pane.setPrefSize(30, 15);
+                LocalTime finalBeginTime = beginTime;
+                int finalDayIndex = dayIndex;
+                pane.getStyleClass().add(pairs.filtered(
+                        pair -> pairService.checkConflict(pair, finalDayIndex + 1, finalBeginTime, endTime)).size() > 0 ?
+                        "auditorium-busy": "auditorium-free");
+                availability.getChildren().add(pane);
+            }
+            Label dayLabel = new Label(dayName.substring(0, 1));
+            dayLabel.alignmentProperty().set(Pos.CENTER);
+            dayLabel.prefWidthProperty().bind(node.widthProperty());
+            node.getChildren().addAll(availability, dayLabel);
+            availability.prefWidthProperty().bind(root.widthProperty());
+            root.getChildren().add(node);
+        }
+        return root;
     }
 
     private int increaseGridRowIndex(@NonNull final GridPane gridPane,

@@ -1,5 +1,6 @@
 package Timetable.model;
 
+import Timetable.model.Dialogs.ViewDialogs.ViewAuditoriumDialog;
 import Timetable.service.AuditoriumService;
 import Timetable.service.DateService;
 import Timetable.service.PairService;
@@ -68,71 +69,6 @@ public class Auditorium {
 
     public void setAdditional(Map<String, Integer> additional) {
         this.additional = additional;
-    }
-
-    public Pane getPane(PairService pairService) {
-        VBox root = new VBox();
-        root.getStyleClass().add("auditorium-pane");
-        root.setFillWidth(true);
-        root.setSpacing(15);
-
-        HBox top = new HBox();
-        top.setFillHeight(true);
-        var image = new Image("auditorium.jpg");
-        var imageView = new ImageView(image);
-        imageView.setFitWidth(75);
-        imageView.setFitHeight(75);
-
-        var info = new VBox();
-        info.setFillWidth(true);
-        info.setAlignment(Pos.CENTER);
-        info.prefWidthProperty().bind(root.widthProperty());
-        Label name = new Label(this.getName());
-        name.setMaxHeight(Double.MAX_VALUE);
-        name.getStyleClass().add("auditorium-name");
-        Separator separator = new Separator();
-        separator.setPrefWidth(name.getPrefWidth());
-        separator.getStyleClass().add("auditorium-separator");
-        Label infoLabel = new Label("Test info");
-        info.getChildren().addAll(name, separator, infoLabel);
-
-        top.getChildren().addAll(imageView, info);
-        HBox availability = getAvailability(pairService);
-        availability.prefWidthProperty().bind(root.widthProperty());
-        root.getChildren().addAll(top, availability);
-        return root;
-    }
-
-    public HBox getAvailability(PairService pairService) {
-        HBox root = new HBox();
-        root.setSpacing(1);
-        ObservableList<Pair> pairs = pairService.getAuditoriumPairs(this);
-
-        for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
-            String dayName = DateService.daysOfWeek.get(dayIndex);
-
-            VBox node = new VBox();
-            VBox availability = new VBox();
-            LocalTime endTime = LocalTime.of(21, 0);
-            for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
-                 beginTime = beginTime.plusHours(2)) {
-                Pane pane = new Pane();
-                pane.setPrefSize(30, 15);
-                LocalTime finalBeginTime = beginTime;
-                int finalDayIndex = dayIndex;
-                pane.getStyleClass().add(pairs.filtered(
-                        pair -> pairService.checkConflict(pair, finalDayIndex + 1, finalBeginTime, endTime)).size() > 0 ?
-                        "auditorium-busy": "auditorium-free");
-                availability.getChildren().add(pane);
-            }
-            Label dayLabel = new Label(dayName.substring(0, 1));
-            dayLabel.alignmentProperty().set(Pos.CENTER);
-            dayLabel.prefWidthProperty().bind(node.widthProperty());
-            node.getChildren().addAll(availability, dayLabel);
-            availability.prefWidthProperty().bind(root.widthProperty());
-            root.getChildren().add(node);
-        }
-        return root;
     }
 
 }

@@ -1,7 +1,9 @@
 package Timetable.model.Dialogs;
 
 import Timetable.model.Auditorium;
+import Timetable.model.Pair;
 import Timetable.service.AuditoriumService;
+import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -9,14 +11,20 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+@Component
 public class AddAuditoriumDialog {
     public static final Pattern NUM_PATTERN = Pattern.compile("^\\d+$");
+
+    Dialog<Auditorium> dialog;
+    private Auditorium auditoriumFrom;
 
     private TextField name;
     private TextField maxStudents;
@@ -30,11 +38,30 @@ public class AddAuditoriumDialog {
         this.auditoriumService = auditoriumService;
     }
 
+    public void showFromAuditorium(Auditorium auditorium) {
+        this.init();
+        this.auditoriumFrom = auditorium;
+
+        this.name.setText(auditorium.getName());
+        this.maxStudents.setText(auditorium.getMaxStudents().toString());
+
+        this.dialog.showAndWait();
+    }
+
 
     public void show() {
+        this.init();
+        final Optional<Auditorium> result = dialog.showAndWait();
+//        if (result.isPresent()) {
+//            return result.get();
+//        }
+        result.ifPresent(pair -> System.out.println("Auditorium created"));
+    }
+
+    public void init() {
 
         // Create the custom dialog.
-        final Dialog<Auditorium> dialog = new Dialog<>();
+        dialog = new Dialog<>();
         dialog.setTitle("Добавление аудитории");
 
         // Set the button types.
@@ -78,19 +105,13 @@ public class AddAuditoriumDialog {
         // Convert the result to a username-password-pair when the login button is clicked.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == loginButtonType) {
-                final Auditorium auditorium = new Auditorium();
+                final Auditorium auditorium = Objects.requireNonNullElseGet(auditoriumFrom, Auditorium::new);
                 auditorium.setName(name.getText());
                 auditorium.setMaxStudents(Integer.valueOf(maxStudents.getText()));
                 return auditoriumService.save(auditorium);
             }
             return null;
         });
-
-        final Optional<Auditorium> result = dialog.showAndWait();
-//        if (result.isPresent()) {
-//            return result.get();
-//        }
-        result.ifPresent(pair -> System.out.println("Auditorium created"));
     }
 
     private void onTextChanged(@NonNull final Observable observable) {
