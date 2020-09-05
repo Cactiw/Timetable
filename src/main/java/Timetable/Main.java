@@ -218,8 +218,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private void initiateAuditoriumWindow() {
         auditoriumPane = new GridPane();
         auditoriumPane.setPadding(new Insets(15, 15, 15, 15));
-        auditoriumPane.setHgap(15);
-        auditoriumPane.setVgap(15);
+        auditoriumPane.setHgap(30);
+        auditoriumPane.setVgap(30);
         fillAuditoriumWindow(auditoriumService.getAuditoriums());
         modes.getChildren().add(auditoriumPane); // Try to keep functions as clean in a haskell way as possible
     }
@@ -463,7 +463,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     public HBox getAuditoriumAvailability(PairService pairService, Auditorium auditorium) {
         HBox root = new HBox();
-        root.setSpacing(1);
+        root.setSpacing(3);
+        root.setPadding(new Insets(0, 30, 0,30));
         ObservableList<Pair> pairs = pairService.getAuditoriumPairs(auditorium);
 
         for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
@@ -475,7 +476,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
             for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
                  beginTime = beginTime.plusHours(2)) {
                 Pane pane = new Pane();
-                pane.setPrefSize(30, 15);
+                pane.setPrefSize(10, 10);
                 LocalTime finalBeginTime = beginTime;
                 int finalDayIndex = dayIndex;
                 pane.getStyleClass().add(pairs.filtered(
