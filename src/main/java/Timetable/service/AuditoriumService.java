@@ -1,6 +1,7 @@
 package Timetable.service;
 
 import Timetable.model.Auditorium;
+import Timetable.model.AuditoriumProperty;
 import Timetable.repositories.AuditoriumRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +11,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Service
 public class AuditoriumService {
@@ -50,5 +52,15 @@ public class AuditoriumService {
         } else {
             return auditoriums.get(0);
         }
+    }
+
+    @NonNull
+    public ObservableList<Auditorium> filterAuditoriums(@NonNull final String name,
+                                                        @NonNull final int maxStudents,
+                                                        @NonNull final Set<AuditoriumProperty> properties) {
+        return FXCollections.observableArrayList(properties.isEmpty()?
+                auditoriumRepository.findByNameIgnoreCaseContainingAndMaxStudentsGreaterThanEqual(name, maxStudents):
+                auditoriumRepository.
+                findByNameIgnoreCaseContainingAndMaxStudentsGreaterThanEqualAndPropertiesIn(name, maxStudents, properties));
     }
 }

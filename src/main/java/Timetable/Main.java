@@ -79,7 +79,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
 //        System.out.println(userRepository.getOne(1).formatFIO());
 
-        mainAuditoriumWindow = new MainAuditoriumWindow(modes, auditoriumService, pairService, viewAuditoriumDialog);
+        mainAuditoriumWindow = new MainAuditoriumWindow(modes, auditoriumService, auditoriumPropertyService,
+                pairService, viewAuditoriumDialog);
         mainClassesWindow = new MainClassesWindow(modes, peopleUnionService, peopleUnionTypeService, pairService,
                 viewPairDialog);
         rootClassesPane = mainClassesWindow.initiateClassesWindow();

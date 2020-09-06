@@ -7,6 +7,18 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
 }
 
+.auditorium-filters {
+    -fx-background-color: lightgrey;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
+
+    -fx-padding: 0 20 0 15;
+}
+
+.auditorium-filter-name {
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
 .auditorium-name {
     -fx-font-size: 20pt;
     -fx-font-weight: bold;
