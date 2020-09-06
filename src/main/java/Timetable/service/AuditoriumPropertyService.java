@@ -27,6 +27,10 @@ public class AuditoriumPropertyService {
         }
     }
 
+    @NonNull public List<AuditoriumProperty> findAll() {
+        return auditoriumPropertyRepository.findAll();
+    }
+
     @NonNull public AuditoriumProperty save(@NonNull final AuditoriumProperty auditoriumProperty) {
         return auditoriumPropertyRepository.save(auditoriumProperty);
     }

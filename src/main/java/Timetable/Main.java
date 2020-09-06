@@ -77,6 +77,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private PeopleUnionTypeService peopleUnionTypeService;
     @Autowired
     private PeopleUnionService peopleUnionService;
+    @Autowired
+    private AuditoriumPropertyService auditoriumPropertyService;
 
     @Override
     public void start(@NonNull final Stage primaryStage) throws Exception {
@@ -124,7 +126,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         addUser.setOnAction((@NonNull final ActionEvent actionEvent) ->
                 new AddUserDialog(userService, peopleUnionService).show());
         addAuditorium.setOnAction((@NonNull final ActionEvent actionEvent) -> {
-            new AddAuditoriumDialog(auditoriumService).show();
+            new AddAuditoriumDialog(auditoriumService, auditoriumPropertyService).show();
             fillAuditoriumWindow(auditoriumService.getAuditoriums());
         });
         addPair.setOnAction((@NonNull final ActionEvent actionEvent) -> {

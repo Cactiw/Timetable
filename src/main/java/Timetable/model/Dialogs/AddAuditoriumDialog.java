@@ -1,9 +1,9 @@
 package Timetable.model.Dialogs;
 
 import Timetable.model.Auditorium;
-import Timetable.model.Pair;
+import Timetable.model.AuditoriumProperty;
+import Timetable.service.AuditoriumPropertyService;
 import Timetable.service.AuditoriumService;
-import com.jfoenix.controls.JFXDialog;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -13,10 +13,7 @@ import javafx.scene.layout.GridPane;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Component
@@ -31,11 +28,19 @@ public class AddAuditoriumDialog {
     private List<TextField> emptyList;
     private Button okButton;
 
+    List<CheckBox> propertyCheckboxes;
+
+    private List<AuditoriumProperty> auditoriumProperties;
+
     @NonNull
     private final AuditoriumService auditoriumService;
+    @NonNull
+    private final AuditoriumPropertyService auditoriumPropertyService;
 
-    public AddAuditoriumDialog(@NonNull final AuditoriumService auditoriumService) {
+    public AddAuditoriumDialog(@NonNull final AuditoriumService auditoriumService,
+                               @NonNull final AuditoriumPropertyService auditoriumPropertyService) {
         this.auditoriumService = auditoriumService;
+        this.auditoriumPropertyService = auditoriumPropertyService;
     }
 
     public void showFromAuditorium(Auditorium auditorium) {
@@ -44,6 +49,7 @@ public class AddAuditoriumDialog {
 
         this.name.setText(auditorium.getName());
         this.maxStudents.setText(auditorium.getMaxStudents().toString());
+        setSelectedProperties(auditorium);
 
         this.dialog.showAndWait();
     }
@@ -92,6 +98,24 @@ public class AddAuditoriumDialog {
         gridPane.add(new Label("Максимум студентов:"), 0, 1);
         gridPane.add(maxStudents, 1, 1);
 
+        Separator separator = new Separator();
+        gridPane.add(separator, 0, 2, 2, 1);
+        gridPane.add(new Label("Дополнительные свойства:"), 0, 3);
+
+        auditoriumProperties = auditoriumPropertyService.findAll();
+        propertyCheckboxes = new LinkedList<>();
+        int rowIndex = 4;
+
+        for (AuditoriumProperty property: auditoriumProperties) {
+            gridPane.add(new Label(property.getName()), 0, rowIndex);
+
+            CheckBox checkBox = new CheckBox();
+            checkBox.setUserData(property);
+            propertyCheckboxes.add(checkBox);
+            gridPane.add(checkBox, 1, rowIndex);
+            rowIndex += 1;
+        }
+
 
         gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
 
@@ -108,10 +132,29 @@ public class AddAuditoriumDialog {
                 final Auditorium auditorium = Objects.requireNonNullElseGet(auditoriumFrom, Auditorium::new);
                 auditorium.setName(name.getText());
                 auditorium.setMaxStudents(Integer.valueOf(maxStudents.getText()));
+                auditorium.setProperties(getSelectedProperties());
                 return auditoriumService.save(auditorium);
             }
             return null;
         });
+    }
+
+    private Set<AuditoriumProperty> getSelectedProperties() {
+        List<AuditoriumProperty> selectedProperties = new LinkedList<>();
+        for (CheckBox checkBox: propertyCheckboxes) {
+            if (checkBox.isSelected()) {
+                selectedProperties.add((AuditoriumProperty)checkBox.getUserData());
+            }
+        }
+        return Set.copyOf(selectedProperties);
+    }
+
+    private void setSelectedProperties(@NonNull final Auditorium auditorium) {
+        for (CheckBox checkBox: propertyCheckboxes) {
+            if (auditorium.getProperties().contains((AuditoriumProperty)checkBox.getUserData())) {
+                checkBox.setSelected(true);
+            }
+        }
     }
 
     private void onTextChanged(@NonNull final Observable observable) {

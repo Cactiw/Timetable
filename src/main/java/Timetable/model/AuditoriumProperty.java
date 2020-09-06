@@ -19,7 +19,7 @@ public class AuditoriumProperty {
     @ManyToMany(mappedBy = "properties")
     private Set<Auditorium> auditoriums;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -37,5 +37,14 @@ public class AuditoriumProperty {
 
     public void setAuditoriums(Set<Auditorium> auditoriums) {
         this.auditoriums = auditoriums;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (! (obj instanceof AuditoriumProperty)) {
+            return false;
+        }
+        AuditoriumProperty other = (AuditoriumProperty) obj;
+        return this.getId().equals(other.getId());
     }
 }
