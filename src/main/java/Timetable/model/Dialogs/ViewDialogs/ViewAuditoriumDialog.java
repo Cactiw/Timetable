@@ -1,6 +1,7 @@
 package Timetable.model.Dialogs.ViewDialogs;
 
 import Timetable.model.Auditorium;
+import Timetable.model.AuditoriumProperty;
 import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Pair;
 import com.jfoenix.controls.JFXButton;
@@ -8,6 +9,7 @@ import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -59,7 +61,8 @@ public class ViewAuditoriumDialog {
         content.setBody(rootPane);
 
         rootPane.setPadding(new Insets(10, 0, 10, 0));
-        rootPane.setHgap(10);
+        rootPane.setHgap(5);
+        rootPane.prefWidthProperty().bind(dialog.widthProperty());
 
         final Image editIcon = new Image("/icons/edit.png");
         final JFXButton editPairButton = new JFXButton("", new ImageView(editIcon));
@@ -74,6 +77,16 @@ public class ViewAuditoriumDialog {
 
         rootPane.add(new Label("Вместимость:"), 0, 1);
         rootPane.add(new Label(auditorium.getMaxStudents().toString()), 1, 1, 2, 1);
+        int rowIndex = 2;
+
+        if (!auditorium.getProperties().isEmpty()) {
+            rootPane.add(new Separator(), 0, rowIndex, 2, 1);
+            rowIndex += 1;
+            for (AuditoriumProperty property: auditorium.getProperties()) {
+                rootPane.add(new Label(property.getName()), 0, rowIndex, 2, 1);
+                rowIndex += 1;
+            }
+        }
     }
 
     @Nullable
