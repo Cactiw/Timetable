@@ -40,6 +40,11 @@ public class AuditoriumProperty {
     }
 
     @Override
+    public int hashCode() {
+        return id;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (! (obj instanceof AuditoriumProperty)) {
             return false;
