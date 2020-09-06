@@ -30,8 +30,6 @@ public class AddAuditoriumDialog {
 
     List<CheckBox> propertyCheckboxes;
 
-    private List<AuditoriumProperty> auditoriumProperties;
-
     @NonNull
     private final AuditoriumService auditoriumService;
     @NonNull
@@ -102,7 +100,7 @@ public class AddAuditoriumDialog {
         gridPane.add(separator, 0, 2, 2, 1);
         gridPane.add(new Label("Дополнительные свойства:"), 0, 3);
 
-        auditoriumProperties = auditoriumPropertyService.findAll();
+        List<AuditoriumProperty> auditoriumProperties = auditoriumPropertyService.findAll();
         propertyCheckboxes = new LinkedList<>();
         int rowIndex = 4;
 
