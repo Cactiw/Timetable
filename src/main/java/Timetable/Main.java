@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -448,12 +449,27 @@ public class Main extends AbstractJavaFxApplicationSupport {
         List<Label> infoLabels = auditorium.getProperties().stream().map(
                 auditoriumProperty -> new Label(auditoriumProperty.getName())).collect(Collectors.toList());
         info.getChildren().addAll(name, separator);
-        info.getChildren().addAll(infoLabels);
+//        info.getChildren().addAll(infoLabels);
+        VBox infoVbox = new VBox();
+        infoVbox.getChildren().addAll(infoLabels);
+        infoVbox.setAlignment(Pos.CENTER);
 
         top.getChildren().addAll(imageView, info);
         HBox availability = getAuditoriumAvailability(pairService, auditorium);
-        availability.prefWidthProperty().bind(root.widthProperty());
-        root.getChildren().addAll(top, availability);
+
+        GridPane lower = new GridPane();
+        lower.add(availability, 0, 0);
+        lower.add(new Separator(Orientation.VERTICAL), 1, 0, 1, 2);
+        lower.add(infoVbox, 1, 0, 2, 2);
+        lower.prefWidthProperty().bind(root.widthProperty());
+        lower.setPadding(new Insets(0, 10, 0, 10));
+        ColumnConstraints grow = new ColumnConstraints();
+        grow.setHgrow(Priority.ALWAYS);
+        ColumnConstraints stay = new ColumnConstraints();
+        stay.setHgrow(Priority.SOMETIMES);
+        lower.getColumnConstraints().addAll(grow, stay, grow);
+
+        root.getChildren().addAll(top, lower);
 
         root.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {  // On double click
@@ -462,14 +478,13 @@ public class Main extends AbstractJavaFxApplicationSupport {
                         auditoriumService.getAuditoriums()));
             }
         });
-
         return root;
     }
 
     public HBox getAuditoriumAvailability(PairService pairService, Auditorium auditorium) {
         HBox root = new HBox();
         root.setSpacing(3);
-        root.setPadding(new Insets(0, 30, 0,30));
+        root.setPadding(new Insets(0, 10, 0,0));
         ObservableList<Pair> pairs = pairService.getAuditoriumPairs(auditorium);
 
         for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
@@ -481,7 +496,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
             for (LocalTime beginTime = LocalTime.of(9, 0); beginTime.compareTo(endTime) < 0;
                  beginTime = beginTime.plusHours(2)) {
                 Pane pane = new Pane();
-                pane.setPrefSize(10, 10);
+                pane.setPrefSize(11, 8);
                 LocalTime finalBeginTime = beginTime;
                 int finalDayIndex = dayIndex;
                 pane.getStyleClass().add(pairs.filtered(
@@ -493,7 +508,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
             dayLabel.alignmentProperty().set(Pos.CENTER);
             dayLabel.prefWidthProperty().bind(node.widthProperty());
             node.getChildren().addAll(availability, dayLabel);
-            availability.prefWidthProperty().bind(root.widthProperty());
+//            availability.prefWidthProperty().bind(root.widthProperty());
             root.getChildren().add(node);
         }
         return root;
