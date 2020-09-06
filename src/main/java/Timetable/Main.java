@@ -1,6 +1,7 @@
 package Timetable;
 
 import Timetable.model.Auditorium;
+import Timetable.model.AuditoriumProperty;
 import Timetable.model.Dialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddPeopleUnionDialog;
@@ -37,6 +38,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Lazy
@@ -434,7 +437,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         var info = new VBox();
         info.setFillWidth(true);
-        info.setAlignment(Pos.CENTER);
+        info.setAlignment(Pos.TOP_CENTER);
         info.prefWidthProperty().bind(root.widthProperty());
         Label name = new Label(auditorium.getName());
         name.setMaxHeight(Double.MAX_VALUE);
@@ -442,8 +445,10 @@ public class Main extends AbstractJavaFxApplicationSupport {
         Separator separator = new Separator();
         separator.setPrefWidth(name.getPrefWidth());
         separator.getStyleClass().add("auditorium-separator");
-        Label infoLabel = new Label("Test info");
-        info.getChildren().addAll(name, separator, infoLabel);
+        List<Label> infoLabels = auditorium.getProperties().stream().map(
+                auditoriumProperty -> new Label(auditoriumProperty.getName())).collect(Collectors.toList());
+        info.getChildren().addAll(name, separator);
+        info.getChildren().addAll(infoLabels);
 
         top.getChildren().addAll(imageView, info);
         HBox availability = getAuditoriumAvailability(pairService, auditorium);
@@ -453,7 +458,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         root.setOnMouseClicked(e -> {
             if (e.getClickCount() >= 2) {  // On double click
                 viewAuditoriumDialog.show(container, auditorium);
-//                viewAuditoriumDialog.
+                viewAuditoriumDialog.getDialog().setOnDialogClosed(skip -> this.fillAuditoriumWindow(
+                        auditoriumService.getAuditoriums()));
             }
         });
 
