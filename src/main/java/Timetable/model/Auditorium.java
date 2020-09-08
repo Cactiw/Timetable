@@ -31,6 +31,7 @@ public class Auditorium {
     private Set<AuditoriumProperty> properties;
 
     @OneToMany
+    @JoinColumn(name = "auditorium_id")
     private Set<Pair> pairs;
 
     public Integer getId() {
