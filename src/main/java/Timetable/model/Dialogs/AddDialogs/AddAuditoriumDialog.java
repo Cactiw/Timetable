@@ -115,7 +115,7 @@ public class AddAuditoriumDialog {
         }
 
 
-        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../../../styles/styles.css").toExternalForm());
 
 
         dialog.getDialogPane().setContent(gridPane);
