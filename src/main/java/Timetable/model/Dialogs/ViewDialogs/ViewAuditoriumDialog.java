@@ -3,6 +3,7 @@ package Timetable.model.Dialogs.ViewDialogs;
 import Timetable.model.Auditorium;
 import Timetable.model.AuditoriumProperty;
 import Timetable.model.Dialogs.AddDialogs.AddAuditoriumDialog;
+import Timetable.model.Dialogs.DeleteDialogs.DeleteAuditoriumDialog;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -24,17 +25,24 @@ public class ViewAuditoriumDialog {
     private JFXDialog dialog;
     private JFXDialogLayout content;
 
+    private StackPane container;
+
     private JFXButton okButton;
 
     private Auditorium auditorium;
 
     @Autowired
     AddAuditoriumDialog addAuditoriumDialog;
+    @Autowired
+    DeleteAuditoriumDialog deleteAuditoriumDialog;
 
-    public void show(@NonNull final StackPane container, @NonNull final Auditorium auditorium) {
+    public void show(@NonNull final StackPane container,
+                     @NonNull final Auditorium auditorium) {
         this.auditorium = auditorium;
+        this.container = container;
 
         dialog = new JFXDialog();
+        dialog.setTransitionType(JFXDialog.DialogTransition.CENTER);
         content = new JFXDialogLayout();
 
         updateContent();
@@ -70,6 +78,13 @@ public class ViewAuditoriumDialog {
             this.updateContent();
         });
         rootPane.add(editPairButton, 3, 0);
+
+        final Image deleteIcon = new Image("/icons/delete.png");
+        final JFXButton deletePairButton = new JFXButton("", new ImageView(deleteIcon));
+        deletePairButton.setOnMouseClicked(e -> {
+            deleteAuditoriumDialog.show(container, auditorium);
+        });
+        rootPane.add(deletePairButton, 4, 0);
 
         rootPane.add(new Label("Название:"), 0, 0);
         rootPane.add(new Label(auditorium.getName()), 1, 0, 2, 1);

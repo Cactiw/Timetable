@@ -28,6 +28,8 @@ public class AuditoriumService {
         return auditoriumRepository.save(auditorium);
     }
 
+    public void delete(@NonNull final Auditorium auditorium) {auditoriumRepository.delete(auditorium);}
+
     @NonNull
     public ObservableList<Auditorium> getAuditoriums() {
         return FXCollections.observableArrayList(auditoriumRepository.findAll());
