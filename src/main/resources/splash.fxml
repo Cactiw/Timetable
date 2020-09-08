@@ -5,6 +5,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <AnchorPane xmlns="http://javafx.com/javafx" mouseTransparent="true">
     <ImageView>
-        <Image url="splash.png"/>
+        <Image url="icons/splash.png"/>
     </ImageView>
 </AnchorPane>

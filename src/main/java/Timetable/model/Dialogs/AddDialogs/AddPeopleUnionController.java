@@ -1,4 +1,4 @@
-package Timetable.model.Dialogs;
+package Timetable.model.Dialogs.AddDialogs;
 
 import javafx.fxml.Initializable;
 import org.springframework.lang.NonNull;

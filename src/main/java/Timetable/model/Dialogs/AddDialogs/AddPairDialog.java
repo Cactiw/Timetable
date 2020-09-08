@@ -1,4 +1,4 @@
-package Timetable.model.Dialogs;
+package Timetable.model.Dialogs.AddDialogs;
 
 import Timetable.model.Auditorium;
 import Timetable.model.Pair;

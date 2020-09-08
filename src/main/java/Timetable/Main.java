@@ -1,9 +1,9 @@
 package Timetable;
 
-import Timetable.model.Dialogs.AddAuditoriumDialog;
-import Timetable.model.Dialogs.AddPairDialog;
-import Timetable.model.Dialogs.AddPeopleUnionDialog;
-import Timetable.model.Dialogs.AddUserDialog;
+import Timetable.model.Dialogs.AddDialogs.AddAuditoriumDialog;
+import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
+import Timetable.model.Dialogs.AddDialogs.AddPeopleUnionDialog;
+import Timetable.model.Dialogs.AddDialogs.AddUserDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewAuditoriumDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
 import Timetable.model.Windows.MainAuditoriumWindow;
@@ -85,13 +85,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
                 viewPairDialog);
         rootClassesPane = mainClassesWindow.initiateClassesWindow();
         rootAuditoriumPane = mainAuditoriumWindow.initiateAuditoriumWindow();
-//        addAuditoriumWindow();
 
         VBox menu = sidePane();
         root_pane.getChildren().add(menu);
-        //mainStack.getChildren().add(root_pane);
-
-        //modes.getChildren().add(classes);
 
 
         rootClassesPane.toBack();
@@ -101,9 +97,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
         HBox.setHgrow(modes, Priority.ALWAYS);
         HBox.setHgrow(root_pane, Priority.ALWAYS);
 
-        //root_pane.setRight(classes);
         mainStack.getChildren().add(root_pane);
-        //menu.toFront();
 
         // Создание меню
         final Menu addMenu = new Menu("Вставка");
@@ -124,7 +118,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
             mainClassesWindow.updateClasses();
         });
 
-        //var AddPeopleUnion = FXMLLoader.load(getClass().getResource("addPeopleUnion.fxml"));
         addPeopleUnion.setOnAction((e) -> new AddPeopleUnionDialog(peopleUnionTypeService, peopleUnionService).show());
 
         // There were multiple .getItems() calls
@@ -138,11 +131,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
         VBox.setVgrow(mainStack, Priority.ALWAYS);
 
         final Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets().addAll(List.of("styles.css", "styles/classes.css", "styles/auditoriums.css"));
+        scene.getStylesheets().addAll(List.of("styles/styles.css", "styles/classes.css", "styles/auditoriums.css"));
 
 //        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
-        primaryStage.getIcons().add(new Image("icon.png"));
+        primaryStage.getIcons().add(new Image("icons/icon.png"));
         primaryStage.show();
     }
 
@@ -182,9 +175,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
             }
             to_pane.toFront();
             to_pane.setVisible(true);
-            //modes.getChildren().add(to_pane);
         });
-        //button.setStyle("-fx-graphic-text-gap:white");
         button.setStyle("-fx-background-color: #212121; -fx-text-fill:white");
         Pane paneIndicator = new Pane();
         paneIndicator.setPrefSize(10, 100);

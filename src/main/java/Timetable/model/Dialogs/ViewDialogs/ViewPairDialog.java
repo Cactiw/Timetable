@@ -1,6 +1,6 @@
 package Timetable.model.Dialogs.ViewDialogs;
 
-import Timetable.model.Dialogs.AddPairDialog;
+import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
 import Timetable.model.Pair;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;

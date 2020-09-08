@@ -1,4 +1,4 @@
-package Timetable.model.Dialogs;
+package Timetable.model.Dialogs.AddDialogs;
 
 import Timetable.model.Auditorium;
 import Timetable.model.AuditoriumProperty;
@@ -174,7 +174,6 @@ public class AddAuditoriumDialog {
         }
         red(maxStudents, bool);
         okButton.setDisable(!correct);
-        //role.valueProperty().getValue()
     }
 
     // TODO these are common methods for all Add* classes, consider creating one parent class and implementing these methods there

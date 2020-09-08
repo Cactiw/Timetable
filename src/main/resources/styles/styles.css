@@ -6,17 +6,8 @@
 }
 
 .jfx-date-picker.error {
-    /*-fx-border-color: red;*/
-    /*-fx-color-label-visible: red;*/
-
     -jfx-default-color: red;
     -jfx-unfocus-color: blue;
-
-    /*-fx-text-fill: blue;*/
-    /*-fx-fill: blue;*/
-    /*-fx-progress-color: blue;*/
-    /*-fx-background-color: red;*/
-    /*-fx-progress-color: red;*/
 }
 
 .jfx-time-picker.error {

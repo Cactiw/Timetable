@@ -2,8 +2,7 @@ package Timetable.model.Dialogs.ViewDialogs;
 
 import Timetable.model.Auditorium;
 import Timetable.model.AuditoriumProperty;
-import Timetable.model.Dialogs.AddAuditoriumDialog;
-import Timetable.model.Pair;
+import Timetable.model.Dialogs.AddDialogs.AddAuditoriumDialog;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
