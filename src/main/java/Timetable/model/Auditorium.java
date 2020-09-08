@@ -28,7 +28,10 @@ public class Auditorium {
     private Map<String, Integer> additional;
 
     @ManyToMany
-    Set<AuditoriumProperty> properties;
+    private Set<AuditoriumProperty> properties;
+
+    @OneToMany
+    private Set<Pair> pairs;
 
     public Integer getId() {
         return id;
@@ -64,5 +67,13 @@ public class Auditorium {
 
     public void setProperties(Set<AuditoriumProperty> properties) {
         this.properties = properties;
+    }
+
+    public Set<Pair> getPairs() {
+        return pairs;
+    }
+
+    public void setPairs(Set<Pair> pairs) {
+        this.pairs = pairs;
     }
 }

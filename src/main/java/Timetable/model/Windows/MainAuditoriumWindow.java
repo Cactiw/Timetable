@@ -9,6 +9,7 @@ import Timetable.service.AuditoriumService;
 import Timetable.service.DateService;
 import Timetable.service.PairService;
 import javafx.beans.Observable;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -207,7 +208,7 @@ public class MainAuditoriumWindow {
         HBox root = new HBox();
         root.setSpacing(3);
         root.setPadding(new Insets(0, 10, 0,0));
-        ObservableList<Pair> pairs = pairService.getAuditoriumPairs(auditorium);
+        ObservableList<Pair> pairs = FXCollections.observableArrayList(auditorium.getPairs());
 
         for (int dayIndex = 0; dayIndex < DateService.daysOfWeek.size(); ++dayIndex) {
             String dayName = DateService.daysOfWeek.get(dayIndex);
