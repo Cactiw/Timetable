@@ -147,7 +147,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
                     try {
                         ResponseEntity<String> response = RequestService.post(url, map);
                         JSONObject jsonObject = new JSONObject(response.getBody());
+
                         JSONObject timetable = (JSONObject)jsonObject.get("timetable");
+
+                        Alert success = new Alert(Alert.AlertType.INFORMATION);
+                        success.setTitle("Успех!");
+                        success.setContentText(timetable.keySet().toString());
+                        success.showAndWait();
+
                         timetable.keySet().forEach(keyStr ->
                         {
                             JSONArray pairs = (JSONArray)timetable.get(keyStr);
