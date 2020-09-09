@@ -1,5 +1,6 @@
 package Timetable;
 
+import Timetable.model.Config;
 import Timetable.model.Dialogs.AddDialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddDialogs.AddPeopleUnionDialog;
@@ -15,16 +16,26 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.coyote.Request;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import java.util.Arrays;
-import java.util.List;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
 
 
 @Lazy
@@ -77,8 +88,6 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         modes = new StackPane();
 
-//        System.out.println(userRepository.getOne(1).formatFIO());
-
         mainAuditoriumWindow = new MainAuditoriumWindow(modes, auditoriumService, auditoriumPropertyService,
                 pairService, viewAuditoriumDialog);
         mainClassesWindow = new MainClassesWindow(modes, peopleUnionService, peopleUnionTypeService, pairService,
@@ -123,8 +132,48 @@ public class Main extends AbstractJavaFxApplicationSupport {
         // There were multiple .getItems() calls
         addMenu.getItems().addAll(List.of(addUser, addAuditorium, addPair, addPeopleUnion));
 
+        final Menu importMenu = new Menu("Импорт");
+        final MenuItem importXls = new MenuItem("Из файла");
+        importXls.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            File selectedFile = fileChooser.showOpenDialog(null);
+            if (selectedFile != null) {
+                System.out.println("File selected!");
+                try {
+                    FileInputStream fileInputStream = new FileInputStream(selectedFile);
+                    final String url = "http://" + Config.parserIp + ":" + Config.parserPort + "/parseXls";
+                    Map<String, String> map = new LinkedHashMap<>();
+                    map.put("file", Base64.getEncoder().encodeToString(fileInputStream.readAllBytes()));
+                    try {
+                        ResponseEntity<String> response = RequestService.post(url, map);
+                        JSONObject jsonObject = new JSONObject(response.getBody());
+                        JSONObject timetable = (JSONObject)jsonObject.get("timetable");
+                        timetable.keySet().forEach(keyStr ->
+                        {
+                            JSONArray pairs = (JSONArray)timetable.get(keyStr);
+                            System.out.println("Processed " + keyStr + " " + pairs.toString());
+                        });
+
+                    } catch (Exception error) {
+                        error.printStackTrace();
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setTitle("Ошибка");
+                        alert.setContentText("Произошла ошибка при парсинге.\n" +
+                                "Убедитесь, что файл соответствует шаблону");
+                        alert.showAndWait();
+                    }
+                } catch (IOException ignored) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Ошибка");
+                    alert.setContentText("Файл не найден");
+                    alert.showAndWait();
+                }
+            }
+        });
+        importMenu.getItems().addAll(importXls);
+
         final MenuBar menuBar = new MenuBar();
-        menuBar.getMenus().addAll(addMenu);
+        menuBar.getMenus().addAll(addMenu, importMenu);
 
         VBox mainBox = new VBox();
         mainBox.getChildren().addAll(menuBar, mainStack);

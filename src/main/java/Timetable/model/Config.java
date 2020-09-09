@@ -13,4 +13,9 @@ public class Config {
     @NonNull
     public static final Duration classesDefaultDuration = Duration.ofMinutes(95);
     public static final int defaultClassesCount = 6;
+
+    @NonNull
+    public static final String parserIp = "localhost";
+    @NonNull
+    public static final int parserPort = 4000;
 }

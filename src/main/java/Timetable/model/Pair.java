@@ -8,6 +8,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
 
 @Component
 @Entity
@@ -56,12 +57,12 @@ public class Pair {
 //    @Nullable
 //    private Integer pairChangedId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "pair_to_change_id")
     private Pair pairToChange;
 
-    @OneToOne(mappedBy = "pairToChange")
-    private Pair newPair;
+    @OneToMany(mappedBy = "pairToChange")
+    Set<Pair> newPairs;
 
 
     public Integer getId() {
@@ -108,12 +109,12 @@ public class Pair {
         this.pairToChange = pairToChange;
     }
 
-    public Pair getNewPair() {
-        return newPair;
+    public Set<Pair> getNewPairs() {
+        return newPairs;
     }
 
-    public void setNewPair(Pair newPair) {
-        this.newPair = newPair;
+    public void setNewPairs(Set<Pair> newPairs) {
+        this.newPairs = newPairs;
     }
 
     public LocalDateTime getBeginTime() {

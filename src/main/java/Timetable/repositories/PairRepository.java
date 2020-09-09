@@ -17,8 +17,10 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
     List<Pair> getAllByAuditoriumEquals(@NonNull final Auditorium auditorium);
 
     @NonNull
-    List<Pair> getAllByAuditoriumEqualsAndDayOfTheWeekEquals(@NonNull final Auditorium auditorium,
-                                                             @NonNull final int dayOfWeek);
+    List<Pair> getAllByAuditoriumEqualsAndDayOfTheWeekEqualsAndRepeatabilityGreaterThan(
+            @NonNull final Auditorium auditorium,
+            @NonNull final int dayOfWeek,
+            @NonNull final int repeatability);
 
     @Query("select p from Pair p where p.auditorium = ?1 and p.dayOfTheWeek = ?2 and " +
             "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
