@@ -128,7 +128,7 @@ public class AddPairDialog {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(20, 150, 10, 10));
 
-        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../../../styles/styles.css").toExternalForm());
 
         subject = new TextField();
         subject.setPromptText("Введите предмет");

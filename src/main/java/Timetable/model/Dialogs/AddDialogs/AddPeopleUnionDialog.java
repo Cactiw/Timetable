@@ -90,7 +90,7 @@ public class AddPeopleUnionDialog {
         gridPane.add(new Label("Родительская группа:"), 0, 3);
         gridPane.add(parentPeopleUnion, 1, 3);
 
-        gridPane.getStylesheets().add(getClass().getResource("../../../styles.css").toExternalForm());
+        gridPane.getStylesheets().add(getClass().getResource("../../../../styles/styles.css").toExternalForm());
 
         dialog.getDialogPane().setContent(gridPane);
 

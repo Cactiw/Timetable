@@ -14,7 +14,7 @@ public class AuditoriumPropertyService {
     @Autowired
     private AuditoriumPropertyRepository auditoriumPropertyRepository;
 
-    private final List<String> defaultProperties = Arrays.asList("Проектор", "Компьютерный класс", "Розетки");
+    private final List<String> defaultProperties = Arrays.asList("Проектор", "Компьютеры", "Розетки");
 
     public void createAll() {
         for (String propertyName: defaultProperties) {
