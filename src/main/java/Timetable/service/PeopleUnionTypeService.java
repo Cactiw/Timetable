@@ -6,9 +6,11 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class PeopleUnionTypeService {
         return FXCollections.observableArrayList(peopleUnionTypeRepository.findAll());
     }
 
-    @NonNull
+    @Nullable
     public PeopleUnionType getByName(@NonNull final String name) {
         return peopleUnionTypeRepository.getByName(name);
     }
@@ -42,10 +44,15 @@ public class PeopleUnionTypeService {
         return peopleUnionType;
     }
 
-    // consider replacing each call with getByName call
     @NonNull
     public PeopleUnionType checkOrCreateType(@NonNull final String name) {
-        return getByName(name);
+        PeopleUnionType peopleUnionType = getByName(name);
+        if (peopleUnionType == null) {
+            peopleUnionType = new PeopleUnionType();
+            peopleUnionType.setName(name);
+            peopleUnionTypeRepository.save(peopleUnionType);
+        }
+        return peopleUnionType;
     }
 
     public void createListOfDefaultTypes() {
