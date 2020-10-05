@@ -1,6 +1,8 @@
 package Timetable.model.Dialogs.ViewDialogs;
 
 import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
+import Timetable.model.Dialogs.DeleteDialogs.DeleteAuditoriumDialog;
+import Timetable.model.Dialogs.DeleteDialogs.DeletePairDialog;
 import Timetable.model.Pair;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -24,13 +26,17 @@ public class ViewPairDialog {
 
     private JFXButton okButton;
 
+    private StackPane container;
     private Pair pair;
 
     @Autowired
     AddPairDialog addPairDialog;
+    @Autowired
+    DeletePairDialog deletePairDialog;
 
     public void show(@NonNull final StackPane container, @NonNull final Pair pair) {
         this.pair = pair;
+        this.container = container;
 
         dialog = new JFXDialog();
         content = new JFXDialogLayout();
@@ -67,6 +73,13 @@ public class ViewPairDialog {
             this.updateContent();
         });
         rootPane.add(editPairButton, 3, 0);
+
+        final Image deleteIcon = new Image("/icons/delete.png");
+        final JFXButton deletePairButton = new JFXButton("", new ImageView(deleteIcon));
+        deletePairButton.setOnMouseClicked(e -> {
+            deletePairDialog.show(container, pair);
+        });
+        rootPane.add(deletePairButton, 4, 0);
 
         rootPane.add(new Label("Предмет:"), 0, 0);
         rootPane.add(new Label(pair.getSubject()), 1, 0, 2, 1);

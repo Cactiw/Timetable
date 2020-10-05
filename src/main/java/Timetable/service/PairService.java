@@ -32,6 +32,10 @@ public class PairService {
         return pairRepository.save(pair);
     }
 
+    public void delete(@NonNull final Pair pair) {
+        pairRepository.delete(pair);
+    }
+
     @NonNull
     public ObservableList<Pair> getDefaultWeek() {
         return FXCollections.observableArrayList(pairRepository.getAllByRepeatabilityGreaterThan(0));
