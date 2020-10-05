@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXDialogLayout;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -26,7 +27,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 
 @Component
@@ -42,6 +42,8 @@ public class ViewAuditoriumDialog {
 
     @Autowired
     AddAuditoriumDialog addAuditoriumDialog;
+    @Autowired
+    ViewPairDialog viewPairDialog;
     @Autowired
     DeleteAuditoriumDialog deleteAuditoriumDialog;
 
@@ -116,6 +118,10 @@ public class ViewAuditoriumDialog {
         VBox auditoriumPairs = getAuditoriumPairs();
         auditoriumPairs.prefWidthProperty().bind(dialog.widthProperty());
 
+//        ScrollPane auditoriumPairsScrollPane = new ScrollPane();
+//        auditoriumPairsScrollPane.setContent(auditoriumPairs);
+//        auditoriumPairsScrollPane.setFitToWidth(true);
+
         rootPane.add(infoPane, 0, 0);
         rootPane.add(auditoriumPairs, 1, 0);
     }
@@ -140,6 +146,13 @@ public class ViewAuditoriumDialog {
                 currentDay = pair.getDayOfTheWeek();
             }
             HBox pairBox = new HBox();
+            pairBox.setSpacing(20);
+            pairBox.setOnMouseClicked( e -> {
+                if (e.getClickCount() >= 2) {  // On double click
+                    viewPairDialog.show(container, pair);
+                    this.updateContent();
+                }
+            });
 
             VBox timeBox = new VBox();
             Label beginLabel = new Label(pair.getClearBeginTIme().toString());

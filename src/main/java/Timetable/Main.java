@@ -187,7 +187,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         VBox.setVgrow(mainStack, Priority.ALWAYS);
 
         final Scene scene = new Scene(mainBox, 1000, 700);
-        scene.getStylesheets().addAll(List.of("styles/styles.css", "styles/classes.css", "styles/auditoriums.css"));
+        scene.getStylesheets().addAll(List.of("styles/styles.css", "styles/classes.css", "styles/auditoriums.css",
+                "styles/scrollpane.css"));
 
 //        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
