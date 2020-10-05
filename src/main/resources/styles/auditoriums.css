@@ -41,3 +41,16 @@
     -fx-border-color: black;
     -fx-border-width: 0 1 0 1;
 }
+
+
+.auditorium-pair-title {
+    -fx-font-size: 14pt;
+    -fx-font-weight: bold;
+}
+
+.auditorium-pair-pane {
+    -fx-background-color: #cde0cd;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
+
+    -fx-padding: 5px;
+}
