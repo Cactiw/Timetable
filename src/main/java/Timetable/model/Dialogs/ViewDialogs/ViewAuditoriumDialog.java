@@ -137,7 +137,7 @@ public class ViewAuditoriumDialog {
         int currentDay = -1;
         for (var pair: pairs) {
             if (pair.getDayOfTheWeek().compareTo(currentDay) != 0) {
-                Label dayLabel = new Label(DateService.daysOfWeek.get(pair.getDayOfTheWeek()));
+                Label dayLabel = new Label(DateService.daysOfWeek.get(pair.getDayOfTheWeek() - 1));
                 dayLabel.getStyleClass().add("auditorium-pair-title");
                 root.getChildren().add(dayLabel);
 

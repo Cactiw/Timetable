@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,6 +32,8 @@ public class ViewPairDialog {
 
     @Autowired
     AddPairDialog addPairDialog;
+    @Autowired
+    ViewAuditoriumDialog viewAuditoriumDialog;
     @Autowired
     DeletePairDialog deletePairDialog;
 
@@ -88,7 +91,13 @@ public class ViewPairDialog {
         rootPane.add(new Label(pair.getTeacher().formatFIO()), 1, 1, 2, 1);
 
         rootPane.add(new Label("Аудитория:"), 0, 2);
-        rootPane.add(new Label(pair.getAuditorium().getName()), 1, 2, 2, 1);
+        final Label auditoriumLabel = new Label(pair.getAuditorium().getName());
+        auditoriumLabel.underlineProperty().setValue(true);
+        auditoriumLabel.cursorProperty().setValue(Cursor.HAND);
+        auditoriumLabel.setOnMouseClicked(e -> {
+            viewAuditoriumDialog.show(container, pair.getAuditorium());
+        });
+        rootPane.add(auditoriumLabel, 1, 2, 2, 1);
 
         rootPane.add(new Label("Продолжительность:"), 0, 3);
         rootPane.add(new Label(pair.formatPairTime()), 1, 3, 2, 1);
