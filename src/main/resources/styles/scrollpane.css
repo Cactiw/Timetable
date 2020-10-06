@@ -3,7 +3,7 @@
 .scroll-pane {
     -fx-background-insets: 0;
     -fx-padding: 0;
-    -fx-background-color: transparent;
+    -fx-background: white;
 }
 
 .scroll-pane:focused {

@@ -16,10 +16,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -118,23 +115,24 @@ public class ViewAuditoriumDialog {
         VBox auditoriumPairs = getAuditoriumPairs();
         auditoriumPairs.prefWidthProperty().bind(dialog.widthProperty());
 
-//        ScrollPane auditoriumPairsScrollPane = new ScrollPane();
-//        auditoriumPairsScrollPane.setContent(auditoriumPairs);
-//        auditoriumPairsScrollPane.setFitToWidth(true);
+        ScrollPane auditoriumPairsScrollPane = new ScrollPane();
+        auditoriumPairsScrollPane.setContent(auditoriumPairs);
+        auditoriumPairsScrollPane.setFitToWidth(true);
+        auditoriumPairsScrollPane.setPadding(new Insets(15, 15, 15, 15));
 
         rootPane.add(infoPane, 0, 0);
-        rootPane.add(auditoriumPairs, 1, 0);
+        rootPane.add(auditoriumPairsScrollPane, 1, 0);
     }
 
     @NonNull
     VBox getAuditoriumPairs() {
         VBox root = new VBox();
-        root.setSpacing(10);
+        root.setSpacing(15);
         Label titleLabel = new Label("Занятия в аудитории");
         titleLabel.getStyleClass().add("auditorium-pair-title");
         root.getChildren().add(titleLabel);
         var pairs = new ArrayList<>(auditorium.getPairs());
-        pairs.sort(Comparator.comparing(Pair::getDayOfTheWeek));
+        pairs.sort(Comparator.comparing(Pair::getDayOfTheWeek).thenComparing(Pair::getClearBeginTIme));
 
         int currentDay = -1;
         for (var pair: pairs) {
@@ -166,8 +164,14 @@ public class ViewAuditoriumDialog {
             Label pairTeacherLabel = new Label(pair.getTeacher().formatFIO());
 
             pairNameLabel.getStyleClass().add("auditorium-pair-title");
+            pairTeacherLabel.alignmentProperty().setValue(Pos.CENTER_RIGHT);
 
-            pairBox.getChildren().addAll(timeBox, pairNameLabel, pairGroupLabel, pairTeacherLabel);
+            Region regionCenter = new Region();
+            Region regionRight = new Region();
+            HBox.setHgrow(regionCenter, Priority.ALWAYS);
+            HBox.setHgrow(regionRight, Priority.ALWAYS);
+
+            pairBox.getChildren().addAll(timeBox, pairNameLabel, regionCenter, pairGroupLabel, regionRight, pairTeacherLabel);
             pairBox.getStyleClass().add("auditorium-pair-pane");
             pairBox.alignmentProperty().setValue(Pos.CENTER_LEFT);
 
