@@ -16,7 +16,10 @@ import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import org.springframework.lang.NonNull;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 public class MainClassesWindow {
@@ -176,19 +179,30 @@ public class MainClassesWindow {
                 currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
 
                 if (!currentDayPairs.isEmpty()) {
-                    LocalDateTime currentTime = currentDayPairs.get(0).getEndTime();
+                    LocalTime currentTime = currentDayPairs.get(0).getClearEndTIme();
                     GridPaneService.addToGridPane(classesPane, new Label(currentDayPairs.get(0).formatPairTime()),
                             0, currentRow);
                     for (Pair pair : currentDayPairs) {
-                        if (pair.getEndTime().toLocalTime().compareTo(currentTime.toLocalTime()) > 0) {
-                            // Пара следующая по времени
-                            currentTime = pair.getEndTime();
-                            currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
-                            GridPaneService.addToGridPane(classesPane, new Label(pair.formatPairTime()), 0,
-                                    currentRow);
+                        Label pairLabel = new Label(pair.formatPair());
+                        if (pair.getClearEndTIme().compareTo(currentTime) > 0) {
+
+                            System.out.println(Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()));
+                            System.out.println(pair.getSubject());
+                            if (Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()) < 30 * 60) {
+                                // Незначительное различие по времени
+                                pairLabel.setText(pair.getClearBeginTIme().toString() + " — " +
+                                        pair.getClearEndTIme().toString() + " " +
+                                        pairLabel.getText()
+                                );
+                            } else {
+                                // Пара следующая по времени
+                                currentTime = pair.getClearEndTIme();
+                                currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
+                                GridPaneService.addToGridPane(classesPane, new Label(pair.formatPairTime()), 0,
+                                        currentRow);
+                            }
                         }
 
-                        Label pairLabel = new Label(pair.formatPair());
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
                         final StyleParameter style = new StyleParameter();
                         // No need to make it null, just initialize it before first read
