@@ -185,9 +185,6 @@ public class MainClassesWindow {
                     for (Pair pair : currentDayPairs) {
                         Label pairLabel = new Label(pair.formatPair());
                         if (pair.getClearEndTIme().compareTo(currentTime) > 0) {
-
-                            System.out.println(Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()));
-                            System.out.println(pair.getSubject());
                             if (Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()) < 30 * 60) {
                                 // Незначительное различие по времени
                                 pairLabel.setText(pair.getClearBeginTIme().toString() + " — " +
