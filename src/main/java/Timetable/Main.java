@@ -188,7 +188,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         final Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().addAll(List.of("styles/styles.css", "styles/classes.css", "styles/auditoriums.css",
-                "styles/scrollpane.css"));
+                "styles/scrollpane.css", "styles/datepicker.css"));
 
 //        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);

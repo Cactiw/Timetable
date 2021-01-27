@@ -9,17 +9,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import org.springframework.lang.NonNull;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.List;
 
 public class MainClassesWindow {
@@ -66,6 +61,7 @@ public class MainClassesWindow {
         classesSettings = new HBox();
         classesSettings.setPadding(new Insets(25, 10, 0, 10));
         classesSettings.setAlignment(Pos.CENTER_LEFT);
+        HBox.setMargin(classesSettings, new Insets(0, 30, 0, 0));
 
         classesSettings.spacingProperty().setValue(10);
 
@@ -93,8 +89,12 @@ public class MainClassesWindow {
 
         streamSelect.setOnAction(e -> updateClasses());
 
+        DatePicker weekPicker = WeekPicker.getWeekPicker();
+        weekPicker.setValue(WeekPicker.getFirstDayOfWeek(LocalDate.now()));
+        Region left = new Region();
+        HBox.setHgrow(left, Priority.ALWAYS);
         classesSettings.getChildren().addAll(courseLabel, courseSelect, new Label("      "),
-                streamLabel, streamSelect);
+                streamLabel, streamSelect, left, weekPicker);
 
         classes.getChildren().add(classesSettings);
 

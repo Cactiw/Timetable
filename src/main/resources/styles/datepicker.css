@@ -1,0 +1,82 @@
+
+
+/*.date-picker-popup > * > .my-selected {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.day-cell.selected {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.date-cell.selected {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.date-picker-popup > * > .date-cell.my-selected {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+
+/*}*/
+
+/*.my-selected {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.date-picker > .text-field {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.date-picker {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+/*}*/
+
+/*.date-picker-popup {*/
+/*    background-color: rgba(113,146,255,0.56);*/
+
+/*}*/
+
+
+/*.date-picker-popup > .month-year-pane {*/
+/*    -fx-padding: 0.588883em 0.5em 0.666667em 0.5em; !* 7 6 8 6 *!*/
+/*    -fx-background-color: derive(-fx-box-border,30%),*/
+/*    linear-gradient(to bottom, derive(-fx-base,-3%),*/
+/*            derive(-fx-base,5%) 50%,*/
+/*            derive(-fx-base,-3%));*/
+/*    -fx-background-insets: 0 0 0 0, 0 0 1 0;*/
+/*}*/
+
+.date-picker-popup > * > .day-cell {
+    /*-fx-control-inner-background: yellow ;*/
+    -fx-control-inner-background: white ;
+    /*-fx-background-color: ;*/
+}
+
+.date-picker-popup > * > .day-cell > * > .selected {
+    -fx-control-inner-background: #00ff04;
+    /*-fx-background-color: ;*/
+}
+
+.date-picker-popup > * > .day-cell.selected {
+    -fx-control-inner-background: #00ff04;
+    /*-fx-background-color: ;*/
+}
+
+.date-picker-popup > * > .day-cell selected {
+    -fx-control-inner-background: #00ff04;
+    /*-fx-background-color: ;*/
+}
+
+
+.date-picker-popup > * > .day-cell > * > selected {
+    -fx-control-inner-background: #00ff04;
+    /*-fx-background-color: ;*/
+}
+
+/*.date-picker-popup > * > .selected  {*/
+/*    -fx-control-inner-background: yellow ;*/
+/*    !*-fx-background-color: ;*!*/
+/*}*/
+
+.date-cell.selected {
+    -fx-background-color: #00ff04;
+
+}
