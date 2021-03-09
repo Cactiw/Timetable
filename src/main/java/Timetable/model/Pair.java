@@ -2,6 +2,7 @@ package Timetable.model;
 
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -201,5 +202,11 @@ public class Pair {
         }
         Pair other = (Pair) obj;
         return this.getId().equals(other.getId());
+    }
+
+    public Pair cancelPair() {
+        var cancelPair = new Pair();
+        cancelPair.isCanceled = true;
+        return cancelPair;
     }
 }
