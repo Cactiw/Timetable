@@ -4,6 +4,7 @@ import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
 import Timetable.model.Dialogs.DeleteDialogs.DeleteAuditoriumDialog;
 import Timetable.model.Dialogs.DeleteDialogs.DeletePairDialog;
 import Timetable.model.Pair;
+import Timetable.service.DateService;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
@@ -99,8 +100,12 @@ public class ViewPairDialog {
         });
         rootPane.add(auditoriumLabel, 1, 2, 2, 1);
 
-        rootPane.add(new Label("Продолжительность:"), 0, 3);
-        rootPane.add(new Label(pair.formatPairTime()), 1, 3, 2, 1);
+        rootPane.add(new Label("День недели:"), 0, 3);
+        rootPane.add(new Label(DateService.daysOfWeek.get(pair.getDayOfTheWeek())),
+                1, 3, 2, 1);
+
+        rootPane.add(new Label("Продолжительность:"), 0, 4);
+        rootPane.add(new Label(pair.formatPairTime()), 1, 4, 2, 1);
     }
 
     @Nullable
