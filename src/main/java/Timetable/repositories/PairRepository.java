@@ -38,7 +38,7 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
                                     @NonNull final LocalTime beginTime,
                                     @NonNull final LocalTime endTime);
 
-    @Query("select p from Pair p where p.repeatability > 0 and p.group in ?1 order by p.dayOfTheWeek asc, " +
+    @Query("select p from Pair p where p.repeatability > 0 and p.group in ?1 and p.pairToChange is null order by p.dayOfTheWeek asc, " +
             "p.clearEndTIme asc")
     @NonNull
     List<Pair> getGroupsDefaultWeek(@NonNull final List<PeopleUnion> peopleUnions);

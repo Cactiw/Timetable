@@ -13,4 +13,9 @@ public class DateService {
             "Суббота",
             "Воскресенье"
     );
+
+    public static boolean isBetween(int value, int min, int max)
+    {
+        return((value > min) && (value < max));
+    }
 }

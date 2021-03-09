@@ -176,7 +176,8 @@ public class MainClassesWindow {
             groupsTmp.add(fatherPeopleUnion);
 
             GridPaneService.addToGridPane(classesPane, new Label(" "), 0, 0);
-            final ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekForStream(groupsTmp);
+//            final ObservableList<ObservableList<Pair>> week = pairService.getDefaultWeekForStream(groupsTmp);
+            final ObservableList<ObservableList<Pair>> week = pairService.getCurrentWeekForStream(groupsTmp, weekPicker.getValue());
             if (week.isEmpty()) {
                 return classesPane;
             }

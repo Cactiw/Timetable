@@ -12,9 +12,12 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -39,6 +42,25 @@ public class PairService {
     @NonNull
     public ObservableList<Pair> getDefaultWeek() {
         return FXCollections.observableArrayList(pairRepository.getAllByRepeatabilityGreaterThan(0));
+    }
+
+    @NonNull
+    public ObservableList<Pair> adaptWeekToCurrent(@NonNull final ObservableList<Pair> pairs,
+                                                   @NonNull final LocalDate weekStart) {
+        for (int i = 0; i < pairs.size(); ++i) {
+            var pair = pairs.get(i);
+            var changes = pair.getNewPairs();
+            if (changes.size() > 0) {
+                var suitableChanges = changes.stream().filter(p ->
+                    DateService.isBetween(
+                            Period.between(p.getBeginTime().toLocalDate(), weekStart).getDays(), 0, 6
+                    )).collect(Collectors.toList());
+                if (suitableChanges.size() > 0) {
+                    pairs.set(i, suitableChanges.get(0));
+                }
+            }
+        }
+        return pairs;
     }
 
     // Never used
@@ -69,6 +91,15 @@ public class PairService {
     public ObservableList<ObservableList<Pair>> getDefaultWeekForStream(@NonNull final List<PeopleUnion> peopleUnions) {
         return dividePairsByDaysOfWeek(FXCollections.observableArrayList(
                 pairRepository.getGroupsDefaultWeek(peopleUnions)));
+    }
+
+    @NonNull
+    public ObservableList<ObservableList<Pair>> getCurrentWeekForStream(@NonNull final List<PeopleUnion> peopleUnions,
+                                                                        @NonNull final LocalDate weekStart) {
+        var pairsByDays = getDefaultWeekForStream(peopleUnions);
+        return FXCollections.observableArrayList(
+                pairsByDays.stream().map(list -> adaptWeekToCurrent(list, weekStart)).collect(Collectors.toList())
+        );
     }
 
     // Получает на вход список пар в неделю, возвращает список из семи списков пар - по одному на каждый день недели.
