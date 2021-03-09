@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -169,6 +170,10 @@ public class MainClassesWindow {
         updateClassesTask.setOnSucceeded(e -> {
             updateClassesWindowLater(updateClassesTask.getValue());
         });
+        updateClassesTask.setOnFailed(e -> {
+                Throwable throwable = updateClassesTask.getException();
+                throwable.printStackTrace();
+            });
         new Thread(updateClassesTask).start();
     }
 
@@ -260,6 +265,13 @@ public class MainClassesWindow {
 
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
                         final StyleParameter style = new StyleParameter();
+                        if (pair.getPairToChange() != null) {
+                            if (pair.getCanceled() != null && pair.getCanceled()) {
+                                style.setPaneStyle("red");
+                            } else {
+                                style.setPaneStyle("blue");
+                            }
+                        }
                         // No need to make it null, just initialize it before first read
                         final Pane pairPane;
                         if (pair.getGroup().equals(fatherPeopleUnion)) {

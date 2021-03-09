@@ -8,6 +8,12 @@
     -fx-border-width: 0 1 1 0;
     -fx-background-color: transparent;
 }
+.classes-grid-cell.red {
+    -fx-background-color: lightcoral;
+}
+.classes-grid-cell.blue {
+    -fx-background-color: lightblue;
+}
 .classes-grid-cell.first-row {
     -fx-border-width: 1 1 1 0 ;
 }

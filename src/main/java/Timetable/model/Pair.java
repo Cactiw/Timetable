@@ -64,6 +64,9 @@ public class Pair {
     @OneToMany(mappedBy = "pairToChange")
     Set<Pair> newPairs;
 
+    @Column
+    private Boolean isCanceled;
+
 
     public Integer getId() {
         return id;
@@ -163,6 +166,14 @@ public class Pair {
 
     public void setClearEndTIme(LocalTime clearEndTIme) {
         this.clearEndTIme = clearEndTIme;
+    }
+
+    public Boolean getCanceled() {
+        return isCanceled;
+    }
+
+    public void setCanceled(Boolean canceled) {
+        isCanceled = canceled;
     }
 
     public DateTimeFormatter getDateTimeFormatter() {
