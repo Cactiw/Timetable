@@ -5,11 +5,14 @@ import Timetable.model.Pair;
 import Timetable.model.Parameters.StyleParameter;
 import Timetable.model.PeopleUnion;
 import Timetable.service.*;
+import com.jfoenix.controls.JFXButton;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 import org.springframework.lang.NonNull;
@@ -93,10 +96,21 @@ public class MainClassesWindow {
 
         weekPicker = WeekPicker.getWeekPicker();
         weekPicker.setValue(WeekPicker.getFirstDayOfWeek(LocalDate.now()));
+        weekPicker.setPrefWidth(185);
         Region left = new Region();
         HBox.setHgrow(left, Priority.ALWAYS);
+        final Image forwardIcon = new Image("/icons/forward.png");
+        final Image backIcon = new Image("/icons/backward.png");
+        final JFXButton forwardWeekButton = new JFXButton("", new ImageView(forwardIcon));
+        final JFXButton backWeekButton = new JFXButton("", new ImageView(backIcon));
+        forwardWeekButton.setOnMouseClicked(e -> {
+            weekPicker.setValue(weekPicker.getValue().plusDays(7));
+        });
+        backWeekButton.setOnMouseClicked(e -> {
+            weekPicker.setValue(weekPicker.getValue().minusDays(7));
+        });
         classesSettings.getChildren().addAll(courseLabel, courseSelect, new Label("      "),
-                streamLabel, streamSelect, left, weekPicker);
+                streamLabel, streamSelect, left, backWeekButton, weekPicker, forwardWeekButton);
 
         classes.getChildren().add(classesSettings);
 
