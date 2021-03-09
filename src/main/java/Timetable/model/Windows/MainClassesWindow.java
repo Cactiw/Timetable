@@ -34,6 +34,8 @@ public class MainClassesWindow {
 
     private StackPane modes;
 
+    private DatePicker weekPicker;
+
     public MainClassesWindow(@NonNull final StackPane modes,
                              @NonNull final PeopleUnionService peopleUnionService,
                              @NonNull final PeopleUnionTypeService peopleUnionTypeService,
@@ -89,7 +91,7 @@ public class MainClassesWindow {
 
         streamSelect.setOnAction(e -> updateClasses());
 
-        DatePicker weekPicker = WeekPicker.getWeekPicker();
+        weekPicker = WeekPicker.getWeekPicker();
         weekPicker.setValue(WeekPicker.getFirstDayOfWeek(LocalDate.now()));
         Region left = new Region();
         HBox.setHgrow(left, Priority.ALWAYS);
