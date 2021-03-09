@@ -107,6 +107,9 @@ public class MainClassesWindow {
         weekPicker = WeekPicker.getWeekPicker();
         weekPicker.setValue(WeekPicker.getFirstDayOfWeek(LocalDate.now()));
         weekPicker.setPrefWidth(230);
+        weekPicker.valueProperty().addListener(e -> {
+            this.updateClasses();
+        });
         Region left = new Region();
         HBox.setHgrow(left, Priority.ALWAYS);
         final Image forwardIcon = new Image("/icons/forward.png");
