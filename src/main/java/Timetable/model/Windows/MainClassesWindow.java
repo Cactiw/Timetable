@@ -6,8 +6,13 @@ import Timetable.model.Parameters.StyleParameter;
 import Timetable.model.PeopleUnion;
 import Timetable.service.*;
 import com.jfoenix.controls.JFXButton;
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -19,6 +24,7 @@ import org.springframework.lang.NonNull;
 
 import java.time.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 public class MainClassesWindow {
 
@@ -36,6 +42,9 @@ public class MainClassesWindow {
     private ViewPairDialog viewPairDialog;
 
     private StackPane modes;
+
+    private BorderPane loaderPane;
+    private RotateTransition loaderAnimation;
 
     private DatePicker weekPicker;
 
@@ -114,6 +123,14 @@ public class MainClassesWindow {
 
         classes.getChildren().add(classesSettings);
 
+        loaderPane = new BorderPane();
+        ImageView updateIcon = new ImageView(new Image("icons/refresh.png"));
+        loaderAnimation = new RotateTransition(javafx.util.Duration.millis(3000), updateIcon);
+        loaderAnimation.setByAngle(360);
+        loaderAnimation.setCycleCount(Animation.INDEFINITE);
+        loaderAnimation.setInterpolator(Interpolator.LINEAR);
+        loaderPane.setCenter(updateIcon);
+
         addClassesWindow();
 
         ScrollPane classesScrollPane = new ScrollPane();
@@ -137,13 +154,37 @@ public class MainClassesWindow {
          */
 
         if (classes != null && classesPane != null) {
+            System.out.println("Classes & classesPane not Null");
             classes.getChildren().remove(classesPane);
         }
 
-        classesPane = getClassesPane();
+        classes.getChildren().add(loaderPane);
+        enableLoader();
+        var updateClassesTask = new Task<GridPane>() {
+            @Override
+            protected GridPane call() throws Exception {
+                return getClassesPane();
+            }
+        };
+        updateClassesTask.setOnSucceeded(e -> {
+            updateClassesWindowLater(updateClassesTask.getValue());
+        });
+        new Thread(updateClassesTask).start();
+    }
+
+    private void updateClassesWindowLater(GridPane newClassesPane) {
+        classesPane = newClassesPane;
+        classes.getChildren().remove(loaderPane);
         classes.getChildren().add(classesPane);
         HBox.setHgrow(classesPane, Priority.ALWAYS);
+    }
 
+    private void enableLoader() {
+        loaderAnimation.play();
+    }
+
+    private void disableLoader() {
+        loaderAnimation.stop();
     }
 
     @NonNull
