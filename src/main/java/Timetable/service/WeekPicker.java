@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import org.springframework.lang.NonNull;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
@@ -76,7 +77,13 @@ public abstract class WeekPicker{
         datePicker.setConverter(new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate localDate) {
-                return localDate.toString() + " — " + localDate.plusDays(6).toString();
+                var currentMonday = getFirstDayOfWeek(LocalDate.now());
+                long weeksFromCurrent = Duration.between(currentMonday.atStartOfDay(), localDate.atStartOfDay()).toDays() / 7;
+                return localDate.toString() + " — " + localDate.plusDays(6).toString() + "  | " +
+                        (
+                                weeksFromCurrent == 0 ? "ТЕК " :
+                                        ( (weeksFromCurrent > 0 ? "+ " : "- ") + Math.abs(weeksFromCurrent) + " ")
+                        );
             }
 
             @Override
