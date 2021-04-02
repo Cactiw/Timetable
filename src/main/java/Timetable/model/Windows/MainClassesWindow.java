@@ -293,7 +293,7 @@ public class MainClassesWindow {
                         }
                         pairPane.setOnMouseClicked(e -> {
                             if (e.getClickCount() >= 2) {  // On double click
-                                viewPairDialog.show(modes, pair);
+                                viewPairDialog.show(modes, pair, weekPicker.getValue());
                                 viewPairDialog.getDialog().setOnDialogClosed(skip -> updateClasses());
                             }
                         });

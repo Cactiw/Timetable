@@ -148,7 +148,7 @@ public class AddPairDialog {
                 }
             }
             teacherPopup.show(teacher, Side.BOTTOM, 0, 0);
-            verifyAddUserDialog();
+            verifyAddPairDialog();
         });
         auditorium = new TextField();
         auditorium.setPromptText("Введите аудиторию");
@@ -169,7 +169,7 @@ public class AddPairDialog {
                 }
                 auditoriumPopup.show(auditorium, Side.BOTTOM, 0, 0);
             }
-            verifyAddUserDialog();
+            verifyAddPairDialog();
         });
         group = new TextField();
         group.setPromptText("Введите название группы");
@@ -182,7 +182,7 @@ public class AddPairDialog {
                 fillGroupPopupItems(group.getText());
                 groupPopup.show(group, Side.BOTTOM, 10, 10);
             }
-            verifyAddUserDialog();
+            verifyAddPairDialog();
         });
 
         final Label groupLabel = new Label("Группа:");
@@ -218,13 +218,13 @@ public class AddPairDialog {
 //        endTime.setDefaultColor(Color.valueOf("#009688"));
         endTime.valueProperty().addListener((observableValue, localTime, t1) -> {
             if (!beginTimeChanged) {
-                verifyAddUserDialog();
+                verifyAddPairDialog();
             }
             beginTimeChanged = false;
         });
 
         beginDate = new JFXDatePicker();
-        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> verifyAddUserDialog());
+        beginDate.valueProperty().addListener((observableValue, localDate, t1) -> verifyAddPairDialog());
         beginTime = new JFXTimePicker();
         beginTime.set24HourView(true);
         beginTime.valueProperty().addListener((observableValue, localTime, t1) -> {
@@ -233,7 +233,7 @@ public class AddPairDialog {
                 endTime.setValue(LocalTime.of(observableValue.getValue().getHour(), observableValue.getValue().
                         getMinute()).plusHours(PAIR_LENGTH.getHour()).plusMinutes(PAIR_LENGTH.getMinute()));
             }
-            verifyAddUserDialog();
+            verifyAddPairDialog();
         });
 
         repeatability = new ChoiceBox<>();
@@ -283,7 +283,7 @@ public class AddPairDialog {
         notNullList = Arrays.asList(beginDate, beginTime, endTime);
 
         dialog.getDialogPane().setContent(gridPane);
-        verifyAddUserDialog();
+        verifyAddPairDialog();
 
         // Request focus on the usersubject field by default.
         Platform.runLater(() -> subject.requestFocus());
@@ -326,7 +326,7 @@ public class AddPairDialog {
     };
 
     private void onTextChanged(@NonNull final Observable observable) {
-        verifyAddUserDialog();
+        verifyAddPairDialog();
     }
 
     private LocalDateTime getBeginTime() {
@@ -342,24 +342,24 @@ public class AddPairDialog {
         teacher.setText(newTeacher.formatFIO());
         teacherEntity = newTeacher;
         Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
-        verifyAddUserDialog();
+        verifyAddPairDialog();
     }
 
     private void setAuditorium(@NonNull final Auditorium newAuditorium) {
         auditorium.setText(newAuditorium.getName());
         auditoriumEntity = newAuditorium;
         Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
-        verifyAddUserDialog();
+        verifyAddPairDialog();
     }
 
     private void setGroup(@NonNull final PeopleUnion newGroup) {
         group.setText(newGroup.getName());
         groupEntity = newGroup;
         Platform.runLater(() -> group.positionCaret(group.getText().length()));
-        verifyAddUserDialog();
+        verifyAddPairDialog();
     }
 
-    private void verifyAddUserDialog() {
+    private void verifyAddPairDialog() {
         boolean correct = true;
         for (var x : emptyList) {
             boolean bool = x.getText().isEmpty();

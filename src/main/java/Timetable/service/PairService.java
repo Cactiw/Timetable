@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,10 +27,20 @@ import java.util.stream.Collectors;
 public class PairService {
     @NonNull
     private final PairRepository pairRepository;
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
     public PairService(@NonNull final PairRepository pairRepository) {
         this.pairRepository = pairRepository;
+    }
+
+    @NonNull
+    public Pair saveFlush(@NonNull final Pair pair) {
+        pairRepository.save(pair);
+        pairRepository.flush();
+        em.refresh(pair);
+        return pair;
     }
 
     @NonNull
@@ -59,6 +71,8 @@ public class PairService {
                     )).collect(Collectors.toList());
                 if (suitableChanges.size() > 0) {
                     week.add(suitableChanges.get(0));
+                } else {
+                    week.add(pair);
                 }
             } else {
                 week.add(pair);

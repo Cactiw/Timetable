@@ -30,6 +30,8 @@
 
 .label.white-text {
     -fx-text-fill: white;
+
+    /*-fx-background-color: orangered;*/
 }
 
 .label.pair {
@@ -39,4 +41,8 @@
 .label.big {
     /*-fx-font-weight: bold;*/
     -fx-font-size: 13pt;
+}
+
+.label.red {
+    -fx-text-fill: red;
 }

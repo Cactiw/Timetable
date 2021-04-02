@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -169,6 +170,10 @@ public class Pair {
         this.clearEndTIme = clearEndTIme;
     }
 
+    public Boolean isCanceled() {
+        return getCanceled() != null && getCanceled();
+    }
+
     public Boolean getCanceled() {
         return isCanceled;
     }
@@ -204,8 +209,20 @@ public class Pair {
         return this.getId().equals(other.getId());
     }
 
-    public Pair cancelPair() {
+    public Pair cancelPair(LocalDate weekStart) {
         var cancelPair = new Pair();
+        cancelPair.setSubject(getSubject());
+        cancelPair.setAuditorium(getAuditorium());
+        cancelPair.setTeacher(getTeacher());
+        cancelPair.setGroup(getGroup());
+        var beginTime = getBeginTime().toLocalTime();
+        var beginDateTime = LocalDateTime.of(weekStart.plusDays(getDayOfTheWeek() - 1), beginTime);
+        var endTime = getEndTime().toLocalTime();
+        var beginEndTime = LocalDateTime.of(weekStart.plusDays(getDayOfTheWeek() - 1), endTime);
+        cancelPair.setBeginTime(beginDateTime);
+        cancelPair.setEndTime(beginEndTime);
+        cancelPair.setRepeatability(getRepeatability());
+        cancelPair.setPairToChange(this);
         cancelPair.isCanceled = true;
         return cancelPair;
     }

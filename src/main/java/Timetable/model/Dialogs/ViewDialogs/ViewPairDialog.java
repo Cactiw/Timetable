@@ -9,6 +9,7 @@ import Timetable.service.PairService;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -20,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 public class ViewPairDialog {
@@ -33,6 +36,10 @@ public class ViewPairDialog {
     private StackPane container;
     private Pair pair;
 
+    private LocalDate weekStart;
+
+    private Label statusLabel;
+
     @Autowired
     AddPairDialog addPairDialog;
     @Autowired
@@ -42,9 +49,10 @@ public class ViewPairDialog {
     @Autowired
     PairService pairService;
 
-    public void show(@NonNull final StackPane container, @NonNull final Pair pair) {
+    public void show(@NonNull final StackPane container, @NonNull final Pair pair, final LocalDate weekStart) {
         this.pair = pair;
         this.container = container;
+        this.weekStart = weekStart;
 
         dialog = new JFXDialog();
         content = new JFXDialogLayout();
@@ -70,7 +78,7 @@ public class ViewPairDialog {
         cancelPairButton = new JFXButton("Отменить");
 //        cancelPairButton.setPrefSize(50, 25);
         cancelPairButton.styleProperty().setValue("-fx-font-size: 13pt; -fx-text-fill: orangered");
-        cancelPairButton.setOnAction(e -> this.cancelPair());
+        cancelPairButton.setOnAction(e -> this.cancelPair(weekStart));
 
         final GridPane rootPane = new GridPane();
 
@@ -119,12 +127,21 @@ public class ViewPairDialog {
         rootPane.add(new Label("Продолжительность:"), 0, 4);
         rootPane.add(new Label(pair.formatPairTime()), 1, 4, 2, 1);
 
-        rootPane.add(cancelPairButton, 0, 5, 2, 1);
+        statusLabel = new Label(pair.isCanceled() ? "Отменена" : (pair.getPairToChange() != null ? "Перенесена" : ""));
+        statusLabel.getStyleClass().add("red");
+        rootPane.add(statusLabel, 0, 5, 2, 1);
+
+        if (weekStart != null) {
+            rootPane.add(cancelPairButton, 0, 6, 2, 1);
+        }
     }
 
-    private void cancelPair() {
-        Pair cancel = pair.cancelPair();
-        pairService.save(cancel);
+    private void cancelPair(@NonNull final LocalDate weekStart) {
+        Pair cancel = pair.cancelPair(weekStart);
+        pairService.saveFlush(cancel);
+
+        this.pair = cancel;
+        Platform.runLater(this::updateContent);
     }
 
     @Nullable

@@ -147,7 +147,7 @@ public class ViewAuditoriumDialog {
             pairBox.setSpacing(20);
             pairBox.setOnMouseClicked( e -> {
                 if (e.getClickCount() >= 2) {  // On double click
-                    viewPairDialog.show(container, pair);
+                    viewPairDialog.show(container, pair, null);
                     this.updateContent();
                 }
             });
