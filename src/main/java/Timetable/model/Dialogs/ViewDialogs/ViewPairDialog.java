@@ -132,15 +132,32 @@ public class ViewPairDialog {
         rootPane.add(statusLabel, 0, 5, 2, 1);
 
         if (weekStart != null) {
+            if (pair.isCanceled()) {
+                cancelPairButton.setText("Вернуть пару");
+                cancelPairButton.setOnAction(e -> { returnCanceledPair(this.pair); });
+                cancelPairButton.styleProperty().setValue("-fx-font-size: 13pt; -fx-text-fill: lightgreen");
+            }
             rootPane.add(cancelPairButton, 0, 6, 2, 1);
         }
     }
 
     private void cancelPair(@NonNull final LocalDate weekStart) {
+        if (pair.isCanceled()) {
+            Platform.runLater(this::updateContent);
+            return;
+        }
         Pair cancel = pair.cancelPair(weekStart);
         pairService.saveFlush(cancel);
 
         this.pair = cancel;
+        Platform.runLater(this::updateContent);
+    }
+
+    private void returnCanceledPair(@NonNull Pair pair) {
+        Pair canceledPair = pair.getPairToChange();
+        this.pair = canceledPair;
+
+        pairService.delete(pair);
         Platform.runLater(this::updateContent);
     }
 
