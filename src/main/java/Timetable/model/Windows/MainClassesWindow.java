@@ -48,6 +48,7 @@ public class MainClassesWindow {
     private RotateTransition loaderAnimation;
 
     private DatePicker weekPicker;
+    private Task<GridPane> updateTask;
 
     public MainClassesWindow(@NonNull final StackPane modes,
                              @NonNull final PeopleUnionService peopleUnionService,
@@ -164,20 +165,23 @@ public class MainClassesWindow {
 
         classes.getChildren().add(loaderPane);
         enableLoader();
-        var updateClassesTask = new Task<GridPane>() {
+        if (updateTask != null) {
+            updateTask.cancel();
+        }
+        updateTask = new Task<GridPane>() {
             @Override
             protected GridPane call() throws Exception {
                 return getClassesPane();
             }
         };
-        updateClassesTask.setOnSucceeded(e -> {
-            updateClassesWindowLater(updateClassesTask.getValue());
+        updateTask.setOnSucceeded(e -> {
+            Platform.runLater( () -> updateClassesWindowLater(updateTask.getValue()) );
         });
-        updateClassesTask.setOnFailed(e -> {
-                Throwable throwable = updateClassesTask.getException();
+        updateTask.setOnFailed(e -> {
+                Throwable throwable = updateTask.getException();
                 throwable.printStackTrace();
             });
-        new Thread(updateClassesTask).start();
+        new Thread(updateTask).start();
     }
 
     private void updateClassesWindowLater(GridPane newClassesPane) {
