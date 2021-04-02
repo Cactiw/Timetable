@@ -165,7 +165,7 @@ public class MainClassesWindow {
 
         classes.getChildren().add(loaderPane);
         enableLoader();
-        if (updateTask != null) {
+        if (updateTask != null && updateTask.isRunning()) {
             updateTask.cancel();
         }
         updateTask = new Task<GridPane>() {
