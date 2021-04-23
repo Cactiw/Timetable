@@ -103,10 +103,12 @@ public class MainClassesWindow {
             }
         });
 
-        streamSelect.setOnAction(e -> updateClasses());
+        streamSelect.valueProperty().addListener(e -> {
+//            this.updateClasses();
+        });
 
         weekPicker = WeekPicker.getWeekPicker();
-        weekPicker.setValue(WeekPicker.getFirstDayOfWeek(LocalDate.now()));
+        weekPicker.setValue(DateService.getFirstDayOfWeek(LocalDate.now()));
         weekPicker.setPrefWidth(230);
         weekPicker.valueProperty().addListener(e -> {
             this.updateClasses();
@@ -254,6 +256,9 @@ public class MainClassesWindow {
                             0, currentRow);
                     for (Pair pair : currentDayPairs) {
                         Label pairLabel = new Label(pair.formatPair());
+                        pairLabel.setWrapText(true);
+                        pairLabel.setAlignment(Pos.CENTER);
+                        pairLabel.setTextAlignment(TextAlignment.CENTER);
                         if (pair.getClearEndTIme().compareTo(currentTime) > 0) {
                             if (Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()) < 30 * 60) {
                                 // Незначительное различие по времени
@@ -291,6 +296,7 @@ public class MainClassesWindow {
                                     currentRow, groupsCount, style);
                         } else {
                             // Пара отдельной группы
+                            pairLabel.setMaxWidth(200);
                             style.setLabelStyle("pair");
                             pairPane = GridPaneService.addToGridPane(classesPane, pairLabel,
                                     groups.indexOf(pair.getGroup()) + 1, currentRow, style);

@@ -150,16 +150,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
                         JSONObject timetable = (JSONObject)jsonObject.get("timetable");
 
+                        pairService.importTimetable(timetable);
+
+                        rootClassesPane = mainClassesWindow.initiateClassesWindow();
+
                         Alert success = new Alert(Alert.AlertType.INFORMATION);
                         success.setTitle("Успех!");
                         success.setContentText(timetable.keySet().toString());
                         success.showAndWait();
-
-                        timetable.keySet().forEach(keyStr ->
-                        {
-                            JSONArray pairs = (JSONArray)timetable.get(keyStr);
-                            System.out.println("Processed " + keyStr + " " + pairs.toString());
-                        });
 
                     } catch (Exception error) {
                         error.printStackTrace();

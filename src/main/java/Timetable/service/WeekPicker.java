@@ -52,7 +52,7 @@ public abstract class WeekPicker{
                         }
                         if (c != null && c.getStyleClass().contains("day-cell")) {
                             final LocalDate selectedDate = datePicker.getValue();
-                            final LocalDate startDate = WeekPicker.getFirstDayOfWeek(selectedDate);
+                            final LocalDate startDate = DateService.getFirstDayOfWeek(selectedDate);
                             final LocalDate endDate = startDate.plusDays(7);
                             Integer ini = startDate.getDayOfMonth();
                             Integer end = endDate.getDayOfMonth();
@@ -77,7 +77,7 @@ public abstract class WeekPicker{
         datePicker.setConverter(new StringConverter<LocalDate>() {
             @Override
             public String toString(LocalDate localDate) {
-                var currentMonday = getFirstDayOfWeek(LocalDate.now());
+                var currentMonday = DateService.getFirstDayOfWeek(LocalDate.now());
                 long weeksFromCurrent = Duration.between(currentMonday.atStartOfDay(), localDate.atStartOfDay()).toDays() / 7;
                 return localDate.toString() + " — " + localDate.plusDays(6).toString() + "  | " +
                         (
@@ -92,9 +92,5 @@ public abstract class WeekPicker{
             }
         });
         return datePicker;
-    }
-
-    public static LocalDate getFirstDayOfWeek(@NonNull LocalDate date) {
-        return date.minusDays(date.getDayOfWeek().getValue() - 1);
     }
 }

@@ -390,47 +390,12 @@ public class AddPairDialog {
         }
         if (correct) {
             setNoConflicts();
-            // Проверка на конфликты преподавателя
-            final ObservableList<Pair> teacherPairs = pairService.getDefaultWeekForTeacher(teacherEntity);
-            for (final Pair pair : teacherPairs) {
-                if (!(getBeginTime().compareTo(pair.getEndTime()) > 0 ||
-                        getEndTime().compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
-                    // Пересекаются, алёрт
-                    setConflict("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
-                            pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                            pair.getEndTime().toLocalTime().toString(), "");
-                    correct = false;
-                }
-            }
-            // Проверка на конфликты аудитории
-            final ObservableList<Pair> auditoriumConflictPairs = pairService.getAuditoriumConflictPairs(auditoriumEntity,
-                    getBeginTime().getDayOfWeek().getValue(),
-                    getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (final Pair pair : auditoriumConflictPairs) {
-                if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
-                    continue;
-                }
-                final ObservableList<Auditorium> availableAuditoriums = auditoriumService.getAvailableAuditoriums(getBeginTime(), getEndTime());
-                final String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
-                        availableAuditoriums.get(0).getName() + ", вместимость: " +
-                        availableAuditoriums.get(0).getMaxStudents() : "Подходящих аудиторий не найдено.";
-                setConflict("Аудитория в это время занята:\n" + pair.getSubject() + " " +
-                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                        pair.getEndTime().toLocalTime().toString(), suggestion);
+            var res = pairService.checkPairConflicts(teacherEntity, groupEntity, auditoriumEntity, getBeginTime(), getEndTime(), pairFrom);
+            String errors = res.get(0);
+            String suggestions = res.get(1);
+            if (errors.length() > 0) {
                 correct = false;
-            }
-
-            // Проверка на конфликты групп
-            final ObservableList<Pair> pairs = pairService.getGroupConflictPairs(groupEntity, getBeginTime().getDayOfWeek().getValue(),
-                    getBeginTime().toLocalTime(), getEndTime().toLocalTime());
-            for (final Pair pair : pairs) {
-                if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
-                    continue;
-                }
-                setConflict("Группа в это время занята:\n" + pair.getSubject() + " " +
-                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                        pair.getEndTime().toLocalTime().toString(), "");
-                correct = false;
+                setConflict(errors, suggestions);
             }
         }
         okButton.setDisable(!correct);

@@ -41,6 +41,24 @@ public class AuditoriumService {
     }
 
     @NonNull
+    public Auditorium searchCreateAuditorium(@NonNull final String text) {
+        var result = searchAuditoriums(text);
+        if (result.size() > 0) {
+            return result.get(0);
+        }
+        var auditorium = new Auditorium();
+        auditorium.setName(text);
+
+        if (text.contains("П")) {
+            auditorium.setMaxStudents(100);
+        } else {
+            auditorium.setMaxStudents(40);
+        }
+        save(auditorium);
+        return auditorium;
+    }
+
+    @NonNull
     public ObservableList<Auditorium> getAvailableAuditoriums(@NonNull final LocalDateTime beginTime,
                                                               @NonNull final LocalDateTime endTime) {
         return FXCollections.observableArrayList(auditoriumRepository.findAvailableAuditorium(beginTime, endTime));

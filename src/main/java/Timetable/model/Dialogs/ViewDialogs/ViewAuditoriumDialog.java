@@ -158,9 +158,11 @@ public class ViewAuditoriumDialog {
             Label endLabel = new Label(pair.getClearEndTIme().toString());
             timeBox.alignmentProperty().setValue(Pos.CENTER);
             timeBox.getChildren().addAll(beginLabel, separatorLabel, endLabel);
+            timeBox.setMinWidth(40);
 
             Label pairNameLabel = new Label(pair.getSubject());
             Label pairGroupLabel = new Label(pair.getGroup().getName());
+            pairGroupLabel.setMinWidth(40);
             Label pairTeacherLabel = new Label(pair.getTeacher().formatFIO());
 
             pairNameLabel.getStyleClass().add("auditorium-pair-title");

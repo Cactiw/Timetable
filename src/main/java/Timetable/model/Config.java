@@ -17,5 +17,5 @@ public class Config {
     @NonNull
     public static final String parserIp = "localhost";
     @NonNull
-    public static final int parserPort = 4000;
+    public static final int parserPort = 6000;
 }

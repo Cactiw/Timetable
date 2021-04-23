@@ -7,6 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -37,7 +38,7 @@ public class PeopleUnionService {
         return FXCollections.observableArrayList(peopleUnionRepository.findByNameIgnoreCaseContaining(name));
     }
 
-    @NonNull
+    @Nullable
     public PeopleUnion getByName(@NonNull final String name) {
         return peopleUnionRepository.getByNameEquals(name);
     }

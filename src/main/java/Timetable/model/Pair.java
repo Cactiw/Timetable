@@ -19,6 +19,9 @@ public class Pair {
     // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
     // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
 
+    public static final int EVERY_WEEK = 1;
+    public static final int NEWER = 0;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column

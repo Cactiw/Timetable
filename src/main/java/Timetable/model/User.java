@@ -27,6 +27,10 @@ public class User {
     // TODO set @NonNull or @Nullable to each variable and it's getter according to it's properties in the table
     // TODO alter all setters to return new object instead of mutating existing one see BorderProperties for example
 
+    public static final int OperatorRole = 0;
+    public static final int TeacherRole = 1;
+    public static final int StudentRole = 2;
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,6 +61,16 @@ public class User {
     @Type( type = "json" )
     @Column( columnDefinition = "json" )
     private Map<String, Integer> additional;
+
+    public Boolean getJustCreated() {
+        return justCreated;
+    }
+
+    public void setJustCreated(Boolean justCreated) {
+        this.justCreated = justCreated;
+    }
+
+    private Boolean justCreated = false;
 
     public Integer getId() {
         return id;
