@@ -65,6 +65,7 @@ public class UserService {
             user.setName(names.get(1));
             user.setSurName(names.get(2));
             user.setJustCreated(true);
+            user.setRole(User.TeacherRole);
             save(user);
             return user;
         } else {
@@ -83,6 +84,7 @@ public class UserService {
             user.setName(name_initial);
             user.setSurName(surname_initial);
             user.setJustCreated(true);
+            user.setRole(User.TeacherRole);
             save(user);
             return user;
         }
