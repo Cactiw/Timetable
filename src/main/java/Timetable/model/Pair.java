@@ -3,6 +3,7 @@ package Timetable.model;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -34,6 +35,7 @@ public class Pair {
     private User teacher;
 
     @ManyToOne
+    @Nullable
     private Auditorium auditorium;
 
     @ManyToOne
@@ -93,8 +95,13 @@ public class Pair {
         this.teacher = teacher;
     }
 
+    @Nullable
     public Auditorium getAuditorium() {
         return auditorium;
+    }
+
+    public String getAuditoriumName() {
+        return getAuditorium() != null ? getAuditorium().getName() : "";
     }
 
     public void setAuditorium(Auditorium auditorium) {
@@ -191,11 +198,13 @@ public class Pair {
     }
 
     public String formatPair() {
-        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "       " +  this.getAuditorium().getName();
+        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "       " +
+                getAuditoriumName();
     }
 
     public String formatStreamPair() {
-        return this.getSubject() + "\n" + this.getTeacher().formatFIO() + "       " +  this.getAuditorium().getName();
+        return this.getSubject() + "\n" + this.getTeacher().formatFIO() + "       " +
+                getAuditoriumName();
     }
 
     public String formatPairTime() {

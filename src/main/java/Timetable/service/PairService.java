@@ -227,7 +227,7 @@ public class PairService {
     public List<String> checkPairConflicts(
             @NonNull User teacher,
             @NonNull PeopleUnion group,
-            @NonNull Auditorium auditorium,
+            @Nullable Auditorium auditorium,
             @NonNull LocalDateTime beginTime,
             @NonNull LocalDateTime endTime,
 
@@ -242,26 +242,28 @@ public class PairService {
                     endTime.compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
                 // Пересекаются, алёрт
                 conflicts.append("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
-                        pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                        pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
                         pair.getEndTime().toLocalTime().toString() + "\n");
             }
         }
         // Проверка на конфликты аудитории
-        final ObservableList<Pair> auditoriumConflictPairs = getAuditoriumConflictPairs(auditorium,
-                beginTime.getDayOfWeek().getValue(),
-                beginTime.toLocalTime(), endTime.toLocalTime());
-        for (final Pair pair : auditoriumConflictPairs) {
-            if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
-                continue;
+        if (auditorium != null) {
+            final ObservableList<Pair> auditoriumConflictPairs = getAuditoriumConflictPairs(auditorium,
+                    beginTime.getDayOfWeek().getValue(),
+                    beginTime.toLocalTime(), endTime.toLocalTime());
+            for (final Pair pair : auditoriumConflictPairs) {
+                if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
+                    continue;
+                }
+                final ObservableList<Auditorium> availableAuditoriums = auditoriumService.getAvailableAuditoriums(beginTime, endTime);
+                final String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
+                        availableAuditoriums.get(0).getName() + ", вместимость: " +
+                        availableAuditoriums.get(0).getMaxStudents() : "Подходящих аудиторий не найдено.";
+                conflicts.append("Аудитория в это время занята:\n" + pair.getSubject() + " " +
+                        pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                        pair.getEndTime().toLocalTime().toString() + "\n");
+                suggestions.append(suggestion);
             }
-            final ObservableList<Auditorium> availableAuditoriums = auditoriumService.getAvailableAuditoriums(beginTime, endTime);
-            final String suggestion = !availableAuditoriums.isEmpty() ? "Подходящая аудитория:\n" +
-                    availableAuditoriums.get(0).getName() + ", вместимость: " +
-                    availableAuditoriums.get(0).getMaxStudents() : "Подходящих аудиторий не найдено.";
-            conflicts.append("Аудитория в это время занята:\n" + pair.getSubject() + " " +
-                    pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                    pair.getEndTime().toLocalTime().toString() + "\n");
-            suggestions.append(suggestion);
         }
 
         // Проверка на конфликты групп
@@ -272,7 +274,7 @@ public class PairService {
                 continue;
             }
             conflicts.append("Группа в это время занята:\n" + pair.getSubject() + " " +
-                    pair.getAuditorium().getName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                    pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
                     pair.getEndTime().toLocalTime().toString() + "\n");
         }
         return Arrays.asList(

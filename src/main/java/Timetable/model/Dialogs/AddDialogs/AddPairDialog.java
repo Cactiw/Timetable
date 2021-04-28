@@ -31,6 +31,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -345,8 +346,8 @@ public class AddPairDialog {
         verifyAddPairDialog();
     }
 
-    private void setAuditorium(@NonNull final Auditorium newAuditorium) {
-        auditorium.setText(newAuditorium.getName());
+    private void setAuditorium(@Nullable final Auditorium newAuditorium) {
+        auditorium.setText(newAuditorium != null ? newAuditorium.getName() : "");
         auditoriumEntity = newAuditorium;
         Platform.runLater(() -> auditorium.positionCaret(auditorium.getText().length()));
         verifyAddPairDialog();

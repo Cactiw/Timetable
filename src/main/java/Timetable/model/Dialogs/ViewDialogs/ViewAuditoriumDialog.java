@@ -45,7 +45,10 @@ public class ViewAuditoriumDialog {
     DeleteAuditoriumDialog deleteAuditoriumDialog;
 
     public void show(@NonNull final StackPane container,
-                     @NonNull final Auditorium auditorium) {
+                     @Nullable final Auditorium auditorium) {
+        if (auditorium == null) {
+            return;
+        }
         this.auditorium = auditorium;
         this.container = container;
 

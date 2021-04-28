@@ -112,7 +112,7 @@ public class ViewPairDialog {
         rootPane.add(new Label(pair.getTeacher().formatFIO()), 1, 1, 2, 1);
 
         rootPane.add(new Label("Аудитория:"), 0, 2);
-        final Label auditoriumLabel = new Label(pair.getAuditorium().getName());
+        final Label auditoriumLabel = new Label(pair.getAuditoriumName());
         auditoriumLabel.underlineProperty().setValue(true);
         auditoriumLabel.cursorProperty().setValue(Cursor.HAND);
         auditoriumLabel.setOnMouseClicked(e -> {
