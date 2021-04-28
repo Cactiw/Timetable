@@ -166,7 +166,7 @@ public class ViewAuditoriumDialog {
             Label pairNameLabel = new Label(pair.getSubject());
             Label pairGroupLabel = new Label(pair.getGroup().getName());
             pairGroupLabel.setMinWidth(40);
-            Label pairTeacherLabel = new Label(pair.getTeacher().formatFIO());
+            Label pairTeacherLabel = new Label(pair.getTeacherFIO());
 
             pairNameLabel.getStyleClass().add("auditorium-pair-title");
             pairTeacherLabel.alignmentProperty().setValue(Pos.CENTER_RIGHT);

@@ -339,8 +339,8 @@ public class AddPairDialog {
     }
 
 
-    private void setTeacher(@NonNull final User newTeacher) {
-        teacher.setText(newTeacher.formatFIO());
+    private void setTeacher(@Nullable final User newTeacher) {
+        teacher.setText(newTeacher != null ? newTeacher.formatFIO() : "");
         teacherEntity = newTeacher;
         Platform.runLater(() -> teacher.positionCaret(teacher.getText().length()));
         verifyAddPairDialog();

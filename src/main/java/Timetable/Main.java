@@ -11,12 +11,14 @@ import Timetable.model.Windows.MainAuditoriumWindow;
 import Timetable.model.Windows.MainClassesWindow;
 import Timetable.service.*;
 import javafx.event.ActionEvent;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.coyote.Request;
 import org.json.JSONArray;
@@ -82,6 +84,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
         databaseService.appInit();
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Timetable");
+
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        primaryStage.setMaxHeight(screenBounds.getHeight());
 
         final StackPane mainStack = new StackPane();
         final HBox root_pane = new HBox();
@@ -150,13 +155,18 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
                         JSONObject timetable = (JSONObject)jsonObject.get("timetable");
 
-                        pairService.importTimetable(timetable);
+                        String conflicts = pairService.importTimetable(timetable);
 
                         rootClassesPane = mainClassesWindow.initiateClassesWindow();
 
                         Alert success = new Alert(Alert.AlertType.INFORMATION);
                         success.setTitle("Успех!");
-                        success.setContentText(timetable.keySet().toString());
+                        TextArea area = new TextArea(conflicts);
+                        area.setWrapText(true);
+                        area.setEditable(false);
+
+                        success.getDialogPane().setContent(area);
+                        success.setResizable(true);
                         success.showAndWait();
 
                     } catch (Exception error) {

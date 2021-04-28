@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -52,7 +53,10 @@ public class UserService {
         return FXCollections.observableArrayList(q.getResultList());   // Look into this warning, this is a potential crash
     }
 
-    @NonNull User searchCreateParsedTeacher(@NonNull final String text) {
+    @Nullable User searchCreateParsedTeacher(@NonNull final String text) {
+        if (text.length() == 0) {
+            return null;
+        }
         ObservableList<User> searchResult;
         if (!text.contains(".")) {
             searchResult = searchUserByName(text, User.TeacherRole);
@@ -69,14 +73,18 @@ public class UserService {
             save(user);
             return user;
         } else {
-            final List<String> words = Arrays.asList(text.toLowerCase().split("\\.").clone());
+            final List<String> words = Arrays.asList(text.split("\\.").clone());
             final List<String> words2 = Arrays.asList(words.get(0).split(" ").clone());
             String last_name = words2.get(0);
             String name_initial = words2.get(1);
             String surname_initial = words.get(1);
 
-            searchResult = searchParsedTeacherByName(last_name, name_initial, surname_initial);
+            searchResult = searchParsedTeacherByName(last_name.toLowerCase(), name_initial.toLowerCase(),
+                    surname_initial.toLowerCase());
             if (searchResult.size() > 0) {
+                System.out.println(searchResult.toString());
+                System.out.println(searchResult.size());
+                System.out.println(searchResult.get(0).formatFIO());
                 return searchResult.get(0);
             }
             var user = new User();

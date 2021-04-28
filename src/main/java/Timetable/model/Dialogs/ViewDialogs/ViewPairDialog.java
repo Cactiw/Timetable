@@ -109,7 +109,7 @@ public class ViewPairDialog {
         rootPane.add(new Label(pair.getSubject()), 1, 0, 2, 1);
 
         rootPane.add(new Label("Преподаватель:"), 0, 1);
-        rootPane.add(new Label(pair.getTeacher().formatFIO()), 1, 1, 2, 1);
+        rootPane.add(new Label(pair.getTeacherFIO()), 1, 1, 2, 1);
 
         rootPane.add(new Label("Аудитория:"), 0, 2);
         final Label auditoriumLabel = new Label(pair.getAuditoriumName());

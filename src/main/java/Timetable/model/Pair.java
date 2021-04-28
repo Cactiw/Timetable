@@ -87,8 +87,17 @@ public class Pair {
         this.subject = subject;
     }
 
+    @Nullable
     public User getTeacher() {
         return teacher;
+    }
+
+    public String getTeacherFIO() {
+        return this.getTeacher() != null ? this.getTeacher().formatFIO() : "";
+    }
+
+    public String getTeacherShortFIO() {
+        return this.getTeacher() != null ? this.getTeacher().formatShortFIO() : "";
     }
 
     public void setTeacher(User teacher) {
@@ -198,12 +207,12 @@ public class Pair {
     }
 
     public String formatPair() {
-        return this.getSubject() + "\n" + this.getTeacher().formatShortFIO() + "       " +
+        return this.getSubject() + "\n" + this.getTeacherShortFIO() + "       " +
                 getAuditoriumName();
     }
 
     public String formatStreamPair() {
-        return this.getSubject() + "\n" + this.getTeacher().formatFIO() + "       " +
+        return this.getSubject() + "\n" + this.getTeacherFIO() + "       " +
                 getAuditoriumName();
     }
 
@@ -218,6 +227,9 @@ public class Pair {
             return false;
         }
         Pair other = (Pair) obj;
+        if (this.getId() == null || other.getId() == null) {
+            return false;
+        }
         return this.getId().equals(other.getId());
     }
 

@@ -225,7 +225,7 @@ public class PairService {
 
     @NonNull
     public List<String> checkPairConflicts(
-            @NonNull User teacher,
+            @Nullable User teacher,
             @NonNull PeopleUnion group,
             @Nullable Auditorium auditorium,
             @NonNull LocalDateTime beginTime,
@@ -235,17 +235,21 @@ public class PairService {
     ) {
         StringBuilder conflicts = new StringBuilder("");
         StringBuilder suggestions = new StringBuilder("");
-        // Проверка на конфликты преподавателя
-        final ObservableList<Pair> teacherPairs = getDefaultWeekForTeacher(teacher);
-        for (final Pair pair : teacherPairs) {
-            if (!(beginTime.compareTo(pair.getEndTime()) > 0 ||
-                    endTime.compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
-                // Пересекаются, алёрт
-                conflicts.append("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
-                        pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
-                        pair.getEndTime().toLocalTime().toString() + "\n");
+
+        if (teacher != null) {
+            // Проверка на конфликты преподавателя
+            final ObservableList<Pair> teacherPairs = getDefaultWeekForTeacher(teacher);
+            for (final Pair pair : teacherPairs) {
+                if (!(beginTime.compareTo(pair.getEndTime()) > 0 ||
+                        endTime.compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
+                    // Пересекаются, алёрт
+                    conflicts.append("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
+                            pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
+                            pair.getEndTime().toLocalTime().toString() + "\n");
+                }
             }
         }
+
         // Проверка на конфликты аудитории
         if (auditorium != null) {
             final ObservableList<Pair> auditoriumConflictPairs = getAuditoriumConflictPairs(auditorium,
@@ -283,7 +287,7 @@ public class PairService {
     }
 
 
-    public void importTimetable(
+    public String importTimetable(
             @NonNull JSONObject timetable
         ) {
         StringBuilder conflicts = new StringBuilder();
@@ -326,19 +330,22 @@ public class PairService {
                 String teacherInitials = pairData.getString("teacher");
                 String subject = pairData.getString("subject");
                 var auditoriumNameObject = pairData.get("pair_auditorium");
+                String auditoriumName;
                 if (JSONObject.NULL.equals(auditoriumNameObject)) {
-                    break;
+                    auditoriumName = "";
+                } else {
+                    auditoriumName = (String) auditoriumNameObject;
                 }
-                String auditoriumName = (String) auditoriumNameObject;
                 String time = pairData.getString("time");
 
                 User teacher = userService.searchCreateParsedTeacher(teacherInitials);
-                if (teacher.getJustCreated()) {
+                if (teacher != null && teacher.getJustCreated()) {
                     conflicts.append("Преподаватель был создан: ").append(teacher.formatFIO());
                     teacher.setJustCreated(false);
                 }
 
-                Auditorium auditorium = auditoriumService.searchCreateAuditorium(auditoriumName);
+                Auditorium auditorium = auditoriumName.length() > 0 ?
+                        auditoriumService.searchCreateAuditorium(auditoriumName) : null;
 
                 var splitTime = time.split(" - ");
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("H:m");
@@ -368,5 +375,6 @@ public class PairService {
             }
             System.out.println("Processed " + groupName + " " + pairs.toString());
         });
+        return conflicts.toString();
     }
 }

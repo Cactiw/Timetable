@@ -31,6 +31,7 @@ public class MainClassesWindow {
 
     private HBox classesSettings;
     private VBox classes;
+    private ScrollPane classesScrollPane;
 
     private GridPane classesPane;
 
@@ -140,11 +141,7 @@ public class MainClassesWindow {
 
         addClassesWindow();
 
-        ScrollPane classesScrollPane = new ScrollPane();
-        classesScrollPane.setContent(classes);
-        classesScrollPane.setFitToWidth(true);
-
-        modes.getChildren().add(classesScrollPane);
+        modes.getChildren().add(classes);
 
         return classes;
     }
@@ -162,7 +159,7 @@ public class MainClassesWindow {
 
         if (classes != null && classesPane != null) {
             System.out.println("Classes & classesPane not Null");
-            classes.getChildren().remove(classesPane);
+            classes.getChildren().remove(classesScrollPane);
         }
 
         classes.getChildren().add(loaderPane);
@@ -188,8 +185,14 @@ public class MainClassesWindow {
 
     private void updateClassesWindowLater(GridPane newClassesPane) {
         classesPane = newClassesPane;
+        classesScrollPane = new ScrollPane();
+        classesScrollPane.setContent(classesPane);
+        classesScrollPane.setFitToWidth(true);
+//        classesScrollPane.setFitToHeight(true);
+
         classes.getChildren().remove(loaderPane);
-        classes.getChildren().add(classesPane);
+        classes.getChildren().add(classesScrollPane);
+
         HBox.setHgrow(classesPane, Priority.ALWAYS);
     }
 
