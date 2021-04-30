@@ -1,5 +1,6 @@
 package Timetable.model;
 
+import Timetable.service.DateService;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.Formula;
 import org.springframework.lang.NonNull;
@@ -7,9 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Set;
 
@@ -45,7 +44,7 @@ public class Pair {
     private LocalDateTime beginTime;
 
     @Formula(value="begin_time::time")
-    private LocalTime clearBeginTIme;
+    private LocalTime clearBeginTime;
 
     @Column
     private LocalDateTime endTime;
@@ -54,7 +53,7 @@ public class Pair {
     private Integer dayOfTheWeek;
 
     @Formula(value="end_time::time")
-    private LocalTime clearEndTIme;
+    private LocalTime clearEndTime;
 
     @Column
     @ColumnDefault("0")
@@ -73,6 +72,9 @@ public class Pair {
 
     @Column
     private Boolean isCanceled;
+
+    @Column
+    private LocalDate changeDate;
 
 
     public Integer getId() {
@@ -165,12 +167,12 @@ public class Pair {
         this.repeatability = repeation;
     }
 
-    public LocalTime getClearBeginTIme() {
-        return clearBeginTIme;
+    public LocalTime getClearBeginTime() {
+        return clearBeginTime != null ? clearBeginTime : getBeginTime().toLocalTime();
     }
 
-    public void setClearBeginTIme(LocalTime clearBeginTIme) {
-        this.clearBeginTIme = clearBeginTIme;
+    public void setClearBeginTime(LocalTime clearBeginTIme) {
+        this.clearBeginTime = clearBeginTIme;
     }
 
     public Integer getDayOfTheWeek() {
@@ -181,12 +183,12 @@ public class Pair {
         this.dayOfTheWeek = dayOfTheWeek;
     }
 
-    public LocalTime getClearEndTIme() {
-        return clearEndTIme;
+    public LocalTime getClearEndTime() {
+        return clearEndTime != null ? clearEndTime : getEndTime().toLocalTime();
     }
 
-    public void setClearEndTIme(LocalTime clearEndTIme) {
-        this.clearEndTIme = clearEndTIme;
+    public void setClearEndTime(LocalTime clearEndTIme) {
+        this.clearEndTime = clearEndTIme;
     }
 
     public Boolean isCanceled() {
@@ -199,6 +201,14 @@ public class Pair {
 
     public void setCanceled(Boolean canceled) {
         isCanceled = canceled;
+    }
+
+    public LocalDate getChangeDate() {
+        return changeDate;
+    }
+
+    public void setChangeDate(LocalDate changeDate) {
+        this.changeDate = changeDate;
     }
 
     public DateTimeFormatter getDateTimeFormatter() {
@@ -221,6 +231,35 @@ public class Pair {
         return this.getBeginTime().format(pairTimeFormatter) + " - " + this.getEndTime().format(pairTimeFormatter);
     }
 
+    public boolean isChangedThisWeek(LocalDate weekStart) {
+        return this.getChangeDate() != null &&
+                DateService.isBetween(Period.between(weekStart, this.getChangeDate()).getDays(), 0, 6);
+    }
+
+    public boolean isThisWeek(LocalDate weekStart) {
+        return DateService.isBetween(Period.between(weekStart, this.getBeginTime().toLocalDate()).getDays(), 0, 6);
+    }
+
+    public boolean isChange() {
+        return this.pairToChange != null;
+    }
+
+    public boolean isBeginTimeMinorDifference(@NonNull final Pair other) {
+        System.out.println("Checking difference!");
+        System.out.println(getSubject());
+        System.out.println(getClearEndTime());
+        System.out.println(other.getSubject());
+        System.out.println(other.getClearEndTime());
+        System.out.println(isBeginTimeMinorDifference(other.getClearEndTime()));
+        System.out.println(getId());
+        System.out.println(other.getId());
+        System.out.println();
+        return isBeginTimeMinorDifference(other.getClearEndTime());
+    }
+    public boolean isBeginTimeMinorDifference(@NonNull final LocalTime time) {
+        return Math.abs(Duration.between(getClearEndTime(), time).toSeconds()) < 30 * 60;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (! (obj instanceof Pair)) {
@@ -239,15 +278,16 @@ public class Pair {
         cancelPair.setAuditorium(getAuditorium());
         cancelPair.setTeacher(getTeacher());
         cancelPair.setGroup(getGroup());
+        cancelPair.setChangeDate(weekStart.plusDays(getDayOfTheWeek() - 1));
         var beginTime = getBeginTime().toLocalTime();
         var beginDateTime = LocalDateTime.of(weekStart.plusDays(getDayOfTheWeek() - 1), beginTime);
         var endTime = getEndTime().toLocalTime();
-        var beginEndTime = LocalDateTime.of(weekStart.plusDays(getDayOfTheWeek() - 1), endTime);
+        var EndDateTime = LocalDateTime.of(weekStart.plusDays(getDayOfTheWeek() - 1), endTime);
         cancelPair.setBeginTime(beginDateTime);
-        cancelPair.setEndTime(beginEndTime);
+        cancelPair.setEndTime(EndDateTime);
         cancelPair.setRepeatability(getRepeatability());
         cancelPair.setPairToChange(this);
-        cancelPair.isCanceled = true;
+        cancelPair.setCanceled(true);
         return cancelPair;
     }
 }

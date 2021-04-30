@@ -19,7 +19,7 @@ public class DateService {
 
     public static boolean isBetween(int value, int min, int max)
     {
-        return((value > min) && (value < max));
+        return((value >= min) && (value <= max));
     }
 
     public static LocalDate getFirstDayOfWeek(@NonNull LocalDate date) {

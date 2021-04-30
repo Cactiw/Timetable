@@ -17,16 +17,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import javax.validation.constraints.Null;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,9 +88,16 @@ public class PairService {
                 var suitableChanges = changes.stream().filter(p ->
                     DateService.isBetween(
                             Period.between(weekStart, p.getBeginTime().toLocalDate()).getDays(), 0, 6
-                    )).collect(Collectors.toList());
+                    ) || (p.getChangeDate() != null && DateService.isBetween(
+                            Period.between(weekStart, p.getChangeDate()).getDays(), 0, 6)
+                )).collect(Collectors.toList());
                 if (suitableChanges.size() > 0) {
-                    week.add(suitableChanges.get(0));
+                    var change = suitableChanges.get(0);
+                    week.add(change);
+                    if ((!change.isCanceled()) && change.isChangedThisWeek(weekStart) && change.isThisWeek(weekStart)) {
+                        // Пара переносится на эту же неделю
+                        week.add(pair.cancelPair(weekStart));
+                    }
                 } else {
                     week.add(pair);
                 }
@@ -156,7 +159,7 @@ public class PairService {
         for (int i = 0; i < 7; ++i) {
             final var finalCurrentDay = currentDay;
             returnList.add(pairs.filtered(e -> e.getDayOfTheWeek().equals(finalCurrentDay)).sorted(
-                    Comparator.comparing(Pair::getClearBeginTIme)));
+                    Comparator.comparing(Pair::getClearBeginTime)));
             currentDay += 1;
         }
         return returnList;
@@ -211,7 +214,7 @@ public class PairService {
                                  @NonNull final LocalTime beginTime,
                                  @NonNull final LocalTime endTime) {
         return pair.getDayOfTheWeek() == dayOfWeek && (
-                pair.getClearBeginTIme().compareTo(endTime) <=0 && pair.getClearEndTIme().compareTo(beginTime) >= 0);
+                pair.getClearBeginTime().compareTo(endTime) <=0 && pair.getClearEndTime().compareTo(beginTime) >= 0);
     }
 
     @NonNull

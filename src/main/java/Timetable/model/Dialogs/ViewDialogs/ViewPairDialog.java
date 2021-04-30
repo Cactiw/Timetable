@@ -49,7 +49,11 @@ public class ViewPairDialog {
     @Autowired
     PairService pairService;
 
-    public void show(@NonNull final StackPane container, @NonNull final Pair pair, final LocalDate weekStart) {
+    public void show(
+            @NonNull final StackPane container,
+            @NonNull final Pair pair,
+            final LocalDate weekStart
+    ) {
         this.pair = pair;
         this.container = container;
         this.weekStart = weekStart;

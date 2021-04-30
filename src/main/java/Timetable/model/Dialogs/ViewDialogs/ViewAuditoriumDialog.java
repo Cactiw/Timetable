@@ -135,7 +135,7 @@ public class ViewAuditoriumDialog {
         titleLabel.getStyleClass().add("auditorium-pair-title");
         root.getChildren().add(titleLabel);
         var pairs = new ArrayList<>(auditorium.getPairs());
-        pairs.sort(Comparator.comparing(Pair::getDayOfTheWeek).thenComparing(Pair::getClearBeginTIme));
+        pairs.sort(Comparator.comparing(Pair::getDayOfTheWeek).thenComparing(Pair::getClearBeginTime));
 
         int currentDay = -1;
         for (var pair: pairs) {
@@ -156,9 +156,9 @@ public class ViewAuditoriumDialog {
             });
 
             VBox timeBox = new VBox();
-            Label beginLabel = new Label(pair.getClearBeginTIme().toString());
+            Label beginLabel = new Label(pair.getClearBeginTime().toString());
             Label separatorLabel = new Label("|");
-            Label endLabel = new Label(pair.getClearEndTIme().toString());
+            Label endLabel = new Label(pair.getClearEndTime().toString());
             timeBox.alignmentProperty().setValue(Pos.CENTER);
             timeBox.getChildren().addAll(beginLabel, separatorLabel, endLabel);
             timeBox.setMinWidth(40);

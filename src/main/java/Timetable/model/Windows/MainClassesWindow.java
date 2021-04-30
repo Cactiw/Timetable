@@ -13,7 +13,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -25,7 +24,6 @@ import org.springframework.lang.NonNull;
 
 import java.time.*;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 public class MainClassesWindow {
 
@@ -254,24 +252,45 @@ public class MainClassesWindow {
                 currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
 
                 if (!currentDayPairs.isEmpty()) {
-                    LocalTime currentTime = currentDayPairs.get(0).getClearEndTIme();
+                    LocalTime currentTime = currentDayPairs.get(0).getClearEndTime();
                     GridPaneService.addToGridPane(classesPane, new Label(currentDayPairs.get(0).formatPairTime()),
                             0, currentRow);
-                    for (Pair pair : currentDayPairs) {
+                    for (int pairIndex = 0; pairIndex < currentDayPairs.size(); ++pairIndex) {
+                        var pair = currentDayPairs.get(pairIndex);
+
+                        final StyleParameter style = new StyleParameter();
+                        if (pair.getPairToChange() != null) {
+                            if (pair.getCanceled() != null && pair.getCanceled()) {
+                                style.setPaneStyle("red");
+
+                                if (checkChangeOverwritten(pair, pairIndex, currentDayPairs)) {
+
+                                    // На месте этой отменённой пары возникла новая - не отражать отменённую
+                                    // ToDo Решить, что с этим делать
+                                    continue;
+                                }
+                            } else {
+                                style.setPaneStyle("blue");
+//                                if (pair.isChangedThisWeek(weekPicker.getValue())) {
+//                                    currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
+//                                }
+                            }
+                        }
+
                         Label pairLabel = new Label(pair.formatPair());
                         pairLabel.setWrapText(true);
                         pairLabel.setAlignment(Pos.CENTER);
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
-                        if (pair.getClearEndTIme().compareTo(currentTime) > 0) {
-                            if (Math.abs(Duration.between(pair.getClearEndTIme(), currentTime).toSeconds()) < 30 * 60) {
+                        if (pair.getClearEndTime().compareTo(currentTime) > 0) {
+                            if (pair.isBeginTimeMinorDifference(currentTime)) {
                                 // Незначительное различие по времени
-                                pairLabel.setText(pair.getClearBeginTIme().toString() + " — " +
-                                        pair.getClearEndTIme().toString() + " " +
+                                pairLabel.setText(pair.getClearBeginTime().toString() + " — " +
+                                        pair.getClearEndTime().toString() + " " +
                                         pairLabel.getText()
                                 );
                             } else {
                                 // Пара следующая по времени
-                                currentTime = pair.getClearEndTIme();
+                                currentTime = pair.getClearEndTime();
                                 currentRow = increaseGridRowIndex(classesPane, currentRow, 1, groupsCount);
                                 GridPaneService.addToGridPane(classesPane, new Label(pair.formatPairTime()), 0,
                                         currentRow);
@@ -279,37 +298,8 @@ public class MainClassesWindow {
                         }
 
                         pairLabel.setTextAlignment(TextAlignment.CENTER);
-                        final StyleParameter style = new StyleParameter();
-                        if (pair.getPairToChange() != null) {
-                            if (pair.getCanceled() != null && pair.getCanceled()) {
-                                style.setPaneStyle("red");
-                            } else {
-                                style.setPaneStyle("blue");
-                            }
-                        }
-                        // No need to make it null, just initialize it before first read
-                        final Pane pairPane;
-                        if (pair.getGroup().equals(fatherPeopleUnion)) {
-                            // Общепоточная пара
-                            classesPane.getChildren().remove(classesPane.getChildren().size() -
-                                    groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
-                            style.setLabelStyle("big");
-                            pairLabel.setText(pair.formatStreamPair());
-                            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel, 1,
-                                    currentRow, groupsCount, style);
-                        } else {
-                            // Пара отдельной группы
-                            pairLabel.setMaxWidth(200);
-                            style.setLabelStyle("pair");
-                            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel,
-                                    groups.indexOf(pair.getGroup()) + 1, currentRow, style);
-                        }
-                        pairPane.setOnMouseClicked(e -> {
-                            if (e.getClickCount() >= 2) {  // On double click
-                                viewPairDialog.show(modes, pair, weekPicker.getValue());
-                                viewPairDialog.getDialog().setOnDialogClosed(skip -> updateClasses());
-                            }
-                        });
+
+                        addPairPaneToGrid(pair, pairLabel, style, groups, fatherPeopleUnion, groupsCount, currentRow);
                     }
                 }
 
@@ -319,6 +309,71 @@ public class MainClassesWindow {
             }
         }
         return classesPane;
+    }
+
+    private void addPairPaneToGrid(
+            @NonNull final Pair pair,
+            @NonNull final Label pairLabel,
+            @NonNull final StyleParameter style,
+            @NonNull final List<PeopleUnion> groups,
+            @NonNull final PeopleUnion fatherPeopleUnion,
+            @NonNull final Integer groupsCount,
+            @NonNull final Integer currentRow
+            ) {
+        // No need to make it null, just initialize it before first read
+        final Pane pairPane;
+        if (pair.getGroup().equals(fatherPeopleUnion)) {
+            // Общепоточная пара
+            classesPane.getChildren().remove(classesPane.getChildren().size() -
+                    groupsCount - 1, classesPane.getChildren().size() - 1);  // Удаляю пустые поля
+            style.setLabelStyle("big");
+            pairLabel.setText(pair.formatStreamPair());
+            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel, 1,
+                    currentRow, groupsCount, style);
+        } else {
+            // Пара отдельной группы
+            pairLabel.setMaxWidth(200);
+            style.setLabelStyle("pair");
+            pairPane = GridPaneService.addToGridPane(classesPane, pairLabel,
+                    groups.indexOf(pair.getGroup()) + 1, currentRow, style);
+        }
+        pairPane.setOnMouseClicked(e -> {
+            if (e.getClickCount() >= 2) {  // On double click
+                viewPairDialog.show(modes, pair, weekPicker.getValue());
+                viewPairDialog.getDialog().setOnDialogClosed(skip -> updateClasses());
+            }
+        });
+    }
+
+    private boolean checkChangeOverwritten(
+            @NonNull final Pair pair,
+            @NonNull final Integer pairIndex,
+            @NonNull final ObservableList<Pair> currentDayPairs
+    ) {
+        int curIndex = pairIndex;
+        while (curIndex > 0) {
+            curIndex -= 1;
+            var curPair = currentDayPairs.get(curIndex);
+            if (curPair.getGroup().equals(pair.getGroup())) {
+                if (curPair.isChange() && curPair.isBeginTimeMinorDifference(pair)) {
+                    return true;
+                }
+                break;
+            }
+        }
+
+        curIndex = pairIndex;
+        while (curIndex < currentDayPairs.size() - 1) {
+            curIndex += 1;
+            var curPair = currentDayPairs.get(curIndex);
+            if (curPair.getGroup().equals(pair.getGroup())) {
+                if (curPair.isChange() && curPair.isBeginTimeMinorDifference(pair)) {
+                    return true;
+                }
+                break;
+            }
+        }
+        return false;
     }
 
     private int increaseGridRowIndex(@NonNull final GridPane gridPane,

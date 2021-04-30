@@ -23,7 +23,7 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
             @NonNull final int repeatability);
 
     @Query("select p from Pair p where p.auditorium = ?1 and p.dayOfTheWeek = ?2 and " +
-            "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
+            "(p.clearBeginTime <= ?4 and p.clearEndTime >= ?3)")
     @NonNull
     List<Pair> getAllAuditoriumConflicts(@NonNull final Auditorium auditorium,
                                           final int dayOfWeek,
@@ -31,7 +31,7 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
                                          @NonNull final LocalTime endTime);
 
     @Query("select p from Pair p where p.group = ?1 and p.dayOfTheWeek = ?2 and " +
-            "(p.clearBeginTIme <= ?4 and p.clearEndTIme >= ?3)")
+            "(p.clearBeginTime <= ?4 and p.clearEndTime >= ?3)")
     @NonNull
     List<Pair> getAllGroupConflicts(@NonNull final PeopleUnion peopleUnion,
                                     final int dayOfWeek,
@@ -39,7 +39,7 @@ public interface PairRepository extends JpaRepository<Pair, Integer> {
                                     @NonNull final LocalTime endTime);
 
     @Query("select p from Pair p where p.repeatability > 0 and p.group in ?1 and p.pairToChange is null order by p.dayOfTheWeek asc, " +
-            "p.clearEndTIme asc")
+            "p.clearEndTime asc")
     @NonNull
     List<Pair> getGroupsDefaultWeek(@NonNull final List<PeopleUnion> peopleUnions);
 
