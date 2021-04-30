@@ -62,6 +62,14 @@ public class User {
     @Column( columnDefinition = "json" )
     private Map<String, Integer> additional;
 
+    // For server use
+    @Column(length = 64)
+    private String password;
+
+    // Always null
+    @Column(length = 64)
+    private String clear_password;
+
     public Boolean getJustCreated() {
         return justCreated;
     }
