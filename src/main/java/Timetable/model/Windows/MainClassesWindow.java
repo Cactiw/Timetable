@@ -103,6 +103,7 @@ public class MainClassesWindow {
         });
 
         streamSelect.valueProperty().addListener(e -> {
+            this.weekPicker.setValue(weekPicker.getValue());
 //            this.updateClasses();
         });
 

@@ -43,6 +43,8 @@ public class MainAuditoriumWindow {
     private PairService pairService;
     private ViewAuditoriumDialog viewAuditoriumDialog;
 
+    private ScrollPane auditoriumScrollPane;
+
     public MainAuditoriumWindow(@NonNull final StackPane modes,
                                 @NonNull final AuditoriumService auditoriumService,
                                 @NonNull final AuditoriumPropertyService auditoriumPropertyService,
@@ -65,7 +67,12 @@ public class MainAuditoriumWindow {
         auditoriumGridPane.setHgap(30);
         auditoriumGridPane.setVgap(30);
         fillAuditoriumWindow(auditoriumService.getAuditoriums());
-        auditoriumPane.centerProperty().set(auditoriumGridPane);
+
+        auditoriumScrollPane = new ScrollPane();
+        auditoriumScrollPane.setFitToWidth(true);
+        auditoriumScrollPane.setContent(auditoriumGridPane);
+        auditoriumPane.centerProperty().set(auditoriumScrollPane);
+
         modes.getChildren().add(auditoriumPane); // Try to keep functions as clean in a haskell way as possible
 
         return auditoriumPane;
