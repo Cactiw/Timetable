@@ -36,7 +36,7 @@ public class GridPaneService {
                                                       final int columnSpan,
                                                       @NonNull final StyleParameter addStyle) {
         applyStyle(node, addStyle);
-        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, new StyleParameter());
+        return finalAddToGridPane(gridPane, node, columnIndex, rowIndex, columnSpan, addStyle);
     }
 
     @NonNull
