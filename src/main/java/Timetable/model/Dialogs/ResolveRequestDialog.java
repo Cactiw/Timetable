@@ -43,7 +43,7 @@ public class ResolveRequestDialog {
         updateContent();
 
         okButton = new JFXButton("Закрыть");
-        okButton.setPrefSize(50, 25);
+        okButton.setPrefSize(200, 25);
         okButton.styleProperty().setValue("-fx-font-size: 13pt; -fx-text-fill: green; -fx-background-color: whitesmoke");
         okButton.setOnAction(e -> this.dialog.close());
 
