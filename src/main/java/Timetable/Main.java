@@ -5,12 +5,15 @@ import Timetable.model.Dialogs.AddDialogs.AddAuditoriumDialog;
 import Timetable.model.Dialogs.AddDialogs.AddPairDialog;
 import Timetable.model.Dialogs.AddDialogs.AddPeopleUnionDialog;
 import Timetable.model.Dialogs.AddDialogs.AddUserDialog;
+import Timetable.model.Dialogs.ResolveRequestDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewAuditoriumDialog;
 import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
 import Timetable.model.Windows.MainAuditoriumWindow;
 import Timetable.model.Windows.MainClassesWindow;
+import Timetable.model.Windows.MainRequestsWindow;
 import Timetable.service.*;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,8 +23,6 @@ import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.apache.coyote.Request;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,12 +31,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -50,9 +48,11 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
     private MainAuditoriumWindow mainAuditoriumWindow;
     private MainClassesWindow mainClassesWindow;
+    private MainRequestsWindow mainRequestsWindow;
 
     private Pane rootAuditoriumPane;
     private Pane rootClassesPane;
+    private Pane rootRequestsPane;
 
     @Autowired
     private ViewPairDialog viewPairDialog;
@@ -63,6 +63,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private AddPairDialog addPairDialog;
     @Autowired
     private AddAuditoriumDialog addAuditoriumDialog;
+    @Autowired
+    private ResolveRequestDialog resolveRequestDialog;
 
     @Autowired
     private DatabaseService databaseService;
@@ -78,6 +80,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private PeopleUnionService peopleUnionService;
     @Autowired
     private AuditoriumPropertyService auditoriumPropertyService;
+    @Autowired
+    private RequestService requestService;
 
     @Override
     public void start(@NonNull final Stage primaryStage) throws Exception {
@@ -97,8 +101,14 @@ public class Main extends AbstractJavaFxApplicationSupport {
                 pairService, viewAuditoriumDialog);
         mainClassesWindow = new MainClassesWindow(modes, peopleUnionService, peopleUnionTypeService, pairService,
                 viewPairDialog);
+        mainRequestsWindow = new MainRequestsWindow(modes, requestService, resolveRequestDialog);
+
         rootClassesPane = mainClassesWindow.initiateClassesWindow();
         rootAuditoriumPane = mainAuditoriumWindow.initiateAuditoriumWindow();
+        rootRequestsPane = mainRequestsWindow.initiateWindow();
+
+        modes.getChildren().add(rootRequestsPane);
+        StackPane.setMargin(rootRequestsPane, new Insets(10, 20, 20, 20));
 
         VBox menu = sidePane();
         root_pane.getChildren().add(menu);
@@ -106,6 +116,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         rootClassesPane.toBack();
         rootClassesPane.setVisible(false);
+        rootRequestsPane.toBack();
+        rootRequestsPane.setVisible(false);
 
         root_pane.getChildren().add(modes);
         HBox.setHgrow(modes, Priority.ALWAYS);
@@ -150,7 +162,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
                     Map<String, String> map = new LinkedHashMap<>();
                     map.put("file", Base64.getEncoder().encodeToString(fileInputStream.readAllBytes()));
                     try {
-                        ResponseEntity<String> response = RequestService.post(url, map);
+                        ResponseEntity<String> response = NetworkRequestService.post(url, map);
                         JSONObject jsonObject = new JSONObject(response.getBody());
 
                         JSONObject timetable = (JSONObject)jsonObject.get("timetable");
@@ -196,7 +208,7 @@ public class Main extends AbstractJavaFxApplicationSupport {
 
         final Scene scene = new Scene(mainBox, 1000, 700);
         scene.getStylesheets().addAll(List.of("styles/styles.css", "styles/classes.css", "styles/auditoriums.css",
-                "styles/scrollpane.css", "styles/datepicker.css"));
+                "styles/scrollpane.css", "styles/datepicker.css", "styles/requests.css"));
 
 //        primaryStage.setMaximized(true);
         primaryStage.setScene(scene);
@@ -211,9 +223,9 @@ public class Main extends AbstractJavaFxApplicationSupport {
         vbox.setPrefWidth(200);
         vbox.setMinWidth(200);
         //vbox.setStyle("-fx-background-color: red");
-        final List<String> names = Arrays.asList("Аудитории", "Занятия");
-        final List<Pane> panes = Arrays.asList(rootAuditoriumPane, rootClassesPane);
-        for (int i = 0; i < 2; ++i) {
+        final List<String> names = Arrays.asList("Аудитории", "Занятия", "Запросы");
+        final List<Pane> panes = Arrays.asList(rootAuditoriumPane, rootClassesPane, rootRequestsPane);
+        for (int i = 0; i < names.size(); ++i) {
             vbox.getChildren().add(boxItem(String.valueOf(i), names.get(i), panes.get(i), panes));
         }
         vbox.setStyle("-fx-background-color: #2d3041");

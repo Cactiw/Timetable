@@ -1,0 +1,46 @@
+.request-header-label{
+    -fx-font-weight: bold;
+    -fx-font-size: 18pt;
+}
+
+.request-pane {
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
+
+    -fx-max-width: 1000;
+}
+
+.request-pane.grey {
+    -fx-background-color: #bdbdbd;
+}
+
+
+.request-pane.red {
+    /*-fx-background-color: rgba(240, 128, 128, 0.6);*/
+    /*-fx-background-color: rgba(243,99,99, 0.7);*/
+    -fx-background-color: #F8CECC;
+    /*-fx-background-color: rgba(255, 0, 0, 0.8);*/
+}
+
+.request-pair-time {
+    -fx-font-size: 12pt;
+}
+
+.request-pair-name {
+    -fx-font-weight: bold;
+    -fx-font-size: 14pt;
+}
+
+.request-pair-auditorium-name {
+    -fx-font-size: 16pt;
+}
+
+
+.request-pair-teacher {
+    /*-fx-font-weight: bold;*/
+    -fx-font-size: 14pt;
+}
+
+

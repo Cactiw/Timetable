@@ -3,6 +3,7 @@ package Timetable.repositories;
 import Timetable.model.Auditorium;
 import Timetable.model.AuditoriumProperty;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
@@ -31,10 +32,25 @@ public interface AuditoriumRepository extends JpaRepository<Auditorium, Integer>
     List<Auditorium> findByNameIgnoreCaseContaining(@NonNull final String text);
 
     @Query("select a from Auditorium a left outer join Pair p on a = p.auditorium where p.id is null or " +
-            "(p.beginTime > ?2 or p.endTime < ?1) order by a.maxStudents desc")
+            "(p.beginTime > ?2 or p.endTime < ?1) group by a order by a.maxStudents desc")
     @NonNull
     List<Auditorium> findAvailableAuditorium(@NonNull final LocalDateTime beginTime,
                                              @NonNull final LocalDateTime endTime);
+
+    @Query("select a from Auditorium a left outer join Pair p on a = p.auditorium where p.id is null or " +
+            "(p.beginTime > ?2 or p.endTime < ?1) group by a order by a.maxStudents asc")
+    @NonNull
+    List<Auditorium> findAvailableAuditorium(@NonNull final LocalDateTime beginTime,
+                                             @NonNull final LocalDateTime endTime,
+                                             @NonNull Pageable pageable);
+
+    @Query("select a from Auditorium a left outer join Pair p on a = p.auditorium where (p.id is null or " +
+            "(p.beginTime > ?2 or p.endTime < ?1)) and a.maxStudents >= ?3 group by a order by a.maxStudents asc")
+    @NonNull
+    List<Auditorium> findAvailableAuditorium(@NonNull final LocalDateTime beginTime,
+                                             @NonNull final LocalDateTime endTime,
+                                             @NonNull final int maxStudents,
+                                             @NonNull Pageable pageable);
 
     @Query(value = "select a from Auditorium a join a.properties p where " +
             "upper(a.name) like upper(concat('%', ?1, '%')) and a.maxStudents >= ?2 and " +
