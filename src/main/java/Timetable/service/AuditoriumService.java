@@ -149,6 +149,11 @@ public class AuditoriumService {
         separator.getStyleClass().add("auditorium-separator");
         List<Label> infoLabels = auditorium.getProperties().stream().map(
                 auditoriumProperty -> new Label(auditoriumProperty.getName())).collect(Collectors.toList());
+        if (infoLabels.size() == 0) {
+            var fakeLabel = new Label("Компьютеры");
+            fakeLabel.setVisible(false);
+            infoLabels.add(fakeLabel);
+        }
         info.getChildren().addAll(name, separator);
 //        info.getChildren().addAll(infoLabels);
         VBox infoVbox = new VBox();
