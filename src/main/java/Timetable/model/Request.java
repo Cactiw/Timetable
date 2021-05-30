@@ -23,8 +23,11 @@ public class Request {
     private Integer id;
 
     @ManyToOne
-    @NonNull
     private Pair requestPair;
+
+    @ManyToOne
+    @NonNull
+    private Pair changePair;
 
     @ManyToOne
     @Nullable
@@ -119,6 +122,14 @@ public class Request {
 
     public void setProcessedAt(LocalDateTime processedAt) {
         this.processedAt = processedAt;
+    }
+
+    public Pair getChangePair() {
+        return changePair;
+    }
+
+    public void setChangePair(@NonNull Pair changePair) {
+        this.changePair = changePair;
     }
 
     public LocalTime getClearNewBeginTime() {

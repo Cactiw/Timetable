@@ -38,7 +38,7 @@ public class DateService {
     }
 
     public static String formatRussian(@NonNull final LocalDate date) {
-        return date.getDayOfMonth() + " " + months.get(date.getMonth().getValue()) + " (" + daysOfWeek.get(
+        return date.getDayOfMonth() + " " + months.get(date.getMonth().getValue() - 1) + " (" + daysOfWeek.get(
                 date.getDayOfWeek().getValue()) + ")";
     }
 

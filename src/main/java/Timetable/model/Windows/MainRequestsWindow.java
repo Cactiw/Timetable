@@ -25,15 +25,18 @@ public class MainRequestsWindow {
 
     private RequestService requestService;
     private ResolveRequestDialog resolveRequestDialog;
+    private MainClassesWindow mainClassesWindow;
 
     public MainRequestsWindow(
             @NonNull final StackPane container,
             @NonNull final RequestService requestService,
-            @NonNull final ResolveRequestDialog resolveRequestDialog
-            ) {
+            @NonNull final ResolveRequestDialog resolveRequestDialog,
+            @NonNull final MainClassesWindow mainClassesWindow
+    ) {
         this.container = container;
         this.requestService = requestService;
         this.resolveRequestDialog = resolveRequestDialog;
+        this.mainClassesWindow = mainClassesWindow;
     }
 
     public Pane initiateWindow() {
@@ -109,8 +112,7 @@ public class MainRequestsWindow {
                 requestBox.getStyleClass().add("red");
                 requestBox.setOnMouseClicked(e -> {
                     if (e.getClickCount() >= 2) {  // On double click);
-                        resolveRequestDialog.show(container, request);
-                        this.updateRequests();
+                        resolveRequestDialog.show(container, request, mainClassesWindow, this);
                     }
                 });
             }
