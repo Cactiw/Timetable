@@ -93,11 +93,11 @@ public class PairService {
                 )).collect(Collectors.toList());
                 if (suitableChanges.size() > 0) {
                     var change = suitableChanges.get(0);
-                    week.add(change);
                     if ((!change.isCanceled()) && change.isChangedThisWeek(weekStart) && change.isThisWeek(weekStart)) {
                         // Пара переносится на эту же неделю
                         week.add(pair.cancelPair(weekStart));
                     }
+                    week.add(change);
                 } else {
                     week.add(pair);
                 }
