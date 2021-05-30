@@ -1,31 +1,34 @@
 package Timetable.model.Windows;
 
+import Timetable.model.AuditoriumProperty;
 import Timetable.model.Dialogs.ResolveRequestDialog;
 import Timetable.service.DateService;
 import Timetable.service.RequestService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
-import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
+import java.util.LinkedList;
 
 
 public class MainRequestsWindow {
 
-    private VBox rootPane;
+    private BorderPane rootPane;
+    private VBox rootVboxPane;
 
     private StackPane container;
 
     private RequestService requestService;
     private ResolveRequestDialog resolveRequestDialog;
     private MainClassesWindow mainClassesWindow;
+
+    private TextField teacherFilterField;
+    private TextField auditoriumFilterField;
 
     public MainRequestsWindow(
             @NonNull final StackPane container,
@@ -40,8 +43,12 @@ public class MainRequestsWindow {
     }
 
     public Pane initiateWindow() {
-        rootPane = new VBox();
-        rootPane.spacingProperty().setValue(10);
+        rootPane = new BorderPane();
+        rootVboxPane = new VBox();
+        rootPane.setCenter(rootVboxPane);
+        rootPane.setRight(getFilters());
+
+        rootVboxPane.spacingProperty().setValue(10);
 
 
         updateRequests();
@@ -49,10 +56,10 @@ public class MainRequestsWindow {
     }
 
     public void updateRequests() {
-        rootPane.getChildren().clear();
+        rootVboxPane.getChildren().clear();
         Label headerLabel = new Label("Запросы на перенос занятий:");
         headerLabel.getStyleClass().add("request-header-label");
-        rootPane.getChildren().add(headerLabel);
+        rootVboxPane.getChildren().add(headerLabel);
 
         var requests = requestService.getLastRequests();
 
@@ -117,8 +124,38 @@ public class MainRequestsWindow {
                 });
             }
 
-            rootPane.getChildren().add(requestBox);
+            rootVboxPane.getChildren().add(requestBox);
         }
 
     }
+
+    @NonNull private Pane getFilters() {
+        VBox root = new VBox();
+        root.setPrefWidth(300);
+        root.setAlignment(Pos.CENTER_LEFT);
+        root.setSpacing(5);
+        root.getStyleClass().add("auditorium-filters");
+
+        Label header = new Label("Фильтры");
+        header.getStyleClass().add("auditorium-filter-name");
+        Separator separator = new Separator();
+
+        Label nameLabel = new Label("Преподаватель:");
+        teacherFilterField = new TextField();
+        teacherFilterField.setPromptText("Поиск по ФИО преподавателя");
+//        teacherFilterField.textProperty().addListener(this::onChanged);
+
+        Pane empty = new Pane();
+        Label maxStudentsLabel = new Label("Аудитория:");
+        auditoriumFilterField = new TextField();
+        auditoriumFilterField.setPromptText("Поиск по названию");
+//        auditoriumFilterField.textProperty().addListener(this::onChanged);
+
+        Separator separator2 = new Separator();
+
+        root.getChildren().addAll(header, separator, nameLabel, teacherFilterField, empty, maxStudentsLabel,
+                auditoriumFilterField, separator2);
+        return root;
+    }
+
 }
