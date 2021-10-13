@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -87,9 +88,9 @@ public class PairService {
             if (changes.size() > 0) {
                 var suitableChanges = changes.stream().filter(p ->
                     DateService.isBetween(
-                            Period.between(weekStart, p.getBeginTime().toLocalDate()).getDays(), 0, 6
+                            ChronoUnit.DAYS.between(weekStart, p.getBeginTime().toLocalDate()), 0, 6
                     ) || (p.getChangeDate() != null && DateService.isBetween(
-                            Period.between(weekStart, p.getChangeDate()).getDays(), 0, 6)
+                            ChronoUnit.DAYS.between(weekStart, p.getChangeDate()), 0, 6)
                 )).collect(Collectors.toList());
                 if (suitableChanges.size() > 0) {
                     var change = suitableChanges.get(0);
@@ -246,6 +247,10 @@ public class PairService {
                 if (!(beginTime.compareTo(pair.getEndTime()) > 0 ||
                         endTime.compareTo(pair.getBeginTime()) < 0 || (pairFrom != null && pairFrom.equals(pair)))) {
                     // Пересекаются, алёрт
+                    if (pair.isChange()) {
+                        // TODO add check changes
+                        continue;
+                    }
                     conflicts.append("Преподаватель в это время занят:\n" + pair.getSubject() + " " +
                             pair.getAuditoriumName() + " " + pair.getBeginTime().toLocalTime().toString() + " - " +
                             pair.getEndTime().toLocalTime().toString() + "\n");
@@ -260,6 +265,10 @@ public class PairService {
                     beginTime.toLocalTime(), endTime.toLocalTime());
             for (final Pair pair : auditoriumConflictPairs) {
                 if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
+                    continue;
+                }
+                if (pair.isChange()) {
+                    // TODO add check changes
                     continue;
                 }
                 final ObservableList<Auditorium> availableAuditoriums = auditoriumService.getAvailableAuditoriums(beginTime, endTime);
@@ -278,6 +287,10 @@ public class PairService {
                 beginTime.toLocalTime(), endTime.toLocalTime());
         for (final Pair pair : pairs) {
             if (pairFrom != null && pairFrom.equals(pair)) { // Пара совпала с текущей - не конфликт
+                continue;
+            }
+            if (pair.isChange()) {
+                // TODO add check changes
                 continue;
             }
             conflicts.append("Группа в это время занята:\n" + pair.getSubject() + " " +

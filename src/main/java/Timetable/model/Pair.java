@@ -37,6 +37,9 @@ public class Pair {
     @Nullable
     private Auditorium auditorium;
 
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isOnline = false;
+
     @ManyToOne
     private PeopleUnion group;
 
@@ -112,11 +115,23 @@ public class Pair {
     }
 
     public String getAuditoriumName() {
+        if (getOnline()) {
+            return "Дист.";
+        }
         return getAuditorium() != null ? getAuditorium().getName() : "";
     }
 
     public void setAuditorium(Auditorium auditorium) {
         this.auditorium = auditorium;
+    }
+
+    @Nullable
+    public Boolean getOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(@Nullable Boolean online) {
+        isOnline = online;
     }
 
     public PeopleUnion getGroup() {

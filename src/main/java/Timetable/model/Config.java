@@ -15,7 +15,7 @@ public class Config {
     public static final int defaultClassesCount = 6;
 
     @NonNull
-    public static final String parserIp = "localhost";
+    public static final String parserIp = "144.91.112.129";  // fixme do not commit
     @NonNull
     public static final int parserPort = 6000;
 }

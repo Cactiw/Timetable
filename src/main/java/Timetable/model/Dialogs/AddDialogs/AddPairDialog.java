@@ -49,6 +49,7 @@ public class AddPairDialog {
     private TextField subject;
     private TextField teacher;
     private TextField auditorium;
+    private CheckBox onlineCheckbox;
     private TextField group;
     private List<TextField> emptyList;
     private List<ComboBoxBase<?>> notNullList;
@@ -103,6 +104,7 @@ public class AddPairDialog {
         subject.setText(pair.getSubject());
         setTeacher(pair.getTeacher());
         setAuditorium(pair.getAuditorium());
+        onlineCheckbox.selectedProperty().setValue(pair.getOnline());
         setGroup(pair.getGroup());
         beginDate.valueProperty().setValue(pair.getBeginTime().toLocalDate());
         beginTime.valueProperty().setValue(pair.getBeginTime().toLocalTime());
@@ -171,6 +173,16 @@ public class AddPairDialog {
                 auditoriumPopup.show(auditorium, Side.BOTTOM, 0, 0);
             }
             verifyAddPairDialog();
+        });
+        onlineCheckbox = new CheckBox();
+        onlineCheckbox.selectedProperty().addListener((observableValue, s, t1) -> {
+            if (observableValue.getValue()) {
+                auditorium.textProperty().setValue("");
+                auditorium.setDisable(true);
+                setAuditorium(null);
+            } else {
+                auditorium.setDisable(false);
+            }
         });
         group = new TextField();
         group.setPromptText("Введите название группы");
@@ -250,16 +262,21 @@ public class AddPairDialog {
 
         gridPane.add(new Label("Аудитория:"), 0, 2);
         gridPane.add(auditorium, 1, 2);
-        gridPane.add(groupLabel, 0, 3);
-        gridPane.add(group, 1, 3);
-        gridPane.add(new Label("Дата занятия:"), 0, 4);
-        gridPane.add(beginDate, 1, 4);
-        gridPane.add(new Label("Начало занятия:"), 0, 5);
-        gridPane.add(beginTime, 1, 5);
-        gridPane.add(new Label("Окончание занятия:"), 0, 6);
-        gridPane.add(endTime, 1, 6);
-        gridPane.add(new Label("Периодичность:"), 0, 7);
-        gridPane.add(repeatability, 1, 7);
+
+        gridPane.add(new Label("Дистанционно:"), 0, 3);
+        gridPane.add(onlineCheckbox, 1, 3);
+
+
+        gridPane.add(groupLabel, 0, 4);
+        gridPane.add(group, 1, 4);
+        gridPane.add(new Label("Дата занятия:"), 0, 5);
+        gridPane.add(beginDate, 1, 5);
+        gridPane.add(new Label("Начало занятия:"), 0, 6);
+        gridPane.add(beginTime, 1, 6);
+        gridPane.add(new Label("Окончание занятия:"), 0, 7);
+        gridPane.add(endTime, 1, 7);
+        gridPane.add(new Label("Периодичность:"), 0, 8);
+        gridPane.add(repeatability, 1, 8);
 
         conflicts = new Text("");
         suggestions = new Text("\n");
@@ -280,7 +297,7 @@ public class AddPairDialog {
 
 
         // Список из полей, которые должны быть не пустыми при корректном заполнении диалога
-        emptyList = Arrays.asList(subject, teacher, auditorium, group);
+        emptyList = Arrays.asList(subject, teacher, group);
         notNullList = Arrays.asList(beginDate, beginTime, endTime);
 
         dialog.getDialogPane().setContent(gridPane);
@@ -299,6 +316,7 @@ public class AddPairDialog {
                 pair.setSubject(subject.getText());
                 pair.setBeginTime(getBeginTime());
                 pair.setEndTime(getEndTime());
+                pair.setOnline(onlineCheckbox.isSelected());
                 pair.setRepeatability(repeatability.getSelectionModel().getSelectedIndex());
 
                 return pairService.save(pair);
@@ -369,10 +387,10 @@ public class AddPairDialog {
                 correct = !bool;
             }
         }
-        if (auditoriumEntity == null) {
-            correct = false;
-            red(auditorium, true);
-        }
+//        if (auditoriumEntity == null) {
+//            correct = false;
+//            red(auditorium, true);
+//        }
         if (teacherEntity == null) {
             correct = false;
             red(teacher, true);
