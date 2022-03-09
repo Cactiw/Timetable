@@ -9,7 +9,7 @@
     -fx-padding: 5px;
     -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
 
-    -fx-max-width: 1000;
+    -fx-max-width: 950;
 }
 
 .request-pane.grey {

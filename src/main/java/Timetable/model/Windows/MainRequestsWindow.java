@@ -4,6 +4,10 @@ import Timetable.model.AuditoriumProperty;
 import Timetable.model.Dialogs.ResolveRequestDialog;
 import Timetable.service.DateService;
 import Timetable.service.RequestService;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.CheckBox;
@@ -11,6 +15,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.util.Duration;
 import org.springframework.lang.NonNull;
 
 import java.util.LinkedList;
@@ -52,7 +57,23 @@ public class MainRequestsWindow {
 
 
         updateRequests();
+        planUpdateTask();
+
         return rootPane;
+    }
+
+    private void planUpdateTask() {
+        Timeline fiveSecondsWonder = new Timeline(
+                new KeyFrame(Duration.seconds(15),
+                        new EventHandler<ActionEvent>() {
+                            @Override
+                            public void handle(ActionEvent event) {
+                                System.out.println("this is called every 5 seconds on UI thread");
+                                updateRequests();
+                            }
+                        }));
+        fiveSecondsWonder.setCycleCount(Timeline.INDEFINITE);
+        fiveSecondsWonder.play();
     }
 
     public void updateRequests() {
