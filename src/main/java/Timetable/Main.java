@@ -11,6 +11,7 @@ import Timetable.model.Dialogs.ViewDialogs.ViewPairDialog;
 import Timetable.model.Windows.MainAuditoriumWindow;
 import Timetable.model.Windows.MainClassesWindow;
 import Timetable.model.Windows.MainRequestsWindow;
+import Timetable.model.Windows.MainTransformWindow;
 import Timetable.service.*;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -49,10 +50,12 @@ public class Main extends AbstractJavaFxApplicationSupport {
     private MainAuditoriumWindow mainAuditoriumWindow;
     private MainClassesWindow mainClassesWindow;
     private MainRequestsWindow mainRequestsWindow;
+    private MainTransformWindow mainTransformWindow;
 
     private Pane rootAuditoriumPane;
     private Pane rootClassesPane;
     private Pane rootRequestsPane;
+    private Pane rootTransformPane;
 
     @Autowired
     private ViewPairDialog viewPairDialog;
@@ -102,13 +105,17 @@ public class Main extends AbstractJavaFxApplicationSupport {
         mainClassesWindow = new MainClassesWindow(modes, peopleUnionService, peopleUnionTypeService, pairService,
                 viewPairDialog);
         mainRequestsWindow = new MainRequestsWindow(modes, requestService, resolveRequestDialog, mainClassesWindow);
+        mainTransformWindow = new MainTransformWindow(modes);
 
         rootClassesPane = mainClassesWindow.initiateClassesWindow();
         rootAuditoriumPane = mainAuditoriumWindow.initiateAuditoriumWindow();
         rootRequestsPane = mainRequestsWindow.initiateWindow();
+        rootTransformPane = mainTransformWindow.initiateWindow();
 
         modes.getChildren().add(rootRequestsPane);
         StackPane.setMargin(rootRequestsPane, new Insets(10, 20, 20, 20));
+        modes.getChildren().add(rootTransformPane);
+        StackPane.setMargin(rootTransformPane, new Insets(10, 20, 20, 20));
 
         VBox menu = sidePane();
         root_pane.getChildren().add(menu);
@@ -118,6 +125,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         rootClassesPane.setVisible(false);
         rootRequestsPane.toBack();
         rootRequestsPane.setVisible(false);
+        rootTransformPane.toBack();
+        rootTransformPane.setVisible(false);
 
         root_pane.getChildren().add(modes);
         HBox.setHgrow(modes, Priority.ALWAYS);
@@ -223,8 +232,8 @@ public class Main extends AbstractJavaFxApplicationSupport {
         vbox.setPrefWidth(200);
         vbox.setMinWidth(200);
         //vbox.setStyle("-fx-background-color: red");
-        final List<String> names = Arrays.asList("Аудитории", "Занятия", "Запросы");
-        final List<Pane> panes = Arrays.asList(rootAuditoriumPane, rootClassesPane, rootRequestsPane);
+        final List<String> names = Arrays.asList("Аудитории", "Занятия", "Запросы", "Преобразования");
+        final List<Pane> panes = Arrays.asList(rootAuditoriumPane, rootClassesPane, rootRequestsPane, rootTransformPane);
         for (int i = 0; i < names.size(); ++i) {
             vbox.getChildren().add(boxItem(String.valueOf(i), names.get(i), panes.get(i), panes));
         }
